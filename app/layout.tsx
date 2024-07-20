@@ -4,6 +4,8 @@ import '../styles/tailwind.css';
 import { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import { QuickReportProvider } from '@/contexts/QuickReportContext';
+import { ReactQueryProvider } from '@/providers/ReactQueryProvider';
+import { SettingsProvider } from '@/contexts/SettingsContext';
 
 export const metadata: Metadata = {
     title: {
@@ -22,11 +24,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en">
             <body className={nunito.variable}>
-                <ProviderComponent>
-                    <QuickReportProvider>
-                        {children}
-                    </QuickReportProvider>
-                </ProviderComponent>
+                <ReactQueryProvider>
+                    <SettingsProvider>
+                        <ProviderComponent>
+                            <QuickReportProvider>
+                                {children}
+                            </QuickReportProvider>
+                        </ProviderComponent>
+                    </SettingsProvider>
+                </ReactQueryProvider>
             </body>
         </html>
     );
