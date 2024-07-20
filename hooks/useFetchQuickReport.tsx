@@ -1,3 +1,4 @@
+import { useQuickReport } from '@/contexts/QuickReportContext';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useQuery } from '@tanstack/react-query';
 
@@ -40,8 +41,8 @@ async function generateQuickReport({ generateCharts, prompt, internet, dataForma
 
     return data as ReportDataType;
 }
-const useFetchQuickReport = (prompt: string) => {
-
+const useFetchQuickReport = () => {
+    const { prompt } = useQuickReport()
     const { reportOptions } = useSettings()
     const fetchReport = async () => {
         const data = await generateQuickReport({
