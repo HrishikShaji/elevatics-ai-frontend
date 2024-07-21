@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, Dispatch, SetStateAction } from 're
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import style from '../../styles/Markdown.module.css';
+import style from '../../../../../../styles/markdown.module.css';
 
 interface StreamMarkdownProps {
     content: string;

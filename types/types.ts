@@ -32,3 +32,23 @@ export interface Topic {
     name: string;
     prompt: string;
 }
+
+type SectionType = {
+    section: string;
+    reasoning: string;
+    score: number;
+    weight: number
+}
+
+type SectorType = {
+    sector: string;
+    sections: SectionType[];
+    overall_score: number;
+}
+
+export type InvestorDataResponse = {
+    grading_results: { final_score: number; sectors: SectorType[] };
+    other_info_results: { [key: string]: string };
+    queries: string[];
+    query_results: string[]
+}
