@@ -11,8 +11,6 @@ type ResearcherProviderProps = {
 interface ResearcherData {
     prompt: string;
     setPrompt: Dispatch<SetStateAction<string>>;
-    data: ResearcherTopicsResponse[];
-    setData: Dispatch<SetStateAction<ResearcherTopicsResponse[]>>;
     selectedSubtasks: SelectedSubtasks;
     setSelectedSubtasks: Dispatch<SetStateAction<SelectedSubtasks>>;
     topics: Topic[];
@@ -31,14 +29,11 @@ export const useResearcher = () => {
 export const ResearchProvider = ({ children }: ResearcherProviderProps) => {
     const [prompt, setPrompt] = useState("");
     const [topics, setTopics] = useState<Topic[]>([])
-    const [data, setData] = useState<ResearcherTopicsResponse[]>([]);
     const [selectedSubtasks, setSelectedSubtasks] = useState<SelectedSubtasks>({});
 
     const researcherData = {
         prompt,
         setPrompt,
-        data,
-        setData,
         topics,
         setTopics,
         selectedSubtasks,

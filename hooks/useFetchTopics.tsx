@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 
 
-async function fetchNewTopics({ prompt, topicsNum, subTopicsNum, setData }: { setData: Dispatch<SetStateAction<ResearcherTopicsResponse[]>>, prompt: string, topicsNum: number, subTopicsNum: number }) {
+async function fetchNewTopics({ prompt, topicsNum, subTopicsNum }: { prompt: string, topicsNum: number, subTopicsNum: number }) {
     const token = process.env.NEXT_PUBLIC_HFSPACE_TOKEN || "";
     const headers = {
         Authorization: token,
@@ -31,21 +31,20 @@ async function fetchNewTopics({ prompt, topicsNum, subTopicsNum, setData }: { se
     }
 
     const result = response.json()
-    setData(await result)
     return result;
 }
 
 export default function useFetchTopics() {
-    const { prompt, setData } = useResearcher();
+    const { prompt } = useResearcher();
     const { topicsLimit } = useSettings();
 
 
     const { data, isLoading, error } = useQuery({
         queryKey: ["topics", prompt],
-        queryFn: () => fetchNewTopics({ setData: setData, prompt, topicsNum: topicsLimit.topics, subTopicsNum: topicsLimit.subTopics }),
+        queryFn: () => fetchNewTopics({ prompt, topicsNum: topicsLimit.topics, subTopicsNum: topicsLimit.subTopics }),
         enabled: !!prompt
     }
     );
 
-    return { isLoading, data, error };
+    return { isLoading, data: data?.topics as ResearcherTopicsResponse[], error };
 }
