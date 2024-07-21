@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
-import 'tailwindcss/tailwind.css';
 
 // Initialize marked
 marked.setOptions({
@@ -23,6 +22,8 @@ const Coder = () => {
     const [userId, setUserId] = useState("")
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const apiKey = process.env.NEXT_PUBLIC_CODER_API_KEY;
+
+    console.log(chatHistory)
 
     useEffect(() => {
 
@@ -109,9 +110,8 @@ const Coder = () => {
     };
 
     return (
-        <div className="bg-gray-900 text-white h-screen flex flex-col">
+        <div className=" h-full flex flex-col">
             <div className="container mx-auto p-4 flex-grow flex flex-col max-w-3xl">
-                <h1 className="text-2xl font-bold mb-4 text-center">Coding Assistant</h1>
                 <div ref={chatContainerRef} id="chat-container" className="flex-grow max-h-[70vh] overflow-y-auto mb-4 space-y-4">
                     {chatHistory.map((message, index) => (
                         <div key={index} className={`p-4 rounded-lg ${message.role === 'user' ? 'bg-gray-800' : 'bg-gray-700'}`}>
