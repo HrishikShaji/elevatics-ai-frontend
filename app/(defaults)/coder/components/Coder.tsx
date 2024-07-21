@@ -19,19 +19,27 @@ const Coder = () => {
     const [userQuery, setUserQuery] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
     const [selectedModel, setSelectedModel] = useState('meta-llama/llama-3-70b-instruct');
+    const [conversationId, setConverstionId] = useState("")
+    const [userId, setUserId] = useState("")
     const chatContainerRef = useRef<HTMLDivElement>(null);
-    const apiKey = '44d5c2ac18ced6fc25c1e57dcd06fc0b31fb4ad97bf56e67540671a647465df4'; // Replace with your actual API key
-    const conversationId = Date.now().toString(); // Simple unique ID for the conversation
-    const userId = 'user_' + Math.random().toString(36).substr(2, 9); // Simple unique user ID
+    const apiKey = process.env.NEXT_PUBLIC_CODER_API_KEY;
+
+    useEffect(() => {
+
+        const userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        const conversationId = Date.now().toString();
+        setUserId(userId)
+        setConverstionId(conversationId)
+    }, [])
 
     const displayMessages = () => {
         // Scroll to the bottom of the chat container
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-
-        // Apply syntax highlighting to code blocks
-        document.querySelectorAll('pre code').forEach((block) => {
-            hljs.highlightElement(block);
-        });
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            chatContainerRef.current.querySelectorAll("pre code").forEach((block) => {
+                hljs.highlightElement(block)
+            })
+        }
     };
 
     useEffect(() => {
@@ -57,13 +65,13 @@ const Coder = () => {
 
         addMessage('user', userQuery);
         setUserQuery('');
-
+        console.log(conversationId)
         try {
             const response = await fetch('https://pvanand-general-chat.hf.space/coding-assistant', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-API-Key': apiKey,
+                    'X-API-Key': apiKey || "",
                 },
                 body: JSON.stringify({
                     user_query: userQuery,
@@ -104,7 +112,7 @@ const Coder = () => {
         <div className="bg-gray-900 text-white h-screen flex flex-col">
             <div className="container mx-auto p-4 flex-grow flex flex-col max-w-3xl">
                 <h1 className="text-2xl font-bold mb-4 text-center">Coding Assistant</h1>
-                <div ref={chatContainerRef} id="chat-container" className="flex-grow overflow-y-auto mb-4 space-y-4">
+                <div ref={chatContainerRef} id="chat-container" className="flex-grow max-h-[70vh] overflow-y-auto mb-4 space-y-4">
                     {chatHistory.map((message, index) => (
                         <div key={index} className={`p-4 rounded-lg ${message.role === 'user' ? 'bg-gray-800' : 'bg-gray-700'}`}>
                             <span className="font-bold text-sm mb-2 inline-block">{message.role === 'user' ? 'You' : 'Assistant'}</span>
