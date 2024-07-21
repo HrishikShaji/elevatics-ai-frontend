@@ -111,7 +111,7 @@ export default function StreamChart({ chartData, onComplete }: StreamChartProps)
         <div className="w-full p-5 rounded-3xl h-full">
             {chartObject ? (
                 <div className='w-full h-full'>
-                    <Plot className="h-full w-full" useResizeHandler data={chartObject.data} layout={chartObject.layout} />
+                    <Plot className="h-full w-full" data={chartObject.data} layout={chartObject.layout} />
                 </div>
             ) : null}
         </div>

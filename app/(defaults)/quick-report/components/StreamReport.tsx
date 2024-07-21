@@ -38,7 +38,7 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
 
 
     return (
-        <>
+        <div className="rounded-3xl bg-gray-300 p-5">
 
             {htmlArray.map((html, i) => (
                 <div key={i}>
@@ -60,6 +60,6 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
                     ) : null}
                 </div>
             ))}
-        </>
+        </div>
     )
 }

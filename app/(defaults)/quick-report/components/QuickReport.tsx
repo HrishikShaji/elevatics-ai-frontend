@@ -7,7 +7,7 @@ import RenderReport from "./RenderReport"
 export default function QuickReport() {
     const { data, loading, error } = useFetchQuickReport()
     console.log(data)
-    return <div className="p-10 w-full h-full">
+    return <div className="py-10 w-full h-full">
         <div>{loading ? "loading" : (
             <RenderReport data={data.report} />
         )}</div>
