@@ -52,3 +52,7 @@ export type InvestorDataResponse = {
     queries: string[];
     query_results: string[]
 }
+
+export type LoaderStep = {
+    title: string
+}
