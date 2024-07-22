@@ -39,35 +39,19 @@ export default function Topic({
     };
 
     return (
-        <div className="w-full bg-white py-1 border-b-2 border-gray-200 flex flex-col">
-            <div className="flex justify-between items-center w-full">
-                <h1>{title}</h1>
-                {isOpen ? (
-                    <button onClick={() => setOpenTopic(null)} className="">
-                        <CiCircleMinus size={30} />
-                    </button>
-                ) : (
-                    <button onClick={() => setOpenTopic(title)} className="">
-                        <CiCirclePlus size={30} />
-                    </button>
-                )}
-            </div>
-            {isOpen ? (
-                <div>
-                    {currentTopic.subtasks.map((subtask, i) => (
-                        <div key={i} className="flex items-center">
-                            <input
-                                type="checkbox"
-                                checked={
-                                    selectedSubtasks[currentTopic.task]?.some(item => item.name === subtask.name) || false
-                                }
-                                onChange={() => handleCheckboxChange(currentTopic.task, { name: subtask.name, prompt: subtask.prompt })}
-                            />
-                            <label className="ml-2">{subtask.name}</label>
-                        </div>
-                    ))}
+        <div>
+            {currentTopic.subtasks.map((subtask, i) => (
+                <div key={i} className="flex items-center">
+                    <input
+                        type="checkbox"
+                        checked={
+                            selectedSubtasks[currentTopic.task]?.some(item => item.name === subtask.name) || false
+                        }
+                        onChange={() => handleCheckboxChange(currentTopic.task, { name: subtask.name, prompt: subtask.prompt })}
+                    />
+                    <label className="ml-2">{subtask.name}</label>
                 </div>
-            ) : null}
+            ))}
         </div>
     );
 }
