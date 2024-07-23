@@ -4,16 +4,21 @@
 import { PiGraduationCap, PiRocketLaunchThin } from "react-icons/pi";
 import useSuggestions from "@/hooks/useSuggestions";
 import { useQuickReport } from "@/contexts/QuickReportContext";
-import { FormEvent } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Spinner from "./Spinner";
 import AnimateHeight from "react-animate-height";
 
 export default function SearchBar() {
 
+    const [currentData, setCurrentData] = useState([])
     const { setPrompt } = useQuickReport()
     const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const router = useRouter()
+
+    useEffect(() => {
+        setCurrentData(data)
+    }, [data])
 
 
     function handleSubmit(e: FormEvent) {
@@ -38,25 +43,23 @@ export default function SearchBar() {
                     <PiRocketLaunchThin size={30} />
                 </button>
             </form>
-            <AnimateHeight height={isSuccess ? "auto" : 0} duration={300}>
-                {isSuccess && input.length > 0 ? (
-                    <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
-                        <span className="text-[#535353] ">Here are some suggestions</span>
-                        <div className="  w-full flex flex-col gap-1">
-                            {data.map((recommendation: string, i: number) => (
-                                <div
-                                    onClick={() => handleRecommendation(recommendation)}
-                                    key={i}
-                                    className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
-                                >
-                                    <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
-                                        {recommendation}
-                                    </h1>
-                                </div>
-                            ))}
-                        </div>
+            <AnimateHeight height={isSuccess ? 300 : 0} duration={300}>
+                <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
+                    <span className="text-[#535353] ">Here are some suggestions</span>
+                    <div className="  w-full flex flex-col gap-1">
+                        {currentData.map((recommendation: string, i: number) => (
+                            <div
+                                onClick={() => handleRecommendation(recommendation)}
+                                key={i}
+                                className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
+                            >
+                                <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
+                                    {recommendation}
+                                </h1>
+                            </div>
+                        ))}
                     </div>
-                ) : null}
+                </div>
             </AnimateHeight>
         </div>
     );
