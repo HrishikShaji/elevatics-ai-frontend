@@ -11,14 +11,10 @@ import AnimateHeight from "react-animate-height";
 
 export default function SearchBar() {
 
-    const [currentData, setCurrentData] = useState([])
     const { setPrompt } = useQuickReport()
     const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const router = useRouter()
 
-    useEffect(() => {
-        setCurrentData(data)
-    }, [data])
 
 
     function handleSubmit(e: FormEvent) {
@@ -47,7 +43,7 @@ export default function SearchBar() {
                 <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
                     <span className="text-[#535353] ">Here are some suggestions</span>
                     <div className="  w-full flex flex-col gap-1">
-                        {currentData.map((recommendation: string, i: number) => (
+                        {data.map((recommendation: string, i: number) => (
                             <div
                                 onClick={() => handleRecommendation(recommendation)}
                                 key={i}
