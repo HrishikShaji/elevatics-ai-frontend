@@ -38,9 +38,8 @@ export default function MainTopic({ handleComplete, index, completedIndexes, dat
     }
     return (
 
-        <div onScroll={onScroll} ref={containerRef} className="bg-red-500 p-10 max-h-[70vh] overflow-y-auto" style={{ display: selectedTopic === parentKey ? "block" : "none" }}>
-            <h1>{parentKey}</h1>
-            <div>
+        <div onScroll={onScroll} ref={containerRef} className=" p-10 max-h-[70vh] overflow-y-auto" style={{ display: selectedTopic === parentKey ? "block" : "none" }}>
+            <div className="bg-gray-300 p-10 rounded-3xl">
                 {indexes.map((item: any, j: number) => (
                     <div id={`jojo-${j}`} key={j}
                         ref={el => {
@@ -50,7 +49,6 @@ export default function MainTopic({ handleComplete, index, completedIndexes, dat
                             itemRefs.current[index][j] = el;
                         }}
                     >
-                        {item}
                         {data[item] && data[item].report && completedIndexes.includes(item) && (
                             <RenderReport setLineAdded={setLineAdded} handleScroll={handleScroll} handleComplete={handleComplete} item={item} report={data[item].report} />
                         )}

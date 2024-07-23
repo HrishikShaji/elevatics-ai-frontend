@@ -21,7 +21,6 @@ export default function QuickReport() {
             setShowLoader(true);
         }
     }, [loading]);
-    console.log(data)
     return <div className="py-10 w-full h-full">
         <div>{showLoader ? <Loader steps={quickReportLoadingSteps} /> : (
             <RenderReport data={data.report} />
