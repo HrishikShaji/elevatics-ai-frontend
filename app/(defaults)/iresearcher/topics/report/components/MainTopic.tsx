@@ -38,8 +38,8 @@ export default function MainTopic({ handleComplete, index, completedIndexes, dat
     }
     return (
 
-        <div onScroll={onScroll} ref={containerRef} className=" p-10 max-h-[70vh] overflow-y-auto" style={{ display: selectedTopic === parentKey ? "block" : "none" }}>
-            <div className="bg-gray-300 p-10 rounded-3xl">
+        <div onScroll={onScroll} ref={containerRef} className=" px-28 max-h-[70vh] overflow-y-auto" style={{ display: selectedTopic === parentKey ? "block" : "none" }}>
+            <div className="bg-gray-100 p-20 rounded-3xl">
                 {indexes.map((item: any, j: number) => (
                     <div id={`jojo-${j}`} key={j}
                         ref={el => {

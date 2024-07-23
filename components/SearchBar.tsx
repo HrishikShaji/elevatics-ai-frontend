@@ -24,7 +24,7 @@ export default function SearchBar() {
     }
 
     return (
-        <div className="w-[60%] bg-white rounded-3xl  overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+        <div className="w-[60%] bg-white rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
             <form onSubmit={handleSubmit} className="h-[80px] relative  flex items-center justify-center  ">
                 <input
                     value={input}

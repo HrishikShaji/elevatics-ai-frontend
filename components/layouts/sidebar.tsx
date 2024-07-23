@@ -88,7 +88,7 @@ const Sidebar = () => {
     return (
         <div className={semidark ? 'dark' : ''}>
             <nav
-                className={`sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${semidark ? 'text-white-dark' : ''}`}
+                className={`sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] bg-white shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${semidark ? 'text-white-dark' : ''}`}
             >
                 <div className="h-full bg-white dark:bg-black">
                     <div className="flex items-center justify-between px-4 py-3">
@@ -148,6 +148,14 @@ const Sidebar = () => {
                                 </AnimateHeight>
                             </li>
 
+                            <li className="nav-item">
+                                <Link href="/library" className="group">
+                                    <div className="flex items-center">
+                                        <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('Library')}</span>
+                                    </div>
+                                </Link>
+                            </li>
                         </ul>
                     </PerfectScrollbar>
                 </div>
