@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@auth/prisma-adapter": "^2.4.1",
         "@emotion/react": "^11.10.6",
         "@fullcalendar/core": "^6.1.4",
         "@fullcalendar/daygrid": "^6.1.4",
@@ -18,6 +19,7 @@
         "@headlessui/react": "^1.7.8",
         "@mantine/core": "^5.10.5",
         "@mantine/hooks": "^5.10.5",
+        "@prisma/client": "^5.17.0",
         "@reduxjs/toolkit": "^1.9.1",
         "@tanstack/react-query": "^5.51.11",
         "@tippyjs/react": "^4.2.6",
@@ -34,8 +36,11 @@
         "i18next": "^22.4.10",
         "mantine-datatable": "^1.7.35",
         "marked": "^13.0.2",
+        "mongodb": "^6.8.0",
         "next": "14.0.3",
+        "next-auth": "^4.24.7",
         "ni18n": "^1.0.5",
+        "prisma": "^5.17.0",
         "react": "18.2.0",
         "react-animate-height": "^3.1.0",
         "react-apexcharts": "^1.4.0",

@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                 String  @id @default(cuid()) @map("_id")
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid()) @map("_id")
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+USER
+ADMIN
+}
+
+enum Plan {
+FREE
+PREMIUM
+}
+
+enum ReportType {
+QUICK
+FULL
+CODE
+}
+
+model User {
+  id            String    @id @default(cuid()) @map("_id")
+  name          String?
+  email         String   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role     @default(USER)
+  plan          Plan     @default(FREE)
+  coins         Int      @default(3)
+  accounts      Account[]
+  profileImg    String?
+  queries       Int      @default(3)
+  phoneNumber   Int?
+  address       String?
+  occupation    String?
+  age           Int?
+  gender        String?
+  interests     String[]
+  nationality   String?
+  dob           DateTime?
+  sessions      Session[]
+  report        Report[]
+}
+
+model VerificationToken {
+  identifier String @id @map("_id")
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+
+model Report {
+id String @id @default(cuid()) @map("_id")
+name      String
+reportType ReportType
+createdAt DateTime @default(now())
+data      String
+userEmail String
+user User @relation(fields: [userEmail],references: [email])
+}
+
