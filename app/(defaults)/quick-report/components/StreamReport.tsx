@@ -34,6 +34,7 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
     }
     function handleHtmlRenderComplete() {
         setCurrentIndex(prev => prev + 1)
+        setLineAdded(prev => !prev)
     }
 
 
