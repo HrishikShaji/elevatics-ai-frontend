@@ -17,9 +17,10 @@ export const GET = async (req: Request) => {
     try {
         const [reports, totalCount] = await Promise.all([
             prisma.report.findMany({
-                where: { userEmail: session.user.email, ...(reportType && reportType !== "" ? { reportType: reportType as "FULL" | "QUICK" } : {}), },
-                skip: (page - 1) * pageSize,
-                take: pageSize,
+                where: { userEmail: session.user.email },
+                //...(reportType && reportType !== "" ? { reportType: reportType as "FULL" | "QUICK" } : {}), },
+                // skip: (page - 1) * pageSize,
+                //take: pageSize,
             }),
             prisma.report.count(),
         ]);

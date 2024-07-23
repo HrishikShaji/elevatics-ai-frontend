@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-const fetchLibrary = async ({ page, pageSize, reportType }: { page: number, pageSize: number, reportType: "QUICK" | "FULL" }) => {
+const fetchLibrary = async ({ page, pageSize, reportType }: { page: number, pageSize: number, reportType: "QUICK" | "FULL" | "" }) => {
     const response = await fetch(`/api/report?page=${page}&pageSize=${pageSize}&reportType=${reportType}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -15,7 +15,7 @@ const fetchLibrary = async ({ page, pageSize, reportType }: { page: number, page
     return response.json();
 };
 
-const useFetchLibrary = ({ page, pageSize, reportType }: { page: number, pageSize: number, reportType: "QUICK" | "FULL" }) => {
+const useFetchLibrary = ({ page, pageSize, reportType }: { page: number, pageSize: number, reportType: "QUICK" | "FULL" | "" }) => {
     return useQuery({ queryKey: ['reports', page, pageSize, reportType], queryFn: () => fetchLibrary({ page, pageSize, reportType }) });
 
 };

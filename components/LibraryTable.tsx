@@ -4,8 +4,13 @@ import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState } from "react";
 import IconPencil from "./icon/icon-pencil";
 import IconTrashLines from "./icon/icon-trash-lines";
+import { Report } from "@prisma/client";
 
-export default function LibraryTable() {
+interface LibraryTableProps {
+    rowData: Report[]
+}
+
+export default function LibraryTable({ rowData }: LibraryTableProps) {
     const [isMounted, setIsMounted] = useState(false);
     useEffect(() => {
         setIsMounted(true);
@@ -40,7 +45,7 @@ export default function LibraryTable() {
         setInitialRecords2(() => {
             return rowData.filter((item: any) => {
                 return (
-                    item.firstName.toLowerCase().includes(search2.toLowerCase()) ||
+                    item.name.toLowerCase().includes(search2.toLowerCase()) ||
                     item.company.toLowerCase().includes(search2.toLowerCase()) ||
                     item.age.toString().toLowerCase().includes(search2.toLowerCase()) ||
                     item.dob.toLowerCase().includes(search2.toLowerCase()) ||
@@ -66,17 +71,6 @@ export default function LibraryTable() {
         return '';
     };
 
-    const randomColor = () => {
-        const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
-        const random = Math.floor(Math.random() * color.length);
-        return color[random];
-    };
-
-    const randomStatus = () => {
-        const status = ['PAID', 'APPROVED', 'FAILED', 'CANCEL', 'SUCCESS', 'PENDING', 'COMPLETE'];
-        const random = Math.floor(Math.random() * status.length);
-        return status[random];
-    };
 
     return (
         <>
@@ -95,35 +89,22 @@ export default function LibraryTable() {
                             records={recordsData2}
                             columns={[
                                 {
-                                    accessor: 'firstName',
-                                    title: 'Name',
+                                    accessor: 'query',
+                                    title: 'Query',
                                     sortable: true,
-                                    render: ({ firstName, lastName, id }) => (
+                                    render: ({ name, id }) => (
                                         <div className="flex w-max items-center">
-                                            <img className="h-9 w-9 rounded-full object-cover ltr:mr-2 rtl:ml-2" src={`/assets/images/profile-${id}.jpeg`} alt="" />
-                                            <div>{firstName + ' ' + lastName}</div>
+                                            {name}
                                         </div>
                                     ),
                                 },
                                 {
-                                    accessor: 'age',
-                                    title: 'Age',
+                                    accessor: 'date',
+                                    title: 'Date',
                                     sortable: true,
-                                    render: ({ age }) => (
-                                        <div className="flex h-2.5 w-4/5 min-w-[100px] rounded-full bg-[#ebedf2] dark:bg-dark/40">
-                                            <div className={`h-2.5 rounded-full rounded-bl-full text-center text-xs text-white bg-${randomColor()}`} style={{ width: `${age}%` }}></div>
-                                        </div>
-                                    ),
-                                },
-                                { accessor: 'company', title: 'Company', sortable: true },
-                                {
-                                    accessor: 'dob',
-                                    title: 'Start Date',
-                                    sortable: true,
-                                    render: ({ dob }) => <div>{formatDate(dob)}</div>,
+                                    render: ({ createdAt }) => <div>{formatDate(createdAt)}</div>,
                                 },
                                 { accessor: 'email', title: 'Email', sortable: true },
-                                { accessor: 'phone', title: 'Phone No.', sortable: true },
                                 {
                                     accessor: 'action',
                                     title: 'Action',
