@@ -75,7 +75,7 @@ export default function TopicSection() {
                             </div>
                         </div>
                         <div className="divide-y divide-white-light px-6 py-4.5 dark:divide-dark">
-                            {data.map((task, i) => (
+                            {data?.map((task, i) => (
 
                                 <div>
                                     <div

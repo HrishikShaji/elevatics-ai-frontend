@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import { useResearcher } from "@/contexts/ResearcherContext";
 import MainTopic from "./MainTopic";
 import { RefObject } from "@fullcalendar/core/preact";
+import useSaveReport from "@/hooks/useSaveReport";
 type Subtask = {
     name: string;
     prompt: string;
@@ -46,6 +47,9 @@ export default function FullReport() {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(new Array(topics.length).fill(false));
     const [completedIndexes, setCompletedIndexes] = useState<number[]>([0]);
+    const [isFetchComplete, setIsFetchComplete] = useState(false)
+    const { mutate } = useSaveReport()
+    const { prompt } = useResearcher()
 
     const groupedData = topics.reduce((acc: any, item, index) => {
         const { parentKey } = item;
@@ -64,7 +68,9 @@ export default function FullReport() {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [selectedTopic, setSelectedTopic] = useState(groupedData[0]?.parentKey || '');
     useEffect(() => {
+        let k = 0
         const fetchAllData = async () => {
+
             for (let i = 0; i < topics.length; i++) {
                 setLoading(prevLoading => {
                     const newLoading = [...prevLoading];
@@ -83,9 +89,19 @@ export default function FullReport() {
                     return newLoading;
                 });
             }
+            console.log(k++)
+            setIsFetchComplete(prev => !prev)
+
         };
-        fetchAllData();
+        fetchAllData()
     }, [topics]);
+    console.log(data)
+
+    useEffect(() => {
+        if (isFetchComplete) {
+            mutate({ name: prompt, report: JSON.stringify(data), reportType: "FULL" });
+        }
+    }, [isFetchComplete, data, mutate, prompt])
 
     const containerRef = useRef<HTMLDivElement>(null)
 
