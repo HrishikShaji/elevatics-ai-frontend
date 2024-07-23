@@ -56,3 +56,8 @@ export type InvestorDataResponse = {
 export type LoaderStep = {
     title: string
 }
+
+export type ReportDataType = {
+    report: string;
+    references: Record<string, any>
+}

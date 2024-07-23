@@ -1,12 +1,9 @@
 import { useQuickReport } from '@/contexts/QuickReportContext';
 import { useSettings } from '@/contexts/SettingsContext';
+import { ReportDataType } from '@/types/types';
 import { useQuery } from '@tanstack/react-query';
 
 
-type ReportDataType = {
-    report: string;
-    references: Record<string, any>
-}
 
 async function generateQuickReport({ generateCharts, prompt, internet, dataFormat, outputFormat }: { generateCharts: boolean, prompt: string; internet: boolean; dataFormat: string; outputFormat: string }) {
     const token = process.env.NEXT_PUBLIC_HFSPACE_TOKEN || "";
@@ -55,7 +52,7 @@ const useFetchQuickReport = () => {
         return data;
     };
 
-    const { data, error, isLoading } = useQuery({
+    return useQuery({
         queryKey: ["report", prompt],
         queryFn: fetchReport
     }
@@ -63,11 +60,6 @@ const useFetchQuickReport = () => {
 
 
 
-    return {
-        loading: isLoading,
-        data: data as ReportDataType,
-        error,
-    };
 };
 
 export default useFetchQuickReport;
