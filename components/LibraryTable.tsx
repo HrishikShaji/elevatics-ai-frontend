@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import IconPencil from "./icon/icon-pencil";
 import IconTrashLines from "./icon/icon-trash-lines";
 import { Report } from "@prisma/client";
+import useDeleteLibraryItem from "@/hooks/useDeleteLibraryItem";
+import DeleteReport from "./DeleteReport";
 
 interface LibraryTableProps {
     rowData: Report[]
@@ -24,7 +26,6 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
     const [pageSize2, setPageSize2] = useState(PAGE_SIZES[0]);
     const [initialRecords2, setInitialRecords2] = useState(sortBy(rowData, 'firstName'));
     const [recordsData2, setRecordsData2] = useState(initialRecords2);
-
     const [search2, setSearch2] = useState('');
     const [sortStatus2, setSortStatus2] = useState<DataTableSortStatus>({
         columnAccessor: 'firstName',
@@ -54,7 +55,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                 );
             });
         });
-    }, [search2]);
+    }, [search2, rowData]);
 
     useEffect(() => {
         const data2 = sortBy(initialRecords2, sortStatus2.columnAccessor);
@@ -109,14 +110,10 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                                     accessor: 'action',
                                     title: 'Action',
                                     titleClassName: '!text-center',
-                                    render: () => (
+                                    render: ({ id }) => (
                                         <div className="mx-auto flex w-max items-center gap-2">
-                                            <Tippy content="Edit">
-                                                <IconPencil />
-                                            </Tippy>
-                                            <Tippy content="Delete">
-                                                <IconTrashLines />
-                                            </Tippy>
+                                            <IconPencil />
+                                            <DeleteReport id={id} />
                                         </div>
                                     ),
                                 },
