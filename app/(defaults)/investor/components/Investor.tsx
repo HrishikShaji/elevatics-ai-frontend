@@ -1,20 +1,14 @@
 
 "use client";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { InvestorDataResponse } from "@/types/types";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { PiRocketLaunchThin } from "react-icons/pi";
 import { useInvestor } from "@/contexts/InvestorContext";
 
 export default function Investor() {
-    const [file, setFile] = useState<File | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [loadingSection, setLoadingSection] = useState("uploading file...")
     const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
-    const { setData, setFileName } = useInvestor();
+    const { file, setFile, setFileName } = useInvestor();
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -22,71 +16,12 @@ export default function Investor() {
             setFile(event.target.files[0]);
         }
     };
-    const handleFetchSubmit = async (event: FormEvent) => {
-        event.preventDefault();
-        if (!file) return null
-
-        const formData = new FormData();
-        formData.append("file", file as Blob);
-        formData.append("Funding", String(.5));
-        try {
-            setLoading(true)
-            const response = await fetch("https://nithin1905-investor.hf.space/investor", {
-                method: "POST",
-                body: formData,
-            });
-
-            const result = await response.json();
-            console.log(result);
-            setData(result as InvestorDataResponse)
-            setProgress(50);
-            setLoadingSection("Evaluating the deck...")
-
-        } catch (error) {
-            console.error("Error:", error);
-        } finally {
-            setLoading(false);
-            router.push("/investor/report");
-        }
-    };
-
-
-    const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault();
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append("file", file as Blob);
-        formData.append("Funding", String(.5));
-
-        try {
-            setLoading(true);
-            const response = await axios.post("https://nithin1905-investor.hf.space/investor", formData, {
-                onUploadProgress: (progressEvent) => {
-                    if (progressEvent.total) {
-                        const percentage = Math.round((progressEvent.loaded * 25) / progressEvent.total);
-                        setProgress(percentage);
-                    }
-                }
-            });
-
-            setProgress(50);
-            setLoadingSection("Evaluating the deck...")
-
-            const result = response.data;
-            console.log(result);
-            setData(result as InvestorDataResponse);
-            setProgress(100);
-        } catch (error) {
-            console.error("Error:", error);
-        } finally {
-            setLoading(false);
-            router.push("/investment/sample");
-        }
+    const handleFetchSubmit = async (e: FormEvent) => {
+        e.preventDefault()
+        router.push("/investor/report");
     };
 
     const handleClick = () => {
-        console.log("clicked");
         if (inputRef.current) {
             inputRef.current.click();
         }
@@ -120,14 +55,6 @@ export default function Investor() {
                         <PiRocketLaunchThin size={30} />
                     </button>
                 </form>
-                {loading && (
-                    <div className="w-[50%] flex flex-col gap-2">
-                        <div className="w-full rounded-3xl h-[10px] bg-gray-300 relative overflow-hidden">
-                            <div className="absolute bg-blue-500 h-full " style={{ width: `${progress}%` }}></div>
-                        </div>
-                        <h1>{loadingSection}</h1>
-                    </div>
-                )}
             </div>
         </div>
     );

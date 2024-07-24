@@ -1,7 +1,6 @@
-
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AiOutlineDownload } from "react-icons/ai"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -9,14 +8,32 @@ import rehypeRaw from "rehype-raw"
 import { useInvestor } from "@/contexts/InvestorContext"
 import Slider from "@/components/Slider"
 import style from "../../../../../styles/markdown.module.css"
+import useFetchInvestorData from "@/hooks/useFetchInvestorData"
 
 export default function InvestorReport() {
+    const { fileName, file } = useInvestor()
     const [currentIndex, setCurrentIndex] = useState(0)
     const [loading, setLoading] = useState(false)
-    const { data, fileName } = useInvestor()
-    if (!data) return null;
+
+    const { mutate, data, isPending, isSuccess } = useFetchInvestorData()
+
+    useEffect(() => {
+        if (fileName) {
+            const formData = new FormData();
+            formData.append("file", file as Blob);  // Adjust if needed
+            formData.append("Funding", String(0.5));
+
+            mutate(formData);
+        }
+    }, [fileName, mutate]);
+
+    if (isPending) return <div>Loading...</div>;
+
+    if (!isSuccess || !data) return null;
+
     const sliderData = Object.entries(data.other_info_results)
     const values = Object.values(data.other_info_results)
+
     function getQueryData({ questions, answers }: { questions: string[], answers: string[] }) {
         const dataLength = questions.length
         const queryData: string[] = []
@@ -64,18 +81,14 @@ export default function InvestorReport() {
     const joinedQueries = items.join(" ")
     const firstArray: [string, string] = ["Queries", joinedQueries]
     sliderData.unshift(firstArray)
+
     return (
         <div className="h-full w-full pt-[100px]  flex justify-center items-end">
             <div className="flex flex-col w-[calc(100vw_-_500px)] py-5  gap-5">
-
                 <Slider setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} items={sliderData} />
                 <div className="px-2 py-10 rounded-3xl bg-gray-100">
-
-                    <div
-                        className=" px-5 h-full "
-                    >
+                    <div className=" px-5 h-full ">
                         <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className={style.markdown} key={currentIndex}>
-
                             {sliderData[currentIndex][1]}
                         </ReactMarkdown>
                     </div>

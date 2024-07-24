@@ -15,6 +15,8 @@ import React, {
 interface InvestorData {
     prompt: string;
     fileName: string;
+    file: File | null;
+    setFile: Dispatch<SetStateAction<File | null>>;
     setFileName: Dispatch<SetStateAction<string>>;
     setPrompt: Dispatch<SetStateAction<string>>;
     setData: Dispatch<SetStateAction<InvestorDataResponse | null>>;
@@ -35,6 +37,7 @@ type InvestorProviderProps = {
 };
 
 export const InvestorProvider = ({ children }: InvestorProviderProps) => {
+    const [file, setFile] = useState<File | null>(null);
     const [prompt, setPrompt] = useState("");
     const [fileName, setFileName] = useState("")
     const [data, setData] = useState<InvestorDataResponse | null>(null)
@@ -44,7 +47,9 @@ export const InvestorProvider = ({ children }: InvestorProviderProps) => {
         data,
         setData,
         fileName,
-        setFileName
+        setFileName,
+        file,
+        setFile
     };
 
     return (
