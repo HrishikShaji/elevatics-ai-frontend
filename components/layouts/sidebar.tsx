@@ -133,6 +133,9 @@ const Sidebar = () => {
                                             <Link href="/coder">{t('Coder')}</Link>
                                         </li>
                                         <li>
+                                            <Link href="/news">{t('News')}</Link>
+                                        </li>
+                                        <li>
                                             <Link href="/career">{t('Career')}</Link>
                                         </li>
                                         <li>
@@ -140,9 +143,6 @@ const Sidebar = () => {
                                         </li>
                                         <li>
                                             <Link href="/document">{t('Document')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/news">{t('News')}</Link>
                                         </li>
                                     </ul>
                                 </AnimateHeight>
