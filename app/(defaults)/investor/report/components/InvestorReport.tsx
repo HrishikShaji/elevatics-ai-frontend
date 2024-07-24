@@ -9,6 +9,7 @@ import { useInvestor } from "@/contexts/InvestorContext"
 import Slider from "@/components/Slider"
 import style from "../../../../../styles/markdown.module.css"
 import useFetchInvestorData from "@/hooks/useFetchInvestorData"
+import useSaveReport from "@/hooks/useSaveReport"
 
 export default function InvestorReport() {
     const { fileName, file } = useInvestor()
@@ -16,16 +17,22 @@ export default function InvestorReport() {
     const [loading, setLoading] = useState(false)
 
     const { mutate, data, isPending, isSuccess } = useFetchInvestorData()
-
+    const { mutate: saveReport } = useSaveReport()
     useEffect(() => {
         if (fileName) {
             const formData = new FormData();
-            formData.append("file", file as Blob);  // Adjust if needed
+            formData.append("file", file as Blob);
             formData.append("Funding", String(0.5));
 
             mutate(formData);
         }
     }, [fileName, mutate]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            saveReport({ name: fileName, report: JSON.stringify(data), reportType: "INVESTOR" })
+        }
+    }, [isSuccess])
 
     if (isPending) return <div>Loading...</div>;
 

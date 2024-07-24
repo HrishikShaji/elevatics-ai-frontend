@@ -54,6 +54,7 @@ enum ReportType {
 QUICK
 FULL
 CODE
+INVESTOR
 }
 
 model User {

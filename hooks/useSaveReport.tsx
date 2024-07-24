@@ -1,8 +1,9 @@
+import { ReportType } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 
 interface Props {
     report: string;
-    reportType: "QUICK" | "FULL";
+    reportType: ReportType;
     name: string;
 }
 
