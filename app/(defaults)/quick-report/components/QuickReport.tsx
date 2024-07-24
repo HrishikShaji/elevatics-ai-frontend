@@ -17,7 +17,7 @@ export default function QuickReport() {
 
     useEffect(() => {
         if (fetchComplete) {
-            mutate({ name: prompt, report: JSON.stringify(data), reportType: "QUICK" })
+            mutate({ reportId: '', name: prompt, report: JSON.stringify(data), reportType: "QUICK" })
         }
     }, [fetchComplete])
 

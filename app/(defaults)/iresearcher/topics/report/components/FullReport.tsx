@@ -99,7 +99,7 @@ export default function FullReport() {
 
     useEffect(() => {
         if (isFetchComplete) {
-            mutate({ name: prompt, report: JSON.stringify(data), reportType: "FULL" });
+            mutate({ reportId: '', name: prompt, report: JSON.stringify(data), reportType: "FULL" });
         }
     }, [isFetchComplete, data, mutate, prompt])
 

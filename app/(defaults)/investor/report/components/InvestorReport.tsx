@@ -30,7 +30,7 @@ export default function InvestorReport() {
 
     useEffect(() => {
         if (isSuccess) {
-            saveReport({ name: fileName, report: JSON.stringify(data), reportType: "INVESTOR" })
+            saveReport({ reportId: '', name: fileName, report: JSON.stringify(data), reportType: "INVESTOR" })
         }
     }, [isSuccess])
 

@@ -5,9 +5,10 @@ interface Props {
     report: string;
     reportType: ReportType;
     name: string;
+    reportId: string;
 }
 
-async function saveReport({ reportType, report, name }: Props) {
+async function saveReport({ reportId, reportType, report, name }: Props) {
     if (report) {
         try {
             const response = await fetch("/api/report", {
@@ -15,7 +16,7 @@ async function saveReport({ reportType, report, name }: Props) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ report: report, reportType: reportType, name: name }),
+                body: JSON.stringify({ reportId: reportId, report: report, reportType: reportType, name: name }),
             });
             if (!response.ok) {
                 throw new Error("Failed to send report to backend");

@@ -32,9 +32,11 @@ export const GET = async (req: Request) => {
         );
     }
 };
+
 export const POST = async (req: Request) => {
     const session = await getServerSession(authOptions);
-    const { report, reportType, name } = await req.json();
+    const { report, reportType, name, reportId } = await req.json();
+
     if (!session || !session.user || !session.user.email) {
         return new Response(JSON.stringify({ message: "Not authenticated" }));
     }
@@ -44,24 +46,38 @@ export const POST = async (req: Request) => {
             where: { email: session.user.email },
             select: { queries: true },
         });
+
         if (!profile) {
             return new NextResponse(JSON.stringify({ message: "Profile not found" }));
         }
-        console.log(profile.queries);
 
-        const savedReport = await prisma.report.create({
-            data: {
-                userEmail: session.user.email,
-                data: report,
-                reportType: reportType,
-                name: name,
-            },
-        });
+        let savedReport;
 
-        await prisma.user.update({
-            where: { email: session.user.email },
-            data: { queries: profile.queries - 1 },
-        });
+        if (reportId && typeof reportId === 'string') {
+            savedReport = await prisma.report.update({
+                where: { id: reportId },
+                data: {
+                    data: report,
+                    reportType: reportType,
+                    name: name,
+                },
+            });
+        } else {
+            savedReport = await prisma.report.create({
+                data: {
+                    userEmail: session.user.email,
+                    data: report,
+                    reportType: reportType,
+                    name: name,
+                },
+            });
+
+            await prisma.user.update({
+                where: { email: session.user.email },
+                data: { queries: profile.queries - 1 },
+            });
+        }
+
         return new NextResponse(JSON.stringify({ message: "success", report: savedReport }));
     } catch (err) {
         console.log(err);
