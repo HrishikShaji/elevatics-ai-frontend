@@ -61,3 +61,11 @@ export type ReportDataType = {
     report: string;
     references: Record<string, any>
 }
+
+export type AgentModel = "meta-llama/llama-3-70b-instruct" |
+    "anthropic/claude-3.5-sonnet" |
+    "deepseek/deepseek-coder" |
+    "anthropic/claude-3-haiku" |
+    "openai/gpt-3.5-turbo-instruct" |
+    "qwen/qwen-72b-chat" |
+    "google/gemma-2-27b-it"

@@ -1,6 +1,6 @@
 "use client";
 
-import { ReportOptions, TopicsLimit } from "@/types/types";
+import { AgentModel, ReportOptions, TopicsLimit } from "@/types/types";
 import React, {
     createContext,
     useContext,
@@ -16,6 +16,8 @@ interface SettingsData {
     setReportOptions: Dispatch<SetStateAction<ReportOptions>>
     topicsLimit: TopicsLimit;
     setTopicsLimit: Dispatch<SetStateAction<TopicsLimit>>;
+    agentModel: AgentModel;
+    setAgentModel: Dispatch<SetStateAction<AgentModel>>;
 }
 
 export const SettingsContext = createContext<SettingsData | undefined>(undefined);
@@ -39,13 +41,16 @@ export const SettingsProvider = ({ children }: SettingsProviderProps) => {
         dataFormat: "Structured data",
         generate_charts: true
     })
+    const [agentModel, setAgentModel] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
     const [topicsLimit, setTopicsLimit] = useState<TopicsLimit>({ topics: 5, subTopics: 3 })
 
     const settingsData: SettingsData = {
         reportOptions,
         setReportOptions,
         topicsLimit,
-        setTopicsLimit
+        setTopicsLimit,
+        setAgentModel,
+        agentModel
     };
 
     return (

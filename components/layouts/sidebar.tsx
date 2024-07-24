@@ -35,6 +35,7 @@ import { usePathname } from 'next/navigation';
 import { getTranslation } from '@/i18n';
 import Image from 'next/image';
 import { VscRobot } from "react-icons/vsc";
+import SettingsModal from '../SettingsModal';
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -156,6 +157,7 @@ const Sidebar = () => {
                                     </div>
                                 </Link>
                             </li>
+                            <SettingsModal />
                         </ul>
                     </PerfectScrollbar>
                 </div>
