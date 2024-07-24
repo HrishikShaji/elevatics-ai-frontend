@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export default function MainContent({ sidebarCollapsed, query, setQuery, selectedModel, setSelectedModel, submitForm, isLoading, renderedReport }) {
+export default function MainContent({ query, setQuery, selectedModel, setSelectedModel, submitForm, isLoading, renderedReport }) {
     const models = [
         "meta-llama/llama-3-70b-instruct",
         "anthropic/claude-3.5-sonnet",
@@ -13,7 +13,7 @@ export default function MainContent({ sidebarCollapsed, query, setQuery, selecte
     ];
 
     return (
-        <main className={`main-content flex-grow p-5 transition-all duration-300 ${sidebarCollapsed ? 'ml-5' : 'ml-[250px]'}`}>
+        <main className={`main-content flex-grow p-5 transition-all duration-300 `}>
             <div className="content-wrapper max-w-4xl mx-auto">
                 <h1 className="text-center text-gray-700 mb-4">Where knowledge begins</h1>
 

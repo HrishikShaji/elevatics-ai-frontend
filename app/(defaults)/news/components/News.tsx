@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import MainContent from './MainContent';
+import { marked } from 'marked';
 
 export default function News() {
     const API_ENDPOINT = "https://pvanand-general-chat.hf.space/news-assistant";
@@ -65,7 +66,6 @@ export default function News() {
 
     const renderMarkdown = (markdown) => {
         try {
-            const marked = window.marked;
             setRenderedReport(marked.parse(markdown));
         } catch (error) {
             console.error('Error parsing markdown:', error);
