@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
+import useSaveReport from '@/hooks/useSaveReport';
 
 // Initialize marked
 marked.setOptions({
@@ -22,8 +23,11 @@ const Coder = () => {
     const [userId, setUserId] = useState("")
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const apiKey = process.env.NEXT_PUBLIC_CODER_API_KEY;
-
+    const [streamComplete, setStreamComplete] = useState(false)
+    const [reportId, setReportId] = useState("")
     console.log(chatHistory)
+
+    const { mutate, isSuccess, data } = useSaveReport()
 
     useEffect(() => {
 
@@ -42,6 +46,20 @@ const Coder = () => {
             })
         }
     };
+    console.log(data)
+    useEffect(() => {
+        if (isSuccess && data.id) {
+            console.log(data.id)
+            setReportId(data.id)
+        }
+    }, [isSuccess, data])
+
+    useEffect(() => {
+        console.log(streamComplete)
+        if (streamComplete) {
+            mutate({ name: chatHistory[0].content, report: JSON.stringify(chatHistory), reportId: reportId, reportType: "CODE" })
+        }
+    }, [streamComplete, reportId, chatHistory])
 
     useEffect(() => {
         displayMessages();
@@ -64,6 +82,7 @@ const Coder = () => {
     const sendMessage = async () => {
         if (!userQuery.trim()) return;
 
+        setStreamComplete(false)
         addMessage('user', userQuery);
         setUserQuery('');
         console.log(conversationId)
@@ -106,6 +125,8 @@ const Coder = () => {
         } catch (error) {
             console.error('Error:', error);
             addMessage('assistant', 'Sorry, an error occurred while processing your request.');
+        } finally {
+            setStreamComplete(true)
         }
     };
 
