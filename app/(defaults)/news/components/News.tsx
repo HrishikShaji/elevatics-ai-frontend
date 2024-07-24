@@ -1,19 +1,28 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
-import MainContent from './MainContent';
+import React, { useEffect, useState } from 'react';
 import { marked } from 'marked';
+import { useSettings } from '@/contexts/SettingsContext';
+import useSaveReport from '@/hooks/useSaveReport';
+
+const API_ENDPOINT = "https://pvanand-general-chat.hf.space/news-assistant";
+const NEWS_API_KEY = "44d5c2ac18ced6fc25c1e57dcd06fc0b31fb4ad97bf56e67540671a647465df4";
 
 export default function News() {
-    const API_ENDPOINT = "https://pvanand-general-chat.hf.space/news-assistant";
-    const NEWS_API_KEY = "44d5c2ac18ced6fc25c1e57dcd06fc0b31fb4ad97bf56e67540671a647465df4";
-
+    const { agentModel } = useSettings()
     const [chatHistory, setChatHistory] = useState([]);
     const [query, setQuery] = useState('');
     const [report, setReport] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedModel, setSelectedModel] = useState('meta-llama/llama-3-70b-instruct');
     const [renderedReport, setRenderedReport] = useState('');
+    const [streamComplete, setStreamComplete] = useState(false)
+    const { mutate } = useSaveReport()
+
+    useEffect(() => {
+        if (streamComplete) {
+            mutate({ name: query, report: JSON.stringify(report), reportId: "", reportType: 'NEWS' })
+        }
+    }, [streamComplete, report])
 
     const submitForm = async (e) => {
         e.preventDefault();
@@ -31,7 +40,7 @@ export default function News() {
                 },
                 body: JSON.stringify({
                     query: query,
-                    model_id: selectedModel
+                    model_id: agentModel
                 })
             });
 
@@ -52,13 +61,14 @@ export default function News() {
                 renderMarkdown(chunks);
             }
 
-            addToChatHistory();
+            addToChatHistory(chunks);
         } catch (error) {
             console.error('Error:', error);
             setReport('An error occurred while fetching the report.');
+            renderMarkdown('An error occurred while fetching the report.');
         } finally {
             setIsLoading(false);
-            renderMarkdown(report);
+            setStreamComplete(true)
         }
     };
 
@@ -67,26 +77,17 @@ export default function News() {
             setRenderedReport(marked.parse(markdown));
         } catch (error) {
             console.error('Error parsing markdown:', error);
-            setRenderedReport(`<p>${report}</p>`);
+            setRenderedReport(`<p>${markdown}</p>`);
         }
     };
 
-    const addToChatHistory = () => {
-        setChatHistory([{ query, report }, ...chatHistory]);
+    const addToChatHistory = (finalReport) => {
+        setChatHistory([{ query, report: finalReport }, ...chatHistory]);
     };
 
-    const models = [
-        "meta-llama/llama-3-70b-instruct",
-        "anthropic/claude-3.5-sonnet",
-        "deepseek/deepseek-coder",
-        "anthropic/claude-3-haiku",
-        "openai/gpt-3.5-turbo-instruct",
-        "qwen/qwen-72b-chat",
-        "google/gemma-2-27b-it"
-    ];
 
     return (
-        <main className={`main-content flex-grow p-5 transition-all duration-300 `}>
+        <main className="main-content flex-grow p-5 transition-all duration-300">
             <div className="content-wrapper max-w-4xl mx-auto">
                 <h1 className="text-center text-gray-700 mb-4">Where knowledge begins</h1>
 
@@ -105,18 +106,11 @@ export default function News() {
                     </button>
                 </form>
 
-                <select value={selectedModel} onChange={(e) => setSelectedModel(e.target.value)} className="w-full mb-4 p-2 border border-gray-300 rounded-md bg-gray-50">
-                    {models.map((model, index) => (
-                        <option key={index} value={model}>{model}</option>
-                    ))}
-                </select>
-
 
                 {renderedReport && (
                     <div id="report-container" className="h-[60vh] overflow-y-scroll bg-white border border-gray-300 rounded-md p-6 mt-6 shadow-md" dangerouslySetInnerHTML={{ __html: renderedReport }}></div>
                 )}
             </div>
         </main>
-
-    )
+    );
 }

@@ -55,6 +55,7 @@ QUICK
 FULL
 CODE
 INVESTOR
+NEWS
 }
 
 model User {
