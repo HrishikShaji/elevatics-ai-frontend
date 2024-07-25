@@ -75,7 +75,7 @@ export default function SettingsModal() {
                                                     <ul className="!min-w-[300px] !shadow-gray-300 !shadow-3xl  !rounded-xl ">
                                                         {dataFormatOptions.map((item, i) => (
 
-                                                            <li>
+                                                            <li key={i}>
                                                                 <button type="button" onClick={() => setReportOptions((prev) => ({ ...prev, dataFormat: item.value }))}>{item.title}</button>
                                                             </li>
                                                         ))}
