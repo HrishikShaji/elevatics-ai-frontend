@@ -26,7 +26,6 @@ const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const [errorSubMenu, setErrorSubMenu] = useState(false);
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-    console.log(themeConfig)
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
     const toggleMenu = (value: string) => {
         setCurrentMenu((oldValue) => {

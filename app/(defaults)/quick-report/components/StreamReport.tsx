@@ -1,8 +1,11 @@
 
 
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, Fragment, SetStateAction, useEffect, useRef, useState } from "react"
 import StreamChart from "./StreamChart";
 import StreamMarkdown from "./StreamMarkdown";
+import DownloadPdfButton from "./DownloadPdfButton";
+import { useQuickReport } from "@/contexts/QuickReportContext";
+import { marked } from "marked";
 
 interface StreamReportProps {
     report: string;
@@ -13,6 +16,8 @@ interface StreamReportProps {
 export default function StreamReport({ setLineAdded, handleScroll, report }: StreamReportProps) {
     const [htmlArray, setHtmlArray] = useState<string[]>([])
     const [currentIndex, setCurrentIndex] = useState(0)
+    const { prompt } = useQuickReport()
+    const reportRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         const cleanedMarkdown = cleanMarkdown(report);
@@ -20,9 +25,13 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
         setHtmlArray(htmlArray);
     }, [report]);
 
-
+    function getHtmlFromMarkdown(markdownContent: string) {
+        const htmlWithoutReportTag = markdownContent.replace(/<\/?report>/g, '');
+        return marked(htmlWithoutReportTag);
+    }
     function cleanMarkdown(markdownContent: string) {
-        const cleanedContent = markdownContent
+        const htmlWithoutReportTag = markdownContent.replace(/<\/?report>/g, '');
+        const cleanedContent = htmlWithoutReportTag
             .split('\n')
             .filter(line => !line.match(/<div id=".*"><\/div>/) && !line.match(/<script src=".*"><\/script>/))
             .join('\n');
@@ -38,9 +47,10 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
     }
 
 
+
     return (
         <div className="flex h-full flex-col items-end gap-5 py-10">
-            <div className="rounded-3xl bg-gray-100 h-full w-[800px] p-10">
+            <div ref={reportRef} className="rounded-3xl bg-gray-100 h-full w-[800px] p-10">
 
                 {htmlArray.map((html, i) => (
                     <Fragment key={i}>
@@ -63,7 +73,7 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
                     </Fragment>
                 ))}
             </div>
-            <button>Download</button>
+            <DownloadPdfButton htmlArray={[["", getHtmlFromMarkdown(report) as string]]} prompt={prompt} />
         </div>
     )
 }
