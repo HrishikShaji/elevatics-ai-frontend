@@ -6,6 +6,7 @@ import StreamMarkdown from "./StreamMarkdown";
 import DownloadPdfButton from "./DownloadPdfButton";
 import { useQuickReport } from "@/contexts/QuickReportContext";
 import { marked } from "marked";
+import ShareModal from "@/components/ShareModal";
 
 interface StreamReportProps {
     report: string;
@@ -73,7 +74,10 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
                     </Fragment>
                 ))}
             </div>
-            <DownloadPdfButton htmlArray={[["", getHtmlFromMarkdown(report) as string]]} prompt={prompt} />
+            <div className="flex gap-4">
+                <DownloadPdfButton htmlArray={[["", getHtmlFromMarkdown(report) as string]]} prompt={prompt} />
+                <ShareModal />
+            </div>
         </div>
     )
 }
