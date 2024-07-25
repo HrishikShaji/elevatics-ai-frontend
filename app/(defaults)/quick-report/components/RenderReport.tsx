@@ -3,9 +3,10 @@ import StreamReport from "./StreamReport";
 
 interface RenderReportProps {
     data: string;
+    reportId: string;
 }
 
-export default function RenderReport({ data }: RenderReportProps) {
+export default function RenderReport({ data, reportId }: RenderReportProps) {
     const containerRef = useRef<HTMLDivElement>(null)
     const [lineAdded, setLineAdded] = useState(false)
     const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
@@ -31,7 +32,7 @@ export default function RenderReport({ data }: RenderReportProps) {
     return (
 
         <div onScroll={onScroll} ref={containerRef} className="flex justify-center  max-h-[calc(100vh_-_40px)] overflow-y-auto" >
-            <StreamReport setLineAdded={setLineAdded} handleScroll={handleScroll} report={data} />
+            <StreamReport reportId={reportId} setLineAdded={setLineAdded} handleScroll={handleScroll} report={data} />
         </div>
     )
 }

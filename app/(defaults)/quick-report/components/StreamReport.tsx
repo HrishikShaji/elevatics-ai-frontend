@@ -9,17 +9,17 @@ import { marked } from "marked";
 import ShareModal from "@/components/ShareModal";
 
 interface StreamReportProps {
+    reportId: string;
     report: string;
     handleScroll: () => void;
     setLineAdded: Dispatch<SetStateAction<boolean>>
 }
 
-export default function StreamReport({ setLineAdded, handleScroll, report }: StreamReportProps) {
+export default function StreamReport({ reportId, setLineAdded, handleScroll, report }: StreamReportProps) {
     const [htmlArray, setHtmlArray] = useState<string[]>([])
     const [currentIndex, setCurrentIndex] = useState(0)
     const { prompt } = useQuickReport()
     const reportRef = useRef<HTMLDivElement | null>(null)
-
     useEffect(() => {
         const cleanedMarkdown = cleanMarkdown(report);
         const htmlArray = splitMarkdownIntoArray(cleanedMarkdown);
@@ -76,7 +76,7 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
             </div>
             <div className="flex gap-4">
                 <DownloadPdfButton htmlArray={[["", getHtmlFromMarkdown(report) as string]]} prompt={prompt} />
-                <ShareModal />
+                <ShareModal reportId={reportId} type="QUICK" />
             </div>
         </div>
     )

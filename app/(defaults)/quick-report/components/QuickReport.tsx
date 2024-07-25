@@ -12,8 +12,15 @@ import useSaveReport from "@/hooks/useSaveReport"
 export default function QuickReport() {
     const { data, isLoading, error, isSuccess: fetchComplete } = useFetchQuickReport()
     const { prompt } = useQuickReport()
+    const [reportId, setReportId] = useState("")
     const [showLoader, setShowLoader] = useState(true);
-    const { mutate } = useSaveReport()
+    const { mutate, isSuccess, data: savedReport } = useSaveReport()
+
+    useEffect(() => {
+        if (isSuccess && savedReport.id) {
+            setReportId(savedReport.id)
+        }
+    }, [isSuccess, savedReport])
 
     useEffect(() => {
         if (fetchComplete) {
@@ -32,6 +39,6 @@ export default function QuickReport() {
         }
     }, [isLoading]);
     return <>{showLoader ? <Loader steps={quickReportLoadingSteps} /> : (
-        <RenderReport data={(data as ReportDataType).report} />
+        <RenderReport reportId={reportId} data={(data as ReportDataType).report} />
     )}</>
 }
