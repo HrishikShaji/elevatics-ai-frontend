@@ -7,6 +7,7 @@ import { QuickReportProvider } from '@/contexts/QuickReportContext';
 import { ReactQueryProvider } from '@/providers/ReactQueryProvider';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import NextAuthProvider from '@/providers/NextAuthProvider';
+import { AccountProvider } from '@/contexts/AccountContext';
 
 export const metadata: Metadata = {
     title: {
@@ -27,13 +28,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className={nunito.variable}>
                 <ReactQueryProvider>
                     <NextAuthProvider>
-                        <SettingsProvider>
-                            <ProviderComponent>
-                                <QuickReportProvider>
-                                    {children}
-                                </QuickReportProvider>
-                            </ProviderComponent>
-                        </SettingsProvider>
+                        <AccountProvider>
+                            <SettingsProvider>
+                                <ProviderComponent>
+                                    <QuickReportProvider>
+                                        {children}
+                                    </QuickReportProvider>
+                                </ProviderComponent>
+                            </SettingsProvider>
+                        </AccountProvider>
                     </NextAuthProvider>
                 </ReactQueryProvider>
             </body>

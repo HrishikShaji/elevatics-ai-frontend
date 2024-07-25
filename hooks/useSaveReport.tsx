@@ -1,5 +1,5 @@
 import { ReportType } from "@prisma/client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
     report: string;
@@ -31,6 +31,7 @@ async function saveReport({ reportId, reportType, report, name }: Props) {
 }
 
 export default function useSaveReport() {
-    return useMutation({ mutationFn: saveReport, mutationKey: ["report"], onSuccess: () => console.log("report saved") })
+    const queryClient = useQueryClient();
+    return useMutation({ mutationFn: saveReport, mutationKey: ["report"], onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["profile"] }); console.log("report saved") } })
 }
 

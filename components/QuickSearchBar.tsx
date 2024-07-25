@@ -5,13 +5,16 @@ import IconSearch from "./icon/icon-search"
 import IconXCircle from "./icon/icon-x-circle"
 import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useAccount } from "@/contexts/AccountContext"
 
 export default function QuickSearchBar() {
     const [input, setInput] = useState("")
     const { setPrompt } = useQuickReport()
     const router = useRouter()
+    const { profile } = useAccount()
 
 
+    console.log(profile)
     function handleSubmit(e: FormEvent) {
         e.preventDefault()
         setPrompt(input)

@@ -8,14 +8,15 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Spinner from "./Spinner";
 import AnimateHeight from "react-animate-height";
+import { useAccount } from "@/contexts/AccountContext";
 
 export default function SearchBar() {
-
+    const { profile } = useAccount()
     const { setPrompt } = useQuickReport()
     const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const router = useRouter()
 
-
+    console.log(profile)
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault()

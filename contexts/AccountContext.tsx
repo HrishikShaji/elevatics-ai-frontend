@@ -2,6 +2,7 @@
 
 "use client";
 
+import useFetchProfile from "@/hooks/useFetchProfile";
 import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import React, {
@@ -11,6 +12,7 @@ import React, {
     ReactNode,
     SetStateAction,
     Dispatch,
+    useEffect
 } from "react";
 
 interface AccountData {
@@ -32,11 +34,17 @@ type AccountProviderProps = {
 
 export const AccountProvider = ({ children }: AccountProviderProps) => {
     const [profile, setProfile] = useState<User | null>(null);
+    const { data, isSuccess } = useFetchProfile()
+
+    useEffect(() => {
+        if (isSuccess) {
+            setProfile(data.profile)
+        }
+    }, [isSuccess, data])
     const accountData = {
         profile
     };
 
-    const { status, data } = useSession()
 
 
     return (
