@@ -31,9 +31,7 @@ export default function QuickReport() {
             setShowLoader(true);
         }
     }, [isLoading]);
-    return <div className="py-10 w-full h-full">
-        <div>{showLoader ? <Loader steps={quickReportLoadingSteps} /> : (
-            <RenderReport data={(data as ReportDataType).report} />
-        )}</div>
-    </div>
+    return <>{showLoader ? <Loader steps={quickReportLoadingSteps} /> : (
+        <RenderReport data={(data as ReportDataType).report} />
+    )}</>
 }

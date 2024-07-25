@@ -86,6 +86,7 @@ export default function StreamChart({ chartData, onComplete }: StreamChartProps)
     useEffect(() => {
         const obj = extractChartData(chartData);
         setChartObject(obj);
+        console.log(obj?.layout)
     }, [chartData]);
 
     useEffect(() => {
@@ -108,10 +109,10 @@ export default function StreamChart({ chartData, onComplete }: StreamChartProps)
 
 
     return (
-        <div className="w-full p-5 rounded-3xl h-full">
+        <div className="w-full py-5  ">
             {chartObject ? (
-                <div className='w-full h-full'>
-                    <Plot className="h-full w-full" data={chartObject.data} layout={chartObject.layout} />
+                <div className='  rounded-3xl overflow-hidden bg-white'>
+                    <Plot className="rounded-3xl" data={chartObject.data} layout={{ title: chartObject.layout.title, width: "100%" }} />
                 </div>
             ) : null}
         </div>

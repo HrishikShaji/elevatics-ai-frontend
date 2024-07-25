@@ -1,6 +1,6 @@
 
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react"
 import StreamChart from "./StreamChart";
 import StreamMarkdown from "./StreamMarkdown";
 
@@ -39,28 +39,31 @@ export default function StreamReport({ setLineAdded, handleScroll, report }: Str
 
 
     return (
-        <div className="rounded-3xl bg-gray-300 p-5">
+        <div className="flex h-full flex-col items-end gap-5 py-10">
+            <div className="rounded-3xl bg-gray-100 h-full w-[800px] p-10">
 
-            {htmlArray.map((html, i) => (
-                <div key={i}>
-                    {i <= currentIndex ? (
-                        html.startsWith('<script>') && html.endsWith('</script>') ? (
-                            <StreamChart chartData={html} onComplete={handleHtmlRenderComplete} />
-                        ) : (
-                            <StreamMarkdown
-                                handleScroll={handleScroll}
-                                setLineAdded={setLineAdded}
-                                content={html}
-                                speed={.1}
-                                fullComplete={i === htmlArray.length - 1}
-                                handleFullComplete={() => { }}
-                                onComplete={handleHtmlRenderComplete}
+                {htmlArray.map((html, i) => (
+                    <Fragment key={i}>
+                        {i <= currentIndex ? (
+                            html.startsWith('<script>') && html.endsWith('</script>') ? (
+                                <StreamChart chartData={html} onComplete={handleHtmlRenderComplete} />
+                            ) : (
+                                <StreamMarkdown
+                                    handleScroll={handleScroll}
+                                    setLineAdded={setLineAdded}
+                                    content={html}
+                                    speed={.1}
+                                    fullComplete={i === htmlArray.length - 1}
+                                    handleFullComplete={() => { }}
+                                    onComplete={handleHtmlRenderComplete}
 
-                            />
-                        )
-                    ) : null}
-                </div>
-            ))}
+                                />
+                            )
+                        ) : null}
+                    </Fragment>
+                ))}
+            </div>
+            <button>Download</button>
         </div>
     )
 }
