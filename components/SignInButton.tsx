@@ -8,11 +8,10 @@ export default function SignInButton() {
     const [modal, setModal] = useState(false)
     const { status, data } = useSession()
 
-    console.log(status, data)
     return (
         <>
-            {status === "authenticated" ? <button className="absolute top-10 right-10 " onClick={() => signOut()}>Logout</button> :
-                <button type="button" onClick={() => setModal(true)} className="absolute top-10 right-10">
+            {status === "authenticated" ? null :
+                <button type="button" onClick={() => setModal(true)} className="absolute top-0 right-0">
                     Login
                 </button>}
             <Transition appear show={modal} as={Fragment}>
