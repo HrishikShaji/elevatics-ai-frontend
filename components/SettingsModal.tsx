@@ -5,11 +5,19 @@ import React, { Fragment, useState } from 'react';
 import IconMenuChat from './icon/menu/icon-menu-chat';
 import { getTranslation } from '@/i18n';
 import IconSettings from './icon/icon-settings';
+import Dropdown from './dropdown';
+import IconCaretDown from './icon/icon-caret-down';
+import { useSettings } from '@/contexts/SettingsContext';
+import { DataFormatType, OutputFormatType } from '@/types/types';
+import SettingsSection from './SettingsSection';
 
 export default function SettingsModal() {
     const [modal, setModal] = useState(false);
-
+    const { setReportOptions, setAgentModel, setTopicsLimit, reportOptions } = useSettings()
     const { t } = getTranslation();
+
+    const dataFormatOptions: { title: string; value: DataFormatType }[] = [{ title: 'No Presets', value: "No presets" }, { title: 'Structured Data', value: "Structured data" }, { title: 'Quantitative Data', value: "Quantitative data" }]
+    const outputFormatOptions: { title: string; value: OutputFormatType }[] = [{ title: 'Chat', value: "chat" }, { title: 'Report', value: "report" }, { title: 'Report Table', value: "report_table" }]
 
     return (
         <>
@@ -35,7 +43,7 @@ export default function SettingsModal() {
                         <div className="fixed inset-0" />
                     </Transition.Child>
                     <div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
-                        <div className="flex items-start justify-center  px-4">
+                        <div className="flex items-center justify-center min-h-screen px-4">
                             <Transition.Child
                                 as={Fragment}
                                 enter="ease-out duration-300"
@@ -45,9 +53,36 @@ export default function SettingsModal() {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8 text-black dark:text-white-dark">
-                                    <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                                <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[60vw] my-8 text-black dark:text-white-dark">
+                                    <div className="flex flex-col   p-5 font-semibold text-lg dark:text-white">
                                         <h5>Settings</h5>
+                                        <SettingsSection />
+                                        <div>
+                                            <div className="dropdown">
+                                                <Dropdown
+                                                    offset={[0, 8]}
+                                                    placement="bottom-end"
+                                                    btnClassName="btn btn-outline-dark btn-sm dropdown-toggle "
+                                                    button={
+                                                        <>
+                                                            <h1>{reportOptions.dataFormat}</h1>
+                                                            <span>
+                                                                <IconCaretDown className="inline-block ltr:ml-1 rtl:mr-1" />
+                                                            </span>
+                                                        </>
+                                                    }
+                                                >
+                                                    <ul className="!min-w-[300px] !shadow-gray-300 !shadow-3xl  !rounded-xl ">
+                                                        {dataFormatOptions.map((item, i) => (
+
+                                                            <li>
+                                                                <button type="button" onClick={() => setReportOptions((prev) => ({ ...prev, dataFormat: item.value }))}>{item.title}</button>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </Dropdown>
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </Dialog.Panel>
