@@ -1,44 +1,23 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
-import { AiOutlineDownload } from "react-icons/ai"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import rehypeRaw from "rehype-raw"
-import { useInvestor } from "@/contexts/InvestorContext"
 import Slider from "@/components/Slider"
 import style from "../../../../../styles/markdown.module.css"
-import useFetchInvestorData from "@/hooks/useFetchInvestorData"
-import useSaveReport from "@/hooks/useSaveReport"
-import DownloadInvestorPdfButton from "./DownloadInvestorPdfButton"
 
-export default function InvestorReport() {
-    const { fileName, file } = useInvestor()
+interface SavedInvestorReportProps {
+    name: string;
+    report: string;
+}
+
+export default function SavedInvestorReport({ name, report }: SavedInvestorReportProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
 
-    const { mutate, data, isPending, isSuccess } = useFetchInvestorData()
-    const { mutate: saveReport } = useSaveReport()
-    useEffect(() => {
-        if (fileName) {
-            const formData = new FormData();
-            formData.append("file", file as Blob);
-            formData.append("Funding", String(0.5));
-
-            mutate(formData);
-        }
-    }, [fileName, mutate]);
-
-    useEffect(() => {
-        if (isSuccess) {
-            saveReport({ reportId: '', name: fileName, report: JSON.stringify(data), reportType: "INVESTOR" })
-        }
-    }, [isSuccess])
-
-    if (isPending) return <div>Loading...</div>;
-
-    if (!isSuccess || !data) return null;
-
-    const sliderData = Object.entries(data.other_info_results)
+    const parsedData = JSON.parse(report)
+    const sliderData = Object.entries(parsedData.other_info_results)
 
     function getQueryData({ questions, answers }: { questions: string[], answers: string[] }) {
         const dataLength = questions.length
@@ -52,7 +31,7 @@ export default function InvestorReport() {
     }
 
 
-    const items = getQueryData({ questions: data.queries, answers: data.query_results })
+    const items = getQueryData({ questions: parsedData.queries, answers: parsedData.query_results })
     const joinedQueries = items.join(" ")
     const firstArray: [string, string] = ["Queries", joinedQueries]
     sliderData.unshift(firstArray)
@@ -67,9 +46,6 @@ export default function InvestorReport() {
                             {sliderData[currentIndex][1]}
                         </ReactMarkdown>
                     </div>
-                </div>
-                <div className="w-full flex justify-end">
-                    <DownloadInvestorPdfButton data={data} name={fileName} />
                 </div>
             </div>
         </div>
