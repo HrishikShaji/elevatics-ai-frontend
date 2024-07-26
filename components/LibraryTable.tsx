@@ -7,6 +7,8 @@ import IconTrashLines from "./icon/icon-trash-lines";
 import { Report } from "@prisma/client";
 import useDeleteLibraryItem from "@/hooks/useDeleteLibraryItem";
 import DeleteReport from "./DeleteReport";
+import IconFile from "./icon/icon-file";
+import Link from "next/link";
 
 interface LibraryTableProps {
     rowData: Report[]
@@ -78,7 +80,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
 
             <div className="panel mt-6">
                 <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                    <h5 className="text-lg font-semibold dark:text-white-light">Table 2</h5>
+                    <h5 className="text-lg font-semibold dark:text-white-light"></h5>
                     <div className="ltr:ml-auto rtl:mr-auto">
                         <input type="text" className="form-input w-auto" placeholder="Search..." value={search2} onChange={(e) => setSearch2(e.target.value)} />
                     </div>
@@ -105,13 +107,21 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                                     sortable: true,
                                     render: ({ createdAt }) => <div>{formatDate(createdAt)}</div>,
                                 },
-                                { accessor: 'email', title: 'Email', sortable: true },
+                                {
+                                    accessor: 'type',
+                                    title: 'Type',
+                                    sortable: true,
+                                    render: ({ reportType }) => <div>{reportType}</div>,
+                                },
                                 {
                                     accessor: 'action',
                                     title: 'Action',
                                     titleClassName: '!text-center',
                                     render: ({ id }) => (
                                         <div className="mx-auto flex w-max items-center gap-2">
+                                            <Link href={`${process.env.NEXT_PUBLIC_URL}/saved/${id}`}>
+                                                <IconFile />
+                                            </Link>
                                             <IconPencil />
                                             <DeleteReport id={id} />
                                         </div>
