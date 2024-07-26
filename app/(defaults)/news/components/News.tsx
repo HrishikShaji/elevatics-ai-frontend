@@ -1,41 +1,46 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
-import { marked } from 'marked';
+import React, { FormEvent, useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useSettings } from '@/contexts/SettingsContext';
 import useSaveReport from '@/hooks/useSaveReport';
 
-const API_ENDPOINT = "https://pvanand-general-chat.hf.space/news-assistant";
-const NEWS_API_KEY = "44d5c2ac18ced6fc25c1e57dcd06fc0b31fb4ad97bf56e67540671a647465df4";
+type NewsItem = {
+    query: string;
+    report: string;
+}
 
 export default function News() {
-    const { agentModel } = useSettings()
-    const [chatHistory, setChatHistory] = useState([]);
+    const { agentModel } = useSettings();
+    const [chatHistory, setChatHistory] = useState<NewsItem[]>([]);
     const [query, setQuery] = useState('');
     const [report, setReport] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [renderedReport, setRenderedReport] = useState('');
-    const [streamComplete, setStreamComplete] = useState(false)
-    const { mutate } = useSaveReport()
+    const [streamComplete, setStreamComplete] = useState(false);
+    const { mutate } = useSaveReport();
 
     useEffect(() => {
         if (streamComplete) {
-            mutate({ name: query, report: JSON.stringify(report), reportId: "", reportType: 'NEWS' })
+            mutate({ name: query, report: JSON.stringify(report), reportId: "", reportType: 'NEWS' });
+            console.log("ran")
         }
-    }, [streamComplete, report])
 
-    const submitForm = async (e) => {
+    }, [streamComplete, report]);
+
+    const submitForm = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setReport('');
         setRenderedReport('');
+        setStreamComplete(false)
 
         try {
-            const response = await fetch(API_ENDPOINT, {
+            const response = await fetch(process.env.NEXT_PUBLIC_NEWS_API_ENDPOINT || "", {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
-                    'X-API-KEY': NEWS_API_KEY,
+                    'X-API-KEY': process.env.NEXT_PUBLIC_NEWS_API_KEY || "",
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -48,43 +53,35 @@ export default function News() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let chunks = '';
+            if (response.body) {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let chunks = '';
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                const chunk = decoder.decode(value, { stream: true });
-                chunks += chunk;
-                setReport((prev) => prev + chunk);
-                renderMarkdown(chunks);
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    chunks += chunk;
+                    setReport((prev) => prev + chunk);
+                    setRenderedReport(chunks);
+                }
+
+                addToChatHistory(chunks);
             }
-
-            addToChatHistory(chunks);
         } catch (error) {
             console.error('Error:', error);
             setReport('An error occurred while fetching the report.');
-            renderMarkdown('An error occurred while fetching the report.');
+            setRenderedReport('An error occurred while fetching the report.');
         } finally {
             setIsLoading(false);
-            setStreamComplete(true)
+            setStreamComplete(true);
         }
     };
 
-    const renderMarkdown = (markdown) => {
-        try {
-            setRenderedReport(marked.parse(markdown));
-        } catch (error) {
-            console.error('Error parsing markdown:', error);
-            setRenderedReport(`<p>${markdown}</p>`);
-        }
-    };
-
-    const addToChatHistory = (finalReport) => {
+    const addToChatHistory = (finalReport: string) => {
         setChatHistory([{ query, report: finalReport }, ...chatHistory]);
     };
-
 
     return (
         <main className="main-content flex-grow p-5 transition-all duration-300">
@@ -106,9 +103,12 @@ export default function News() {
                     </button>
                 </form>
 
-
                 {renderedReport && (
-                    <div id="report-container" className="h-[60vh] overflow-y-scroll bg-white border border-gray-300 rounded-md p-6 mt-6 shadow-md" dangerouslySetInnerHTML={{ __html: renderedReport }}></div>
+                    <div id="report-container" className="h-[60vh] overflow-y-scroll bg-white border border-gray-300 rounded-md p-6 mt-6 shadow-md">
+                        <ReactMarkdown
+                            children={renderedReport}
+                        />
+                    </div>
                 )}
             </div>
         </main>
