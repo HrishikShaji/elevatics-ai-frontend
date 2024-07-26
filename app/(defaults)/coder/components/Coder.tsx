@@ -1,71 +1,66 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
-import { marked } from 'marked';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/atom-one-dark.css';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dark, dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import useSaveReport from '@/hooks/useSaveReport';
+import { useSettings } from '@/contexts/SettingsContext';
 
-// Initialize marked
-marked.setOptions({
-    highlight: function(code, lang) {
-        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-        return hljs.highlight(code, { language }).value;
-    },
-    langPrefix: 'hljs language-',
-});
+type Chat = {
+    content: string;
+    role: "assistant" | "user";
+}
 
 const Coder = () => {
     const [userQuery, setUserQuery] = useState('');
-    const [chatHistory, setChatHistory] = useState([]);
-    const [selectedModel, setSelectedModel] = useState('meta-llama/llama-3-70b-instruct');
-    const [conversationId, setConverstionId] = useState("")
-    const [userId, setUserId] = useState("")
+    const [chatHistory, setChatHistory] = useState<Chat[]>([]);
+    const { agentModel } = useSettings();
+    const [conversationId, setConverstionId] = useState("");
+    const [userId, setUserId] = useState("");
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const apiKey = process.env.NEXT_PUBLIC_CODER_API_KEY;
-    const [streamComplete, setStreamComplete] = useState(false)
-    const [reportId, setReportId] = useState("")
-    console.log(chatHistory)
+    const [streamComplete, setStreamComplete] = useState(false);
+    const [reportId, setReportId] = useState("");
 
-    const { mutate, isSuccess, data } = useSaveReport()
+    const { mutate, isSuccess, data } = useSaveReport();
 
     useEffect(() => {
-
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
         const conversationId = Date.now().toString();
-        setUserId(userId)
-        setConverstionId(conversationId)
-    }, [])
+        setUserId(userId);
+        setConverstionId(conversationId);
+    }, []);
 
     const displayMessages = () => {
         // Scroll to the bottom of the chat container
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-            chatContainerRef.current.querySelectorAll("pre code").forEach((block) => {
-                hljs.highlightElement(block)
-            })
         }
     };
-    console.log(data)
-    useEffect(() => {
-        if (isSuccess && data.id) {
-            console.log(data.id)
-            setReportId(data.id)
-        }
-    }, [isSuccess, data])
 
     useEffect(() => {
-        console.log(streamComplete)
-        if (streamComplete) {
-            mutate({ name: chatHistory[0].content, report: JSON.stringify(chatHistory), reportId: reportId, reportType: "CODE" })
+        if (isSuccess && data.id) {
+            setReportId(data.id);
         }
-    }, [streamComplete, reportId, chatHistory])
+    }, [isSuccess, data]);
+
+    useEffect(() => {
+        if (streamComplete) {
+            mutate({
+                name: chatHistory[0].content,
+                report: JSON.stringify(chatHistory),
+                reportId: reportId,
+                reportType: "CODE"
+            });
+        }
+    }, [streamComplete, reportId, chatHistory]);
 
     useEffect(() => {
         displayMessages();
     }, [chatHistory]);
 
-    const addMessage = (role, content) => {
+    const addMessage = ({ role, content }: { role: "user" | "assistant", content: string }) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
                 // Update the last assistant message if it's a continuation
@@ -82,10 +77,10 @@ const Coder = () => {
     const sendMessage = async () => {
         if (!userQuery.trim()) return;
 
-        setStreamComplete(false)
-        addMessage('user', userQuery);
+        setStreamComplete(false);
+        addMessage({ role: 'user', content: userQuery });
         setUserQuery('');
-        console.log(conversationId)
+
         try {
             const response = await fetch('https://pvanand-general-chat.hf.space/coding-assistant', {
                 method: 'POST',
@@ -95,7 +90,7 @@ const Coder = () => {
                 },
                 body: JSON.stringify({
                     user_query: userQuery,
-                    model_id: selectedModel,
+                    model_id: agentModel,
                     conversation_id: conversationId,
                     user_id: userId,
                 }),
@@ -105,39 +100,62 @@ const Coder = () => {
                 throw new Error('API request failed');
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let assistantResponse = '';
-            let lastUpdateTime = Date.now();
+            if (response.body) {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let assistantResponse = '';
+                let lastUpdateTime = Date.now();
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                const chunk = decoder.decode(value);
-                assistantResponse += chunk;
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value);
+                    assistantResponse += chunk;
 
-                // Update the message every 100ms or when the stream is complete
-                if (Date.now() - lastUpdateTime > 100 || done) {
-                    addMessage('assistant', assistantResponse);
-                    lastUpdateTime = Date.now();
+                    // Update the message every 100ms or when the stream is complete
+                    if (Date.now() - lastUpdateTime > 100 || done) {
+                        addMessage({ role: 'assistant', content: assistantResponse });
+                        lastUpdateTime = Date.now();
+                    }
                 }
             }
         } catch (error) {
             console.error('Error:', error);
-            addMessage('assistant', 'Sorry, an error occurred while processing your request.');
+            addMessage({ role: 'assistant', content: 'Sorry, an error occurred while processing your request.' });
         } finally {
-            setStreamComplete(true)
+            setStreamComplete(true);
         }
     };
 
     return (
-        <div className=" h-full flex flex-col">
+        <div className="h-full flex flex-col">
             <div className="container mx-auto p-4 flex-grow flex flex-col max-w-3xl">
                 <div ref={chatContainerRef} id="chat-container" className="flex-grow max-h-[70vh] overflow-y-auto mb-4 space-y-4">
                     {chatHistory.map((message, index) => (
                         <div key={index} className={`p-4 rounded-lg ${message.role === 'user' ? 'bg-gray-800' : 'bg-gray-700'}`}>
                             <span className="font-bold text-sm mb-2 inline-block">{message.role === 'user' ? 'You' : 'Assistant'}</span>
-                            <div className="markdown-content text-gray-300" dangerouslySetInnerHTML={{ __html: marked.parse(message.content) }}></div>
+                            <div className="markdown-content text-gray-300">
+                                <ReactMarkdown
+                                    children={message.content}
+                                    components={{
+                                        code({ node, className, children, ...props }) {
+                                            const match = /language-(\w+)/.exec(className || '');
+                                            return match ? (
+                                                <SyntaxHighlighter
+                                                    style={dracula}
+                                                    language={match[1]}
+                                                    PreTag="div"
+                                                >{String(children).replace(/\n$/, '')}
+                                                </SyntaxHighlighter>
+                                            ) : (
+                                                <code className={className} {...props}>
+                                                    {children}
+                                                </code>
+                                            );
+                                        },
+                                    }}
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -153,20 +171,6 @@ const Coder = () => {
                             if (e.key === 'Enter') sendMessage();
                         }}
                     />
-                    <select
-                        id="model-select"
-                        className="p-2 bg-gray-800 border border-gray-700 rounded text-white"
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
-                    >
-                        <option value="meta-llama/llama-3-70b-instruct">Llama 3 70B</option>
-                        <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
-                        <option value="deepseek/deepseek-coder">DeepSeek Coder</option>
-                        <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
-                        <option value="openai/gpt-3.5-turbo-instruct">GPT-3.5 Turbo</option>
-                        <option value="qwen/qwen-72b-chat">Qwen 72B</option>
-                        <option value="google/gemma-2-27b-it">Gemma 27B</option>
-                    </select>
                     <button onClick={sendMessage} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">
                         Send
                     </button>
