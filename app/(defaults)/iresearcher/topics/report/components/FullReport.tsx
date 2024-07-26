@@ -103,7 +103,7 @@ export default function FullReport() {
 
     useEffect(() => {
         if (isFetchComplete) {
-            mutate({ reportId: '', name: prompt, report: JSON.stringify(data), reportType: "FULL" });
+            mutate({ reportId: '', name: prompt, report: JSON.stringify({ data: data, groupedData: groupedData }), reportType: "FULL" });
         }
     }, [isFetchComplete, data, mutate, prompt])
 
@@ -144,7 +144,6 @@ export default function FullReport() {
             const topic = [topics[i].name, parsedHtml]
             downloadData.push(topic)
         })
-        console.log(downloadData)
         return downloadData
     }
 

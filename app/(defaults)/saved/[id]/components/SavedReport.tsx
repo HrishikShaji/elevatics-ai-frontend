@@ -2,10 +2,13 @@
 
 import useFetchSavedReport from "@/hooks/useFetchSavedReport"
 import SavedQuickReport from "./SavedQuickReport"
+import SavedFullReport from "./SavedFullReport"
 
 export default function SavedReport() {
     const { data, isLoading } = useFetchSavedReport()
     if (isLoading) return <div>Loading...</div>
 
-    return <div>{data.reportType === "QUICK" ? <SavedQuickReport name={data.name} report={data.data} /> : null}</div>
+    return <div>{data.reportType === "QUICK" ? <SavedQuickReport name={data.name} report={data.data} /> : null}
+        {data.reportType === "FULL" ? <SavedFullReport name={data.name} report={data.data} /> : null}
+    </div>
 }
