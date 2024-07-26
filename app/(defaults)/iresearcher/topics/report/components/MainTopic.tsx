@@ -38,22 +38,24 @@ export default function MainTopic({ handleComplete, index, completedIndexes, dat
     }
     return (
 
-        <div onScroll={onScroll} ref={containerRef} className=" px-28 max-h-[70vh] overflow-y-auto" style={{ display: selectedTopic === parentKey ? "block" : "none" }}>
-            <div className="bg-gray-100 p-20 rounded-3xl">
-                {indexes.map((item: any, j: number) => (
-                    <div id={`jojo-${j}`} key={j}
-                        ref={el => {
-                            if (!itemRefs.current[index]) {
-                                itemRefs.current[index] = [];
-                            }
-                            itemRefs.current[index][j] = el;
-                        }}
-                    >
-                        {data[item] && data[item].report && completedIndexes.includes(item) && (
-                            <RenderReport setLineAdded={setLineAdded} handleScroll={handleScroll} handleComplete={handleComplete} item={item} report={data[item].report} />
-                        )}
-                    </div>
-                ))}
+        <div onScroll={onScroll} ref={containerRef} className="flex justify-center w-full max-h-[calc(100vh_-_150px)] h-full overflow-y-auto" style={{ display: selectedTopic === parentKey ? "block" : "none" }}>
+            <div className="flex h-full flex-col items-center  gap-5 py-10">
+                <div className="rounded-3xl bg-gray-100 h-full w-[800px] p-10">
+                    {indexes.map((item: any, j: number) => (
+                        <div id={`jojo-${j}`} key={j}
+                            ref={el => {
+                                if (!itemRefs.current[index]) {
+                                    itemRefs.current[index] = [];
+                                }
+                                itemRefs.current[index][j] = el;
+                            }}
+                        >
+                            {data[item] && data[item].report && completedIndexes.includes(item) && (
+                                <RenderReport setLineAdded={setLineAdded} handleScroll={handleScroll} handleComplete={handleComplete} item={item} report={data[item].report} />
+                            )}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )

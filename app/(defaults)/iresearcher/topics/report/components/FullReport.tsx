@@ -9,6 +9,8 @@ import useSaveReport from "@/hooks/useSaveReport";
 import SliderTabs from "./SliderTabs";
 import { Loader } from "@/components/Loader";
 import { reportLoadingSteps } from "@/lib/loadingStatements";
+import { marked } from "marked";
+import DownloadPdfButton from "@/app/(defaults)/quick-report/components/DownloadPdfButton";
 type Subtask = {
     name: string;
     prompt: string;
@@ -107,6 +109,10 @@ export default function FullReport() {
     const handleComplete = (index: number) => {
         setCompletedIndexes(prev => [...prev, index])
     };
+    function getHtmlFromMarkdown(markdownContent: string) {
+        const htmlWithoutReportTag = markdownContent.replace(/<\/?report>/g, '');
+        return marked(htmlWithoutReportTag) as string;
+    }
 
     const getAllInnerHTML = () => {
         const innerHTMLArray: any[] = [];
@@ -115,7 +121,7 @@ export default function FullReport() {
                 if (ref) {
                     innerHTMLArray.push({
                         id: ref.id,
-                        innerHTML: ref.innerHTML1267
+                        innerHTML: ref.innerHTML
 
                     });
                 }
@@ -124,16 +130,27 @@ export default function FullReport() {
         return innerHTMLArray;
     };
 
-
+    function getDownloadData() {
+        let downloadData: string[][] = []
+        data.forEach((item, i) => {
+            const parsedHtml = getHtmlFromMarkdown(item.report)
+            const topic = [topics[i].name, parsedHtml]
+            downloadData.push(topic)
+        })
+        console.log(downloadData)
+        return downloadData
+    }
 
     return (
         <div className="h-full pt-[10px] w-full flex flex-col  items-center justify-center">
             <SliderTabs setSelectedTopic={setSelectedTopic} options={groupedData} />
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full">
                 {loading[0] ? <Loader steps={reportLoadingSteps} /> : groupedData.map((group: any, i: number) => (
                     <MainTopic key={i} indexes={group.indexes} selectedTopic={selectedTopic} parentKey={group.parentKey} completedIndexes={completedIndexes} data={data} itemRefs={itemRefs} index={i} handleComplete={handleComplete} />
                 ))}
             </div>
+            <button onClick={() => getDownloadData()}>data</button>
+            <DownloadPdfButton prompt={prompt} htmlArray={getDownloadData()} />
             <button onClick={() => console.log(getAllInnerHTML())}>Get InnerHTML</button>
         </div>
     );
