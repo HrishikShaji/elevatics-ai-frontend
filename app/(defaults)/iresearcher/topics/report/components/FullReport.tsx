@@ -11,6 +11,7 @@ import { Loader } from "@/components/Loader";
 import { reportLoadingSteps } from "@/lib/loadingStatements";
 import { marked } from "marked";
 import DownloadPdfButton from "@/app/(defaults)/quick-report/components/DownloadPdfButton";
+import ShareModal from "@/components/ShareModal";
 type Subtask = {
     name: string;
     prompt: string;
@@ -53,7 +54,8 @@ export default function FullReport() {
     const [loading, setLoading] = useState(new Array(topics.length).fill(false));
     const [completedIndexes, setCompletedIndexes] = useState<number[]>([0]);
     const [isFetchComplete, setIsFetchComplete] = useState(false)
-    const { mutate } = useSaveReport()
+    const { mutate, data: savedReport, isSuccess } = useSaveReport()
+    const [reportId, setReportId] = useState("")
     const { prompt } = useResearcher()
 
     const groupedData = topics.reduce((acc: any, item, index) => {
@@ -105,6 +107,11 @@ export default function FullReport() {
         }
     }, [isFetchComplete, data, mutate, prompt])
 
+    useEffect(() => {
+        if (isSuccess) {
+            setReportId(savedReport.id)
+        }
+    }, [isSuccess, savedReport])
 
     const handleComplete = (index: number) => {
         setCompletedIndexes(prev => [...prev, index])
@@ -142,16 +149,19 @@ export default function FullReport() {
     }
 
     return (
-        <div className="h-full pt-[10px] w-full flex flex-col  items-center justify-center">
+        <div className="h-full pt-[10px] w-full flex flex-col flex-grow gap-5 items-center justify-between">
             <SliderTabs setSelectedTopic={setSelectedTopic} options={groupedData} />
-            <div className="flex gap-2 w-full">
+            <div className=" w-full">
                 {loading[0] ? <Loader steps={reportLoadingSteps} /> : groupedData.map((group: any, i: number) => (
                     <MainTopic key={i} indexes={group.indexes} selectedTopic={selectedTopic} parentKey={group.parentKey} completedIndexes={completedIndexes} data={data} itemRefs={itemRefs} index={i} handleComplete={handleComplete} />
                 ))}
             </div>
-            <button onClick={() => getDownloadData()}>data</button>
-            <DownloadPdfButton prompt={prompt} htmlArray={getDownloadData()} />
-            <button onClick={() => console.log(getAllInnerHTML())}>Get InnerHTML</button>
+            <div className=" flex justify-center">
+                <div className="w-[800px] flex gap-4 justify-end">
+                    <ShareModal type="FULL" reportId={reportId} />
+                    <DownloadPdfButton prompt={prompt} htmlArray={getDownloadData()} />
+                </div>
+            </div>
         </div>
     );
 }

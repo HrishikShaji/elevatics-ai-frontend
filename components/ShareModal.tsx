@@ -44,7 +44,7 @@ export default function ShareModal({ reportId, type }: ShareModalProps) {
     };
     return (
         <>
-            <button type="button" onClick={() => setModal(true)} className="group">
+            <button type="button" onClick={() => setModal(true)} className="group px-3 py-2 rounded-md bg-gray-100">
                 Share
             </button>
             <Transition appear show={modal} as={Fragment}>
