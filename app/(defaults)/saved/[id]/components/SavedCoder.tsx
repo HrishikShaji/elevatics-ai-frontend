@@ -1,18 +1,24 @@
+
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark, dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import useSaveReport from '@/hooks/useSaveReport';
 import { useSettings } from '@/contexts/SettingsContext';
+import useSaveReport from '@/hooks/useSaveReport';
 
 type Chat = {
     content: string;
     role: "assistant" | "user";
 }
 
-const Coder = () => {
+interface SavedCoderProps {
+    history: string;
+    id: string;
+}
+
+const SavedCoder = ({ history, id }: SavedCoderProps) => {
     const [userQuery, setUserQuery] = useState('');
     const [chatHistory, setChatHistory] = useState<Chat[]>([]);
     const { agentModel } = useSettings();
@@ -26,11 +32,13 @@ const Coder = () => {
     const { mutate, isSuccess, data } = useSaveReport();
 
     useEffect(() => {
+        const parsedData = JSON.parse(history)
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
-        const conversationId = Date.now().toString();
         setUserId(userId);
-        setConverstionId(conversationId);
-    }, []);
+        setChatHistory(parsedData.chatHistory)
+        setConverstionId(parsedData.conversationId);
+        setReportId(id)
+    }, [history, id]);
 
     const displayMessages = () => {
         // Scroll to the bottom of the chat container
@@ -180,4 +188,4 @@ const Coder = () => {
     );
 };
 
-export default Coder;
+export default SavedCoder;
