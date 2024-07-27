@@ -1,6 +1,4 @@
-import QuickSearchBar from '@/components/QuickSearchBar';
 import SearchBar from '@/components/SearchBar';
-import SettingsModal from '@/components/SettingsModal';
 import SignInButton from '@/components/SignInButton';
 import React from 'react';
 

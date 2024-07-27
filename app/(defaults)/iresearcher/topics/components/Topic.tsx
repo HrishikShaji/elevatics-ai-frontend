@@ -1,6 +1,5 @@
 
 import { Dispatch, SetStateAction } from "react";
-import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 import { ResearcherTopicsResponse } from "@/types/types";
 import { useResearcher } from "@/contexts/ResearcherContext";
 

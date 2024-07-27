@@ -27,10 +27,8 @@ export default function TopicSection() {
     const [openTopic, setOpenTopic] = useState<string | null>(null);
     const { prompt, selectedSubtasks, setTopics } = useResearcher();
     const { data, isLoading } = useFetchTopics();
-    const [active, setActive] = useState(0)
+    const [active, setActive] = useState<number | null>(0)
     const router = useRouter()
-    console.log(selectedSubtasks)
-    console.log(data)
 
     const transformData = (data: OriginalData): TransformedData[] => {
         const result: TransformedData[] = [];

@@ -64,7 +64,7 @@ export default function InvestorReport() {
                 <div className="px-2 py-10 rounded-3xl bg-gray-100">
                     <div className=" px-5 h-full ">
                         <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className={style.markdown} key={currentIndex}>
-                            {sliderData[currentIndex][1]}
+                            {sliderData[currentIndex][1] as string}
                         </ReactMarkdown>
                     </div>
                 </div>
