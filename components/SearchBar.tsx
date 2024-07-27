@@ -16,7 +16,6 @@ export default function SearchBar() {
     const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const router = useRouter()
 
-    console.log(profile)
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault()
@@ -25,19 +24,19 @@ export default function SearchBar() {
     }
 
     return (
-        <div className="w-[60%] bg-white rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
-            <form onSubmit={handleSubmit} className="h-[80px] relative  flex items-center justify-center  ">
+        <div className="w-[800px]  bg-white flex-grow-0 absolute top-[40%] rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+            <form onSubmit={handleSubmit} className=" relative  flex items-center justify-center  ">
                 <input
                     value={input}
                     onChange={handleChange}
                     placeholder="What's on your mind..."
-                    className="  text-xl h-full   pl-5 pr-20 w-full focus:outline-none"
+                    className="   pr-28  bg-white focus:outline-none p-4 w-full"
                 />{" "}
 
                 <button
-                    className="text-gray-400 absolute glow p-2 cursor-pointer rounded-full bg-gray-100  right-5 "
+                    className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
                 >
-                    <PiRocketLaunchThin size={30} />
+                    <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                 </button>
             </form>
             <AnimateHeight height={isSuccess ? 300 : 0} duration={300}>

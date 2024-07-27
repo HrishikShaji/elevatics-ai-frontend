@@ -6,7 +6,7 @@ import React from 'react';
 
 const Page = () => {
 
-    return <div className='relative rounded-3xl bg-white h-[90vh] flex justify-center items-center w-full '>
+    return <div className='  h-screen flex items-center pt-[300px] justify-center w-full '>
         <SearchBar />
         <SignInButton />
     </div>;
