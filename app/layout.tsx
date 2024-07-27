@@ -11,8 +11,8 @@ import { AccountProvider } from '@/contexts/AccountContext';
 
 export const metadata: Metadata = {
     title: {
-        template: '%s | VRISTO - Multipurpose Tailwind Dashboard Template',
-        default: 'VRISTO - Multipurpose Tailwind Dashboard Template',
+        template: '%s | Elevatics',
+        default: 'Elevatics',
     },
 };
 const nunito = Nunito({

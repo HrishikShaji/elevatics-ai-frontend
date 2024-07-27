@@ -1,10 +1,71 @@
+import { useSettings } from "@/contexts/SettingsContext";
+import { DataFormatType, OutputFormatType } from "@/types/types";
 import { Tab } from "@headlessui/react";
 import { Fragment } from "react";
+import CustomDropdown from "./CustomDropdown";
+import { subtle } from "crypto";
+import { useSelector } from "react-redux";
+import { IRootState } from "@/store";
+import { useDispatch } from "react-redux";
+import { toggleAnimation, toggleTheme } from "@/store/themeConfigSlice";
 
 export default function SettingsSection() {
+    const { setReportOptions, setAgentModel, setTopicsLimit, reportOptions, topicsLimit } = useSettings()
+
+    const themeConfig = useSelector((state: IRootState) => state.themeConfig);
+    const dispatch = useDispatch();
+
+    const dataFormatOptions: { title: string; value: DataFormatType }[] = [{ title: 'No Presets', value: "No presets" }, { title: 'Structured Data', value: "Structured data" }, { title: 'Quantitative Data', value: "Quantitative data" }]
+    const outputFormatOptions: { title: string; value: OutputFormatType }[] = [{ title: 'Chat', value: "chat" }, { title: 'Report', value: "report" }, { title: 'Report Table', value: "report_table" }]
+    const topicsOptions: { title: string; value: number }[] = [{ title: "1", value: 1 }, { title: "2", value: 2 }, { title: "3", value: 3 }, { title: '4', value: 4 }, { title: "5", value: 5 }]
+    const subTopicsOptions: { title: string; value: number }[] = [{ title: "1", value: 1 }, { title: "2", value: 2 }, { title: "3", value: 3 }, { title: '4', value: 4 }, { title: "5", value: 5 }]
+    const animationOptions: { title: string; value: string }[] = [{ title: "Fade", value: "animate__fadeIn" },
+    { title: "Fade Down", value: "animate__fadeInDown" },
+    { title: "Fade Up", value: "animate__fadeInUp" },
+    { title: "Fade Left", value: "animate__fadeInLeft" }, { title: "Fade Right", value: "animate__fadeInRight" },
+    { title: "Slide Up", value: "animate__slideInUp" }, { title: "Slide Down", value: "animate__slideInDown" }, { title: "Slide Left", value: "animate__slideInLeft" },
+    { title: "Slide Right", value: "animate__fadeInRight" }, { title: "Zoom In", value: "animate__zoomIn" }]
+    const themeOptions: { title: string, value: string }[] = [{ title: "Light", value: "light" }, { title: "Dark", value: "dark" }, { title: "System", value: "system" }]
+
+
+    function animationChange(value: string | number) {
+        dispatch(toggleAnimation(value as string))
+    }
+
+    function themeChange(value: string | number) {
+        dispatch(toggleTheme(value))
+    }
+
+    function outputFormatChange(value: string | number) {
+        setReportOptions((prev) => ({
+            ...prev,
+            outputFormat: value as OutputFormatType
+        }))
+    }
+
+    function topicsChange(value: string | number) {
+        setTopicsLimit(prev => ({
+            ...prev,
+            topics: value as number
+        }))
+    }
+    function subTopicsChange(value: string | number) {
+        setTopicsLimit(prev => ({
+            ...prev,
+            subTopics: value as number
+        }))
+    }
+
+    function dataFormatChange(value: string | number) {
+        setReportOptions((prev) => ({
+            ...prev,
+            dataFormat: value as DataFormatType
+        }))
+    }
+
     return (
 
-        <div className="mb-5 flex bg-gray-200 rounded-3xl p-5 items-start h-[300px] flex-col sm:flex-row">
+        <div className="mb-5 flex bg-gray-200 rounded-3xl p-5  items-start w-[700px] h-[300px] flex-col sm:flex-row">
             <Tab.Group>
                 <div className=" mr-10 mb-5 sm:mb-0">
                     <Tab.List className=" w-32 text-left font-semibold">
@@ -32,47 +93,17 @@ export default function SettingsSection() {
                 </div>
                 <Tab.Panels>
                     <Tab.Panel>
-                        <div className="active">
-                            <h4 className="mb-4 text-2xl font-semibold">We move your world!</h4>
-                            <p className="mb-4">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                            </p>
+                        <div className="active flex-col items-start pt-4 gap-4 flex">
+                            <CustomDropdown label="Theme" options={themeOptions} value={themeConfig.theme} onChange={themeChange} />
+                            <CustomDropdown label="Animation" options={animationOptions} value={themeConfig.animation} onChange={animationChange} />
                         </div>
                     </Tab.Panel>
                     <Tab.Panel>
-                        <div className="flex items-start">
-                            <div className="h-20 w-20 flex-none ltr:mr-4 rtl:ml-4">
-                                <img src="/assets/images/profile-34.jpeg" alt="img" className="m-0 h-20 w-20 rounded-full object-cover ring-2 ring-[#ebedf2] dark:ring-white-dark" />
-                            </div>
-                            <div className="flex-auto">
-                                <h5 className="mb-4 text-xl font-medium">Media heading</h5>
-                                <p className="text-white-dark">
-                                    Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra
-                                    turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                                </p>
-                            </div>
-                        </div>
-                    </Tab.Panel>
-                    <Tab.Panel>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                        </p>
-                    </Tab.Panel>
-                    <Tab.Panel>
-                        <div className="rounded-br-md rounded-tr-md border border-l-2 border-white-light !border-l-primary bg-white p-5 text-black shadow-md ltr:pl-3.5 rtl:pr-3.5 dark:border-[#060818] dark:bg-[#060818]">
-                            <div className="flex items-start">
-                                <p className="m-0 text-sm not-italic text-[#515365] dark:text-white-dark">
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.
-                                </p>
-                            </div>
+                        <div className="flex items-start pt-4 flex-col gap-4">
+                            <CustomDropdown label="Data Format" options={dataFormatOptions} value={reportOptions.dataFormat} onChange={dataFormatChange} />
+                            <CustomDropdown label="Output Format" options={outputFormatOptions} value={reportOptions.outputFormat} onChange={outputFormatChange} />
+                            <CustomDropdown label="Topics Limit" options={topicsOptions} value={topicsLimit.topics} onChange={topicsChange} />
+                            <CustomDropdown label="SubTopics Limit" options={subTopicsOptions} value={topicsLimit.subTopics} onChange={subTopicsChange} />
                         </div>
                     </Tab.Panel>
                 </Tab.Panels>

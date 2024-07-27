@@ -17,16 +17,15 @@ const Setting = () => {
 
     return (
         <div>
-            <div className={`${(showCustomizer && '!block') || ''} fixed inset-0 z-[51] hidden bg-[black]/60 px-4 transition-[display]`} onClick={() => setShowCustomizer(false)}></div>
+            <div className={`${(showCustomizer && '!block') || ''} fixed inset-0 z-[51] !hidden bg-[black]/60 px-4 transition-[display]`} onClick={() => setShowCustomizer(false)}></div>
 
             <nav
-                className={`${
-                    (showCustomizer && 'ltr:!right-0 rtl:!left-0') || ''
-                } fixed bottom-0 top-0 z-[51] w-full max-w-[400px] bg-white p-4 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-[right] duration-300 ltr:-right-[400px] rtl:-left-[400px] dark:bg-black`}
+                className={`${(showCustomizer && 'ltr:!right-0 rtl:!left-0') || ''
+                    } fixed bottom-0 top-0 z-[51] w-full max-w-[400px] bg-white p-4 shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-[right] duration-300 ltr:-right-[400px] rtl:-left-[400px] dark:bg-black`}
             >
                 <button
                     type="button"
-                    className="absolute bottom-0 top-0 my-auto flex h-10 w-12 cursor-pointer items-center justify-center bg-primary text-white ltr:-left-12 ltr:rounded-bl-full ltr:rounded-tl-full rtl:-right-12 rtl:rounded-br-full rtl:rounded-tr-full"
+                    className="absolute bottom-0 hidden top-0 my-auto flex h-10 w-12 cursor-pointer items-center justify-center bg-primary text-white ltr:-left-12 ltr:rounded-bl-full ltr:rounded-tl-full rtl:-right-12 rtl:rounded-br-full rtl:rounded-tr-full"
                     onClick={() => setShowCustomizer(!showCustomizer)}
                 >
                     <IconSettings className="h-5 w-5 animate-[spin_3s_linear_infinite]" />
