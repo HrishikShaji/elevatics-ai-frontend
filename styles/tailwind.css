@@ -708,6 +708,21 @@ pre.hljs {
     @apply bg-success;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    margin: 0px 10px 0px 0px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    border-radius: 25px;
+    background-color: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 25px;
+  }
+
 img.dark-img {
     @apply hidden;
 }

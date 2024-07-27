@@ -1,11 +1,12 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark, dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import useSaveReport from '@/hooks/useSaveReport';
 import { useSettings } from '@/contexts/SettingsContext';
+import { PiRocketLaunchThin } from 'react-icons/pi';
 
 type Chat = {
     content: string;
@@ -74,7 +75,8 @@ const Coder = () => {
         });
     };
 
-    const sendMessage = async () => {
+    const sendMessage = async (e: FormEvent) => {
+        e.preventDefault()
         if (!userQuery.trim()) return;
 
         setStreamComplete(false);
@@ -128,52 +130,56 @@ const Coder = () => {
     };
 
     return (
-        <div className="h-full flex flex-col">
-            <div className="container mx-auto p-4 flex-grow flex flex-col max-w-3xl">
-                <div ref={chatContainerRef} id="chat-container" className="flex-grow max-h-[70vh] overflow-y-auto mb-4 space-y-4">
-                    {chatHistory.map((message, index) => (
-                        <div key={index} className={`p-4 rounded-lg ${message.role === 'user' ? 'bg-gray-800' : 'bg-gray-700'}`}>
-                            <span className="font-bold text-sm mb-2 inline-block">{message.role === 'user' ? 'You' : 'Assistant'}</span>
-                            <div className="markdown-content text-gray-300">
-                                <ReactMarkdown
-                                    children={message.content}
-                                    components={{
-                                        code({ node, className, children, ...props }) {
-                                            const match = /language-(\w+)/.exec(className || '');
-                                            return match ? (
-                                                <SyntaxHighlighter
-                                                    style={dracula}
-                                                    language={match[1]}
-                                                    PreTag="div"
-                                                >{String(children).replace(/\n$/, '')}
-                                                </SyntaxHighlighter>
-                                            ) : (
-                                                <code className={className} {...props}>
-                                                    {children}
-                                                </code>
-                                            );
-                                        },
-                                    }}
-                                />
+        <div className="h-[(100vh_-_40px)] flex flex-col">
+            <div className="container mx-auto  flex-grow flex flex-col items-center w-full ">
+                <div ref={chatContainerRef} id="chat-container" style={{ scrollbarGutter: "stable" }} className="custom-scrollbar  flex w-full justify-center min-h-[40vh] max-h-[80vh] overflow-y-auto mb-4 space-y-4">
+                    <div className='w-[800px] flex flex-col gap-4 py-10'>
+                        {chatHistory.map((message, index) => (
+                            <div key={index} className={`flex ${message.role === 'user' ? "justify-end" : "justify-start"}`}>
+                                <div key={index} className={` px-10 rounded-lg ${message.role === 'user' ? 'py-4 bg-gray-300 rounded-t-3xl rounded-l-3xl ' : 'py-10 bg-gray-300 rounded-b-3xl rounded-r-3xl'}`}>
+                                    <div className="markdown-content text-black">
+                                        <ReactMarkdown
+                                            children={message.content}
+                                            components={{
+                                                code({ node, className, children, ...props }) {
+                                                    const match = /language-(\w+)/.exec(className || '');
+                                                    return match ? (
+                                                        <SyntaxHighlighter
+                                                            style={dracula}
+                                                            language={match[1]}
+                                                            PreTag="div"
+                                                        >{String(children).replace(/\n$/, '')}
+                                                        </SyntaxHighlighter>
+                                                    ) : (
+                                                        <code className={className} {...props}>
+                                                            {children}
+                                                        </code>
+                                                    );
+                                                },
+                                            }}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-                <div className="flex space-x-2">
-                    <input
-                        id="user-input"
-                        type="text"
-                        placeholder="Ask a coding question..."
-                        className="flex-grow p-2 bg-gray-800 border border-gray-700 rounded text-white"
-                        value={userQuery}
-                        onChange={(e) => setUserQuery(e.target.value)}
-                        onKeyPress={(e) => {
-                            if (e.key === 'Enter') sendMessage();
-                        }}
-                    />
-                    <button onClick={sendMessage} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">
-                        Send
-                    </button>
+                <div className="w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+                    <form onSubmit={sendMessage} className=" relative  flex items-center justify-center  ">
+                        <input
+                            value={userQuery}
+                            onChange={(e) => setUserQuery(e.target.value)}
+                            placeholder="What's on your mind..."
+                            className="   pr-28  bg-white focus:outline-none p-4 w-full"
+                        />{" "}
+
+                        <button
+                            type='submit'
+                            className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
+                        >
+                            <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
