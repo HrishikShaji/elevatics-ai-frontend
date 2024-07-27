@@ -4,17 +4,17 @@ import { Fragment } from "react";
 export default function SettingsSection() {
     return (
 
-        <div className="mb-5 flex flex-col sm:flex-row">
+        <div className="mb-5 flex bg-gray-200 rounded-3xl p-5 items-start h-[300px] flex-col sm:flex-row">
             <Tab.Group>
-                <div className="mx-10 mb-5 sm:mb-0">
-                    <Tab.List className="m-auto w-24 text-center font-semibold">
-                        <Tab as={Fragment}>
+                <div className=" mr-10 mb-5 sm:mb-0">
+                    <Tab.List className=" w-32 text-left font-semibold">
+                        <Tab as={Fragment} >
                             {({ selected }) => (
                                 <button
                                     className={`${selected ? 'text-secondary !outline-none before:!h-[80%]' : ''}
-                                                    relative -mb-[1px] block w-full border-white-light p-3.5 py-4 before:absolute before:bottom-0 before:top-0 before:m-auto before:inline-block before:h-0 before:w-[1px] before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:h-[80%] ltr:border-r ltr:before:-right-[1px] rtl:border-l rtl:before:-left-[1px] dark:border-[#191e3a]`}
+                                                    !text-left relative -mb-[1px] block w-full border-white-light pl-0 pr-3.5 py-4 before:absolute before:bottom-0 before:top-0 before:m-auto before:inline-block before:h-0 before:w-[1px] before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:h-[80%] ltr:border-r ltr:before:-right-[1px] rtl:border-l rtl:before:-left-[1px] dark:border-[#191e3a]`}
                                 >
-                                    Home
+                                    Appearance
                                 </button>
                             )}
                         </Tab>
@@ -22,29 +22,9 @@ export default function SettingsSection() {
                             {({ selected }) => (
                                 <button
                                     className={`${selected ? 'text-secondary !outline-none before:!h-[80%]' : ''}
-                                                    relative -mb-[1px] block w-full border-white-light p-3.5 py-4 before:absolute before:bottom-0 before:top-0 before:m-auto before:inline-block before:h-0 before:w-[1px] before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:h-[80%] ltr:border-r ltr:before:-right-[1px] rtl:border-l rtl:before:-left-[1px] dark:border-[#191e3a]`}
+                                                    relative !text-left -mb-[1px] block w-full border-white-light pl-0 p-3.5 py-4 before:absolute before:bottom-0 before:top-0 before:m-auto before:inline-block before:h-0 before:w-[1px] before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:h-[80%] ltr:border-r ltr:before:-right-[1px] rtl:border-l rtl:before:-left-[1px] dark:border-[#191e3a]`}
                                 >
-                                    Profile
-                                </button>
-                            )}
-                        </Tab>
-                        <Tab as={Fragment}>
-                            {({ selected }) => (
-                                <button
-                                    className={`${selected ? 'text-secondary !outline-none before:!h-[80%]' : ''}
-                                                    relative -mb-[1px] block w-full border-white-light p-3.5 py-4 before:absolute before:bottom-0 before:top-0 before:m-auto before:inline-block before:h-0 before:w-[1px] before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:h-[80%] ltr:border-r ltr:before:-right-[1px] rtl:border-l rtl:before:-left-[1px] dark:border-[#191e3a]`}
-                                >
-                                    Messages
-                                </button>
-                            )}
-                        </Tab>
-                        <Tab as={Fragment}>
-                            {({ selected }) => (
-                                <button
-                                    className={`${selected ? 'text-secondary !outline-none before:!h-[80%]' : ''}
-                                                    relative -mb-[1px] block w-full border-white-light p-3.5 py-4 before:absolute before:bottom-0 before:top-0 before:m-auto before:inline-block before:h-0 before:w-[1px] before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:h-[80%] ltr:border-r ltr:before:-right-[1px] rtl:border-l rtl:before:-left-[1px] dark:border-[#191e3a]`}
-                                >
-                                    Settings
+                                    Options
                                 </button>
                             )}
                         </Tab>
