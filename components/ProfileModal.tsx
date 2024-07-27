@@ -7,12 +7,14 @@ import IconMenuChat from './icon/menu/icon-menu-chat';
 import { getTranslation } from '@/i18n';
 import IconSettings from './icon/icon-settings';
 import IconUser from './icon/icon-user';
+import { useAccount } from '@/contexts/AccountContext';
+import Image from 'next/image';
 
 export default function ProfileModal() {
     const [modal, setModal] = useState(false);
-
+    const { profile } = useAccount()
     const { t } = getTranslation();
-
+    console.log(profile)
     return (
         <>
             <li className="nav-item">
@@ -37,7 +39,7 @@ export default function ProfileModal() {
                         <div className="fixed inset-0" />
                     </Transition.Child>
                     <div id="login_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
-                        <div className="flex items-start justify-center  px-4">
+                        <div className="flex items-center min-h-screen justify-center  px-4">
                             <Transition.Child
                                 as={Fragment}
                                 enter="ease-out duration-300"
@@ -47,9 +49,26 @@ export default function ProfileModal() {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8 text-black dark:text-white-dark">
-                                    <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
-                                        <h5>Profile</h5>
+                                <Dialog.Panel className="panel border-0 p-5 rounded-3xl overflow-hidden  my-8 text-black dark:text-white-dark">
+                                    <div className="flex flex-col gap-5 p-5 font-semibold text-lg dark:text-white">
+                                        <h5 className='border-b-2 pl-5 py-2 bg-gray-200 rounded-3xl'>Profile</h5>
+                                        {profile ?
+
+                                            <div className='flex items-center gap-5 bg-gray-200 pr-10 rounded-3xl'>
+                                                {profile.image ?
+                                                    <div className='h-[200px] w-[200px] flex-shrink-0 overflow-hidden rounded-l-3xl'>
+                                                        <Image src={profile.image} alt="profile-img" height={1000} width={1000} className='h-[200px] w-[200px] rounded-l-3xl hover:scale-110 duration-500' />
+                                                    </div>
+                                                    : null}
+                                                <table>
+                                                    <tbody><tr className=''><td className='border-b-2 !text-left !p-1 border-white'>Name</td><td className='!pl-10 border-b-2 border-white !py-2'>{profile.name}</td></tr>
+                                                        <tr className='border-b-2  border-black'><td className='border-b-2 !text-left !p-1 border-white'>Email</td><td className='!pl-10 border-b-2 border-white !py-2'>{profile.email}</td></tr>
+                                                        <tr className='border-b-2  border-black'><td className='border-b-2 !text-left !p-1 border-white'>Current Plan</td><td className='!pl-10 border-b-2 border-white !py-2'>{profile.plan}</td></tr>
+                                                        <tr className='border-b-2 border-black'><td className='border-b-2 !text-left !p-1 '>Quieries Left</td><td className='!pl-10 border-b-2  !py-2'>{profile.queries}</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            : null}
                                     </div>
 
                                 </Dialog.Panel>
