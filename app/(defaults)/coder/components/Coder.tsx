@@ -3,10 +3,12 @@
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark, dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { dark, dracula, oneLight, duotoneLight, gruvboxLight, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import useSaveReport from '@/hooks/useSaveReport';
 import { useSettings } from '@/contexts/SettingsContext';
 import { PiRocketLaunchThin } from 'react-icons/pi';
+import { Livvic } from 'next/font/google';
+import { lightfair } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 type Chat = {
     content: string;
@@ -136,7 +138,7 @@ const Coder = () => {
                     <div className='w-[800px] flex flex-col gap-4 py-10'>
                         {chatHistory.map((message, index) => (
                             <div key={index} className={`flex ${message.role === 'user' ? "justify-end" : "justify-start"}`}>
-                                <div key={index} className={` px-10 rounded-lg ${message.role === 'user' ? 'py-4 bg-gray-300 rounded-t-3xl rounded-l-3xl ' : 'py-10 bg-gray-300 rounded-b-3xl rounded-r-3xl'}`}>
+                                <div key={index} className={` px-10 rounded-lg ${message.role === 'user' ? 'py-4 bg-gray-200 rounded-t-3xl rounded-l-3xl ' : 'py-10 bg-gray-200 rounded-b-3xl rounded-r-3xl'}`}>
                                     <div className="markdown-content text-black">
                                         <ReactMarkdown
                                             children={message.content}
@@ -145,7 +147,8 @@ const Coder = () => {
                                                     const match = /language-(\w+)/.exec(className || '');
                                                     return match ? (
                                                         <SyntaxHighlighter
-                                                            style={dracula}
+                                                            customStyle={{ padding: "20px", borderRadius: "24px" }}
+                                                            style={materialLight}
                                                             language={match[1]}
                                                             PreTag="div"
                                                         >{String(children).replace(/\n$/, '')}
