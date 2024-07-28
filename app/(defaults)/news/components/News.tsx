@@ -1,9 +1,10 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useSettings } from '@/contexts/SettingsContext';
 import useSaveReport from '@/hooks/useSaveReport';
+import { PiRocketLaunchThin } from 'react-icons/pi';
 
 type NewsItem = {
     query: string;
@@ -19,7 +20,16 @@ export default function News() {
     const [renderedReport, setRenderedReport] = useState('');
     const [streamComplete, setStreamComplete] = useState(false);
     const { mutate } = useSaveReport();
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTo({
+                top: scrollContainerRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    }, [renderedReport]);
     useEffect(() => {
         if (streamComplete) {
             mutate({ name: query, report: JSON.stringify(report), reportId: "", reportType: 'NEWS' });
@@ -84,32 +94,35 @@ export default function News() {
     };
 
     return (
-        <main className="main-content flex-grow p-5 transition-all duration-300">
-            <div className="content-wrapper max-w-4xl mx-auto">
-                <h1 className="text-center text-gray-700 mb-4">Where knowledge begins</h1>
-
-                <form onSubmit={submitForm} className="flex mb-8">
-                    <input
-                        type="text"
-                        id="search-input"
-                        placeholder="Ask anything..."
-                        required
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        className="flex-grow p-3 border border-gray-300 rounded-l-md shadow-md"
-                    />
-                    <button type="submit" disabled={isLoading} className="p-3 bg-blue-600 text-white rounded-r-md shadow-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                        {isLoading ? 'Loading...' : 'Search'}
-                    </button>
-                </form>
-
+        <main className=" h-[calc(100vh_-_40px)]   w-full transition-all duration-300">
+            <div ref={scrollContainerRef} id="report-container" className="min-h-[40vh] custom-scrollbar py-10 flex justify-center max-h-[80vh] overflow-y-auto bg-white w-full">
                 {renderedReport && (
-                    <div id="report-container" className="h-[60vh] overflow-y-scroll bg-white border border-gray-300 rounded-md p-6 mt-6 shadow-md">
+                    <div className='w-[800px] bg-gray-200 rounded-3xl p-10 h-full'>
                         <ReactMarkdown
                             children={renderedReport}
                         />
                     </div>
                 )}
+
+            </div>
+            <div className='w-full h-[calc(20vh_-_40px)] items-center flex justify-center'>
+                <div className="w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+                    <form onSubmit={submitForm} className=" relative  flex items-center justify-center  ">
+                        <input
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="What's on your mind..."
+                            className="   pr-28  bg-white focus:outline-none p-4 w-full"
+                        />{" "}
+
+                        <button
+                            type='submit'
+                            className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
+                        >
+                            <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
+                        </button>
+                    </form>
+                </div>
             </div>
         </main>
     );

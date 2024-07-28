@@ -24,7 +24,7 @@ const nunito = Nunito({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html className="custom-scrollbar" lang="en">
             <body className={nunito.variable}>
                 <ReactQueryProvider>
                     <NextAuthProvider>
