@@ -39,7 +39,7 @@ export default function Investor() {
 
                 <form onSubmit={handleFetchSubmit} className="flex items-center relative w-[50%]">
                     <div
-                        className="rounded-xl cursor-pointer bg-white border-2 pr-28 text-gray-500 shadow-md border-gray-100 focus:outline-gray-300 p-4 w-full"
+                        className="rounded-3xl cursor-pointer bg-white border-2 pr-28 text-gray-500 shadow-md border-gray-100 focus:outline-gray-300 p-4 w-full"
                         onClick={handleClick}
                     >
                         {file ? file.name : " Browse or Drag and Drop File"}
@@ -49,10 +49,12 @@ export default function Investor() {
                         hidden
                         ref={inputRef}
                         onChange={handleFileChange}
-                        className="rounded-xl border-2 pr-28 shadow-md border-gray-100 bg-white focus:outline-gray-300 p-4 w-full"
+                        className="rounded-3xl border-2 pr-28 shadow-md border-gray-100 bg-white focus:outline-gray-300 p-4 w-full"
                     />{" "}
-                    <button className="text-black absolute right-2">
-                        <PiRocketLaunchThin size={30} />
+                    <button
+                        className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
+                    >
+                        <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                     </button>
                 </form>
             </div>
