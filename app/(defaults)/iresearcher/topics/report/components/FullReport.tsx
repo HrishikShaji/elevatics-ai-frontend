@@ -158,7 +158,7 @@ export default function FullReport() {
                         ))}
                     </div>
                     <div className=" flex justify-center">
-                        <div className="w-[800px] flex gap-4 justify-end">
+                        <div className="w-[90vw] sm:w-[800px] flex gap-4 justify-end">
                             <ShareModal type="FULL" reportId={reportId} />
                             <DownloadPdfButton prompt={prompt} htmlArray={getDownloadData()} />
                         </div>

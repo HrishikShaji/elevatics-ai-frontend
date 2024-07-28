@@ -37,7 +37,7 @@ export default function SliderTabs({ options, setSelectedTopic }: SliderTabsProp
 
 
     return (
-        <div className="relative flex w-[800px] items-center ">
+        <div className="relative flex w-[90vw] sm:w-[800px] items-center ">
             <button
                 onClick={() => scrollLeft(containerRef)}
                 className="absolute size-6 flex items-center justify-center -left-10 hover:bg-gray-200 rounded-full"
