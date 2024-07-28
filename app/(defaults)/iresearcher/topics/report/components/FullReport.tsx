@@ -148,19 +148,23 @@ export default function FullReport() {
     }
 
     return (
-        <div className="h-full pt-[10px] w-full flex flex-col flex-grow gap-5 items-center justify-between">
-            <SliderTabs setSelectedTopic={setSelectedTopic} options={groupedData} />
-            <div className=" w-full">
-                {loading[0] ? <Loader steps={reportLoadingSteps} /> : groupedData.map((group: any, i: number) => (
-                    <MainTopic key={i} indexes={group.indexes} selectedTopic={selectedTopic} parentKey={group.parentKey} completedIndexes={completedIndexes} data={data} itemRefs={itemRefs} index={i} handleComplete={handleComplete} />
-                ))}
-            </div>
-            <div className=" flex justify-center">
-                <div className="w-[800px] flex gap-4 justify-end">
-                    <ShareModal type="FULL" reportId={reportId} />
-                    <DownloadPdfButton prompt={prompt} htmlArray={getDownloadData()} />
+        <>
+            {loading[0] ? <Loader steps={reportLoadingSteps} /> :
+                <div className="h-full pt-[10px] w-full flex flex-col flex-grow gap-5 items-center justify-between">
+                    <SliderTabs setSelectedTopic={setSelectedTopic} options={groupedData} />
+                    <div className=" w-full">
+                        {groupedData.map((group: any, i: number) => (
+                            <MainTopic key={i} indexes={group.indexes} selectedTopic={selectedTopic} parentKey={group.parentKey} completedIndexes={completedIndexes} data={data} itemRefs={itemRefs} index={i} handleComplete={handleComplete} />
+                        ))}
+                    </div>
+                    <div className=" flex justify-center">
+                        <div className="w-[800px] flex gap-4 justify-end">
+                            <ShareModal type="FULL" reportId={reportId} />
+                            <DownloadPdfButton prompt={prompt} htmlArray={getDownloadData()} />
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            }
+        </>
     );
 }
