@@ -62,13 +62,13 @@ export default function InvestorReport() {
     return (
         <div className=" h-[(100vh_-_40px)]  w-full   ">
             <div className="w-full flex py-2 justify-center">
-                <div className="w-[800px]">
+                <div className="w-[90vw] sm:w-[800px]">
                     <Slider setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} items={sliderData} />
                 </div>
             </div>
-            <div className="w-full flex justify-center custom-scrollbar overflow-y-auto max-h-[80vh]">
-                <div className="flex flex-col w-[800px]   ">
-                    <div className="px-2 py-10 rounded-3xl bg-gray-100">
+            <div className="w-full flex justify-center custom-scrollbar overflow-x-hidden overflow-y-auto max-h-[80vh]">
+                <div className="flex flex-col w-full  items-center  ">
+                    <div className="px-2 py-10 rounded-3xl bg-gray-100 w-[90vw] sm:w-[800px]">
                         <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className={style.markdown} key={currentIndex}>
                             {sliderData[currentIndex][1] as string}
                         </ReactMarkdown>
@@ -76,7 +76,7 @@ export default function InvestorReport() {
                 </div>
             </div>
             <div className="w-full flex justify-center pt-2">
-                <div className="flex w-[800px] justify-end">
+                <div className="flex w-[90vw] sm:w-[800px] justify-end">
                     <DownloadInvestorPdfButton data={data} name={fileName} />
                 </div>
             </div>
