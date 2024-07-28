@@ -29,17 +29,21 @@ export default function SavedQuickReport({ name, report }: SavedQuickReportProps
         const parts = markdownContent.split(/(<script>[\s\S]*?<\/script>)/);
         return parts.filter(part => part.trim() !== '');
     }
-    return <div>
-        {htmlArray.map((html, i) => (
-            <Fragment key={i}>
-                {
-                    html.startsWith('<script>') && html.endsWith('</script>') ? (
-                        <SavedChart chartData={html} />
-                    ) : (
-                        <SavedMarkdown content={html} />
-                    )
-                }
-            </Fragment>
-        ))}
+    return <div className="flex justify-center  max-h-[calc(100vh_-_40px)] overflow-y-auto" >
+        <div className="flex h-full flex-col items-end gap-5 py-10">
+            <div className="rounded-3xl bg-gray-100 h-full w-[800px] p-10">
+                {htmlArray.map((html, i) => (
+                    <Fragment key={i}>
+                        {
+                            html.startsWith('<script>') && html.endsWith('</script>') ? (
+                                <SavedChart chartData={html} />
+                            ) : (
+                                <SavedMarkdown content={html} />
+                            )
+                        }
+                    </Fragment>
+                ))}
+            </div>
+        </div>
     </div>
 }
