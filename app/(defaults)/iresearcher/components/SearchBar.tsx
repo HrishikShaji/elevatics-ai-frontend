@@ -22,7 +22,7 @@ export default function SearchBar() {
 
     return (
 
-        <div className="w-[800px]  bg-white flex-grow-0 absolute top-[40%] rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+        <div className="w-[90vw] sm:w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
             <form onSubmit={handleSubmit} className=" relative  flex items-center justify-center  ">
                 <input
                     value={input}
@@ -40,7 +40,7 @@ export default function SearchBar() {
             <AnimateHeight height={isSuccess ? 300 : 0} duration={300}>
                 <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
                     <span className="text-[#535353] ">Here are some suggestions</span>
-                    <div className="  w-full flex flex-col gap-1">
+                    <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
                         {data.map((recommendation: string, i: number) => (
                             <div
                                 onClick={() => handleRecommendation(recommendation)}

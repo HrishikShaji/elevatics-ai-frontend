@@ -62,9 +62,9 @@ export default function TopicSection() {
         <div
             className="flex flex-col  h-full sm:gap-5"
         >
-            <div className="flex">
+            <div className="flex flex-col sm:flex-row">
 
-                <div className="sm:w-[50%] w-full h-full  sm:h-full overflow-y-hidden px-28 pt-32">
+                <div className="sm:w-[50%] w-full h-full  sm:h-full overflow-y-hidden sm:px-28 p-5 sm:pt-32">
                     <div className="w-full justify-between flex relative items-center">
                         <div>
                             <h1 className="text-xl sm:text-3xl font-semibold w-full">
@@ -116,7 +116,7 @@ export default function TopicSection() {
                         Continue
                     </button>
                 </div>
-                <div className="w-full sm:w-[50%] h-full sm:h-full justify-center items-center flex p-10 px-28 text-white pt-24">
+                <div className="w-full sm:w-[50%] h-full sm:h-full justify-center items-center flex mb-5 sm:px-28 text-white p-5 sm:pt-24">
                     <div className="px-3 py-10 bg-black rounded-3xl w-full">
 
                         <div className="w-full h-[65vh] custom-scrollbar  pt-8 px-10 pr-20 overflow-y-auto">

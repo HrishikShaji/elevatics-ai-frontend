@@ -1,5 +1,6 @@
 import SearchBar from "./components/SearchBar";
 
 export default function Page() {
-    return (<div className="h-[70vh] flex w-full justify-center items-center"><SearchBar /></div>)
+    return (<div className='  h-screen flex flex-col items-center w-full '>
+        <div className='h-[300px] w-full'></div><SearchBar /></div>)
 }
