@@ -4,7 +4,8 @@ import React from 'react';
 
 const Page = () => {
 
-    return <div className='  h-screen flex items-center pt-[300px] justify-center w-full '>
+    return <div className='  h-screen flex flex-col items-center w-full '>
+        <div className='h-[300px] w-full'></div>
         <SearchBar />
         <SignInButton />
     </div>;
