@@ -37,11 +37,15 @@ export default function SavedInvestorReport({ name, report }: SavedInvestorRepor
     sliderData.unshift(firstArray)
 
     return (
-        <div className="h-full w-full pt-[10px] flex-col  flex justify-center items-end">
-            <Slider setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} items={sliderData} />
-            <div className="flex flex-col w-[calc(100vw_-_500px)] py-5  gap-5">
-                <div className="px-2 py-10 rounded-3xl bg-gray-100">
-                    <div className=" px-5 h-full ">
+        <div className=" h-[(100vh_-_40px)]  w-full   ">
+            <div className="w-full flex py-2 justify-center">
+                <div className="w-[800px]">
+                    <Slider setCurrentIndex={setCurrentIndex} currentIndex={currentIndex} items={sliderData} />
+                </div>
+            </div>
+            <div className="w-full flex justify-center custom-scrollbar overflow-y-auto max-h-[80vh]">
+                <div className="flex flex-col w-[800px]   ">
+                    <div className="px-2 py-10 rounded-3xl bg-gray-100">
                         <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className={style.markdown} key={currentIndex}>
                             {sliderData[currentIndex][1] as string}
                         </ReactMarkdown>
