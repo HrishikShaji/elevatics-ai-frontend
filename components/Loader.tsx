@@ -94,9 +94,11 @@ padding:0px 0px 0px 100px;
 const PhraseTypography = styled.h1`
   color: #000000;
   font-size: 24px;
+line-height:34px;
 
   @media (min-width: 1024px) {
-    font-size: 46px;
+line-height:56px;
+font-size: 46px;
   }
 `;
 

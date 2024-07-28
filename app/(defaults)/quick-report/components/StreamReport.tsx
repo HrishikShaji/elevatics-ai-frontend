@@ -51,7 +51,7 @@ export default function StreamReport({ reportId, setLineAdded, handleScroll, rep
 
     return (
         <div className="flex h-full flex-col items-end gap-5 py-10">
-            <div ref={reportRef} className="rounded-3xl bg-gray-100 h-full w-[800px] p-10">
+            <div ref={reportRef} className="rounded-3xl bg-gray-100 h-full w-[90vw] sm:w-[800px] p-10">
 
                 {htmlArray.map((html, i) => (
                     <Fragment key={i}>

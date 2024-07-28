@@ -111,7 +111,7 @@ export default function StreamChart({ chartData, onComplete }: StreamChartProps)
     return (
         <div className="w-full py-5  ">
             {chartObject ? (
-                <div className='  rounded-3xl overflow-hidden bg-white'>
+                <div className='  rounded-3xl overflow-x-auto bg-white'>
                     <Plot className="rounded-3xl" data={chartObject.data} layout={{ title: chartObject.layout.title, width: "100%" }} />
                 </div>
             ) : null}

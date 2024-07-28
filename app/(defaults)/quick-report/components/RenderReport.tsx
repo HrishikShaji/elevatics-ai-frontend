@@ -31,7 +31,7 @@ export default function RenderReport({ data, reportId }: RenderReportProps) {
     }
     return (
 
-        <div onScroll={onScroll} ref={containerRef} className="flex justify-center  max-h-[calc(100vh_-_40px)] overflow-y-auto" >
+        <div onScroll={onScroll} ref={containerRef} className="flex justify-center  max-h-[calc(100vh_-_40px)] overflow-y-auto custom-scrollbar" >
             <StreamReport reportId={reportId} setLineAdded={setLineAdded} handleScroll={handleScroll} report={data} />
         </div>
     )
