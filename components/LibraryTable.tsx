@@ -46,14 +46,10 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
 
     useEffect(() => {
         setInitialRecords2(() => {
-            return rowData.filter((item: any) => {
+            return rowData.filter((item: Report) => {
                 return (
                     item.name.toLowerCase().includes(search2.toLowerCase()) ||
-                    item.company.toLowerCase().includes(search2.toLowerCase()) ||
-                    item.age.toString().toLowerCase().includes(search2.toLowerCase()) ||
-                    item.dob.toLowerCase().includes(search2.toLowerCase()) ||
-                    item.email.toLowerCase().includes(search2.toLowerCase()) ||
-                    item.phone.toLowerCase().includes(search2.toLowerCase())
+                    item.reportType.toLowerCase().includes(search2.toLowerCase())
                 );
             });
         });
@@ -78,7 +74,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
     return (
         <>
 
-            <div className="panel mt-6">
+            <div className="p-10">
                 <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
                     <h5 className="text-lg font-semibold dark:text-white-light"></h5>
                     <div className="ltr:ml-auto rtl:mr-auto">
