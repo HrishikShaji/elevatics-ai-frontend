@@ -138,19 +138,22 @@ const Coder = () => {
             {initialSearch ? (
 
                 <div ref={chatContainerRef} id="chat-container" style={{ scrollbarGutter: "stable" }} className="custom-scrollbar  flex w-full justify-center  max-h-[80vh] overflow-y-auto  ">
-                    <div className='w-[800px] flex flex-col gap-4 py-10'>
+                    <div className='max-w-[800px] flex flex-col gap-4 py-10'>
                         {chatHistory.map((message, index) => (
-                            <div key={index} className={`flex ${message.role === 'user' ? "justify-end" : "justify-start"}`}>
+                            <div key={index} className={`flex ${message.role === 'user' ? "justify-end " : "w-[800px] justify-start"}`}>
                                 <div key={index} className={` px-10 rounded-lg ${message.role === 'user' ? 'py-4 bg-gray-200 rounded-t-3xl rounded-l-3xl ' : 'py-10 bg-gray-200 rounded-b-3xl rounded-r-3xl'}`}>
                                     <div className="markdown-content text-black">
                                         <ReactMarkdown
                                             children={message.content}
                                             components={{
                                                 code({ node, className, children, ...props }) {
+                                                    console.log(message.content)
                                                     const match = /language-(\w+)/.exec(className || '');
+                                                    console.log(match)
                                                     return match ? (
                                                         <SyntaxHighlighter
-                                                            customStyle={{ padding: "20px", borderRadius: "24px" }}
+                                                            useInlineStyles={true}
+                                                            customStyle={{ width: "700px", padding: "20px", borderRadius: "24px" }}
                                                             style={materialLight}
                                                             language={match[1]}
                                                             PreTag="div"
