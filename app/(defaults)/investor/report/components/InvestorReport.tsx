@@ -68,7 +68,7 @@ export default function InvestorReport() {
             </div>
             <div className="w-full flex justify-center custom-scrollbar overflow-x-hidden overflow-y-auto max-h-[80vh]">
                 <div className="flex flex-col w-full  items-center  ">
-                    <div className="px-2 py-10 rounded-3xl bg-gray-100 w-[90vw] sm:w-[800px]">
+                    <div className="px-10 py-10 rounded-3xl bg-gray-100 w-[90vw] sm:w-[800px]">
                         <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className={style.markdown} key={currentIndex}>
                             {sliderData[currentIndex][1] as string}
                         </ReactMarkdown>

@@ -17,6 +17,7 @@ type Chat = {
 
 const Coder = () => {
     const [userQuery, setUserQuery] = useState('');
+    const [initialSearch, setInitialSearch] = useState(false)
     const [chatHistory, setChatHistory] = useState<Chat[]>([]);
     const { agentModel } = useSettings();
     const [conversationId, setConverstionId] = useState("");
@@ -79,6 +80,7 @@ const Coder = () => {
 
     const sendMessage = async (e: FormEvent) => {
         e.preventDefault()
+        setInitialSearch(true)
         if (!userQuery.trim()) return;
 
         setStreamComplete(false);
@@ -132,9 +134,10 @@ const Coder = () => {
     };
 
     return (
-        <div className="h-[(100vh_-_40px)] flex flex-col">
-            <div className="container mx-auto  flex-grow flex flex-col items-center w-full ">
-                <div ref={chatContainerRef} id="chat-container" style={{ scrollbarGutter: "stable" }} className="custom-scrollbar  flex w-full justify-center min-h-[40vh] max-h-[80vh] overflow-y-auto mb-4 space-y-4">
+        <div style={{ gap: initialSearch ? "0px" : "20px", paddingTop: initialSearch ? "0px" : "200px" }} className="h-[(100vh_-_40px)] items-center w-full flex flex-col">
+            {initialSearch ? (
+
+                <div ref={chatContainerRef} id="chat-container" style={{ scrollbarGutter: "stable" }} className="custom-scrollbar  flex w-full justify-center  max-h-[80vh] overflow-y-auto  ">
                     <div className='w-[800px] flex flex-col gap-4 py-10'>
                         {chatHistory.map((message, index) => (
                             <div key={index} className={`flex ${message.role === 'user' ? "justify-end" : "justify-start"}`}>
@@ -167,23 +170,33 @@ const Coder = () => {
                         ))}
                     </div>
                 </div>
-                <div className="w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
-                    <form onSubmit={sendMessage} className=" relative  flex items-center justify-center  ">
-                        <input
-                            value={userQuery}
-                            onChange={(e) => setUserQuery(e.target.value)}
-                            placeholder="What's on your mind..."
-                            className="   pr-28  bg-white focus:outline-none p-4 w-full"
-                        />{" "}
+            ) : (
+                <>
 
-                        <button
-                            type='submit'
-                            className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
-                        >
-                            <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
-                        </button>
-                    </form>
-                </div>
+                    <h1 className="text-3xl font-semibold">
+                        Coder
+                    </h1>
+                    <h1 className="text-[#8282AD] text-center">
+                        Efficient code for you.
+                    </h1>
+                </>
+            )}
+            <div className="w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col mt-4">
+                <form onSubmit={sendMessage} className=" relative  flex items-center justify-center  ">
+                    <input
+                        value={userQuery}
+                        onChange={(e) => setUserQuery(e.target.value)}
+                        placeholder="What's on your mind..."
+                        className="   pr-28  bg-white focus:outline-none p-4 w-full"
+                    />{" "}
+
+                    <button
+                        type='submit'
+                        className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
+                    >
+                        <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
+                    </button>
+                </form>
             </div>
         </div>
     );
