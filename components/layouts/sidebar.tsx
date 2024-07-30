@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import IconCaretsDown from '@/components/icon/icon-carets-down';
 import IconCaretDown from '@/components/icon/icon-caret-down';
 import IconMenuChat from '@/components/icon/menu/icon-menu-chat';
+import { TbApps } from "react-icons/tb";
 import { usePathname } from 'next/navigation';
 import { getTranslation } from '@/i18n';
 import Image from 'next/image';
@@ -17,6 +18,7 @@ import SettingsModal from '../SettingsModal';
 import ProfileModal from '../ProfileModal';
 import IconLogout from '../icon/icon-logout';
 import { signOut, useSession } from 'next-auth/react';
+import { CiFolderOn } from "react-icons/ci";
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -73,12 +75,15 @@ const Sidebar = () => {
                 className={`sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] bg-white shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${semidark ? 'text-white-dark' : ''}`}
             >
                 <div className="h-full bg-white dark:bg-black">
-                    <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center justify-between pl-6 pr-4 pt-6">
                         <Link href="/" className="main-logo flex shrink-0 items-center">
-                            <Image width={1000} height={1000} className="ml-[5px] w-8 flex-none" src="/assets/compactLogo.png" alt="logo" />
+                            <Image width={1000} height={1000} className=" w-6 flex-none" src="/assets/compactLogo.png" alt="logo" />
+                            {/*
+
                             <span className="align-middle  text-2xl font-semibold ltr:ml-4.5 rtl:mr-1.5 dark:text-white-light lg:inline" >
                                 <Image className='w-28 ' width={762} height={274} src="/assets/ElevaticsAILogo.png" alt="logo" />
                             </span>
+                       */}
                         </Link>
 
                         <button
@@ -89,12 +94,13 @@ const Sidebar = () => {
                             <IconCaretsDown className="m-auto rotate-90" />
                         </button>
                     </div>
-                    <PerfectScrollbar className="relative h-[calc(100vh-80px)]">
+                    <PerfectScrollbar className=" relative h-[calc(100vh-80px)]">
                         <ul className="relative  space-y-0.5 p-4 py-0 font-semibold">
-                            <li className="menu nav-item">
+                            <li className="menu nav-item mt-10">
                                 <button type="button" className={`${currentMenu === 'agents' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('agents')}>
                                     <div className="flex items-center">
-                                        <VscRobot className="shrink-0 group-hover:!text-primary" />
+
+                                        <TbApps className="shrink-0 group-hover:!text-primary" />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t("Agents")}</span>
                                     </div>
 
@@ -133,14 +139,14 @@ const Sidebar = () => {
                                 <li className="nav-item">
                                     <Link href="/library" className="group">
                                         <div className="flex items-center">
-                                            <IconMenuChat className="shrink-0 group-hover:!text-primary" />
+                                            <CiFolderOn className="shrink-0 group-hover:!text-primary" />
                                             <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('Library')}</span>
                                         </div>
                                     </Link>
                                 </li>
                                 <ProfileModal />
                                 <SettingsModal />
-                                <div className="nav-item pt-[60vh]">
+                                <div className="nav-item pt-[53vh]">
                                     <button onClick={() => signOut()} className="group">
                                         <div className="flex items-center">
                                             <IconLogout className="shrink-0 group-hover:!text-primary -rotate-90" />

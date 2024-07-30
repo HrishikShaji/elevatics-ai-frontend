@@ -140,7 +140,7 @@ const Coder = () => {
                 <div ref={chatContainerRef} id="chat-container" style={{ scrollbarGutter: "stable" }} className="custom-scrollbar  flex w-full justify-center  max-h-[80vh] overflow-y-auto  ">
                     <div className='max-w-[800px] flex flex-col gap-4 py-10'>
                         {chatHistory.map((message, index) => (
-                            <div key={index} className={`flex ${message.role === 'user' ? "justify-end " : "w-[800px] justify-start"}`}>
+                            <div key={index} className={`flex ${message.role === 'user' ? "justify-end w-auto" : "w-[800px] justify-start"}`}>
                                 <div key={index} className={` px-10 rounded-lg ${message.role === 'user' ? 'py-4 bg-gray-200 rounded-t-3xl rounded-l-3xl ' : 'py-10 bg-gray-200 rounded-b-3xl rounded-r-3xl'}`}>
                                     <div className="markdown-content text-black">
                                         <ReactMarkdown

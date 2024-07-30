@@ -6,6 +6,7 @@ import IconPencil from "./icon/icon-pencil";
 import IconTrashLines from "./icon/icon-trash-lines";
 import { Report } from "@prisma/client";
 import useDeleteLibraryItem from "@/hooks/useDeleteLibraryItem";
+import { IoDocumentTextOutline } from "react-icons/io5";
 import DeleteReport from "./DeleteReport";
 import IconFile from "./icon/icon-file";
 import Link from "next/link";
@@ -88,6 +89,12 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                             records={recordsData2}
                             columns={[
                                 {
+                                    accessor: 'no',
+                                    title: "ID",
+                                    sortable: true,
+                                    render: (value, row) => <div>{row + 1}</div>,
+                                },
+                                {
                                     accessor: 'query',
                                     title: 'Query',
                                     sortable: true,
@@ -116,7 +123,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                                     render: ({ id }) => (
                                         <div className="mx-auto flex w-max items-center gap-2">
                                             <Link href={`${process.env.NEXT_PUBLIC_URL}/saved/${id}`}>
-                                                <IconFile />
+                                                <IoDocumentTextOutline size={20} />
                                             </Link>
                                             <IconPencil />
                                             <DeleteReport id={id} />

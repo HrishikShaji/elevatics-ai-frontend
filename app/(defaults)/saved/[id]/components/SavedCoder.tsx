@@ -41,7 +41,6 @@ const SavedCoder = ({ history, id }: SavedCoderProps) => {
         setReportId(id)
     }, [history, id]);
 
-    console.log(conversationId)
     const displayMessages = () => {
         // Scroll to the bottom of the chat container
         if (chatContainerRef.current) {
@@ -152,6 +151,7 @@ const SavedCoder = ({ history, id }: SavedCoderProps) => {
                                             components={{
                                                 code({ node, className, children, ...props }) {
                                                     const match = /language-(\w+)/.exec(className || '');
+                                                    console.log(message.content)
                                                     return match ? (
                                                         <SyntaxHighlighter
                                                             customStyle={{ padding: "20px", borderRadius: "24px" }}
