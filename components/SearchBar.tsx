@@ -1,6 +1,5 @@
 
 
-"use client";
 import { PiGraduationCap, PiRocketLaunchThin } from "react-icons/pi";
 import useSuggestions from "@/hooks/useSuggestions";
 import { useQuickReport } from "@/contexts/QuickReportContext";
@@ -10,7 +9,11 @@ import Spinner from "./Spinner";
 import AnimateHeight from "react-animate-height";
 import { useAccount } from "@/contexts/AccountContext";
 
-export default function SearchBar() {
+interface SearchBarProps {
+    handleClick: () => void;
+}
+
+export default function SearchBar({ handleClick }: SearchBarProps) {
     const { profile } = useAccount()
     const { setPrompt } = useQuickReport()
     const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
@@ -27,6 +30,7 @@ export default function SearchBar() {
         <div className="w-[90vw] sm:w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
             <form onSubmit={handleSubmit} className=" relative  flex items-center justify-center  ">
                 <input
+                    onClick={handleClick}
                     value={input}
                     onChange={handleChange}
                     placeholder="What's on your mind..."

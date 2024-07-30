@@ -11,7 +11,7 @@ import { AccountProvider } from '@/contexts/AccountContext';
 
 export const metadata: Metadata = {
     title: {
-        template: '%s | Elevatics',
+        template: 'Elevatics',
         default: 'Elevatics',
     },
 };

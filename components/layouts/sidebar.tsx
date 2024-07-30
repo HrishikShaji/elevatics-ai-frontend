@@ -19,6 +19,7 @@ import ProfileModal from '../ProfileModal';
 import IconLogout from '../icon/icon-logout';
 import { signOut, useSession } from 'next-auth/react';
 import { CiFolderOn } from "react-icons/ci";
+import IconHome from '../icon/icon-home';
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -96,7 +97,15 @@ const Sidebar = () => {
                     </div>
                     <PerfectScrollbar className=" relative h-[calc(100vh-80px)]">
                         <ul className="relative  space-y-0.5 p-4 py-0 font-semibold">
-                            <li className="menu nav-item mt-10">
+                            <li className="nav-item mt-10">
+                                <Link href="/" className="group">
+                                    <div className="flex items-center">
+                                        <IconHome className="shrink-0 group-hover:!text-primary" />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('Home')}</span>
+                                    </div>
+                                </Link>
+                            </li>
+                            <li className="menu nav-item ">
                                 <button type="button" className={`${currentMenu === 'agents' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('agents')}>
                                     <div className="flex items-center">
 

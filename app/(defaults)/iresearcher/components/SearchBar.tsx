@@ -1,30 +1,29 @@
 
-"use client"
-
-import { FormEvent, useState } from "react"
+import { ChangeEvent, FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useResearcher } from "@/contexts/ResearcherContext"
 import useSuggestions from "@/hooks/useSuggestions"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 
-export default function SearchBar() {
-    const { setPrompt } = useResearcher()
-    const router = useRouter()
+interface SearchBarProps {
+    handleClick: () => void;
+    input: string;
+    handleSubmit: (e: FormEvent) => void;
+    handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    data: string[];
+    handleRecommendation: (value: string) => void;
+    isSuccess: boolean;
+}
 
-
-    const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
-    function handleSubmit(e: FormEvent) {
-        e.preventDefault()
-        setPrompt(input)
-        router.push("/iresearcher/topics")
-    }
+export default function SearchBar({ data, handleRecommendation, isSuccess, handleClick, input, handleChange, handleSubmit }: SearchBarProps) {
 
     return (
 
         <div className="w-[90vw] sm:w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
             <form onSubmit={handleSubmit} className=" relative  flex items-center justify-center  ">
                 <input
+                    onClick={handleClick}
                     value={input}
                     onChange={handleChange}
                     placeholder="What's on your mind..."
