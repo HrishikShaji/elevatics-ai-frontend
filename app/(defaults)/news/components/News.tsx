@@ -21,6 +21,7 @@ export default function News() {
     const [streamComplete, setStreamComplete] = useState(false);
     const { mutate } = useSaveReport();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [initialSearch, setInitialSearch] = useState(false)
 
     useEffect(() => {
         if (scrollContainerRef.current) {
@@ -40,6 +41,7 @@ export default function News() {
 
     const submitForm = async (e: FormEvent) => {
         e.preventDefault();
+        setInitialSearch(true);
         setIsLoading(true);
         setReport('');
         setRenderedReport('');
@@ -94,24 +96,33 @@ export default function News() {
     };
 
     return (
-        <main className=" h-[calc(100vh_-_40px)]  flex flex-col gap-5 items-center pt-[200px] w-full transition-all duration-300">
-            <h1 className="text-3xl font-semibold">
-                News
-            </h1>
-            <h1 className="text-[#8282AD] text-center">
-                Everything from Internet.
-            </h1>
-            <div ref={scrollContainerRef} id="report-container" className=" custom-scrollbar py-10 flex justify-center max-h-[80vh] overflow-y-auto bg-white w-full">
-                {renderedReport && (
-                    <div className='w-[800px] bg-gray-200 rounded-3xl p-10 h-full'>
-                        <ReactMarkdown
-                            children={renderedReport}
-                        />
-                    </div>
-                )}
+        <div style={{ gap: initialSearch ? "0px" : "20px", paddingTop: initialSearch ? "0px" : "200px" }} className="h-[(100vh_-_40px)] items-center w-full flex flex-col">
+            {initialSearch ? (
 
-            </div>
-            <div className="w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+                <div ref={scrollContainerRef} id="chat-container" style={{ scrollbarGutter: "stable" }} className="custom-scrollbar  flex w-full justify-center  max-h-[80vh] overflow-y-auto  ">
+                    <div className='max-w-[800px] h-full flex flex-col gap-4 py-10'>
+                        {renderedReport && (
+                            <div className='w-[800px] bg-gray-200 rounded-3xl p-10 h-full'>
+                                <ReactMarkdown
+                                    children={renderedReport}
+                                />
+                            </div>
+                        )}
+
+                    </div>
+                </div>
+            ) : (
+                <>
+
+                    <h1 className="text-3xl font-semibold">
+                        News
+                    </h1>
+                    <h1 className="text-[#8282AD] text-center">
+                        Latest News for you.
+                    </h1>
+                </>
+            )}
+            <div className="w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col mt-4">
                 <form onSubmit={submitForm} className=" relative  flex items-center justify-center  ">
                     <input
                         value={query}
@@ -128,6 +139,6 @@ export default function News() {
                     </button>
                 </form>
             </div>
-        </main>
+        </div>
     );
 }
