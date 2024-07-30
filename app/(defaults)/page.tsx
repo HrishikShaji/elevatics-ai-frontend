@@ -4,8 +4,14 @@ import React from 'react';
 
 const Page = () => {
 
-    return <div className='  h-screen flex flex-col items-center w-full '>
-        <div className='h-[300px] w-full'></div>
+    return <div className="relative flex flex-col px-10 gap-5 items-center h-full pt-[200px] sm:pt-[200px] w-full">
+        <h1 className="text-3xl font-semibold">
+            Quick Search
+        </h1>
+        <h1 className="text-[#8282AD] text-center">
+            Efficiently Searches Everything.
+        </h1>
+
         <SearchBar />
         <SignInButton />
     </div>;
