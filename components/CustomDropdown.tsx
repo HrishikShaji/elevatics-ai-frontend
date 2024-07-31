@@ -11,12 +11,12 @@ interface CustomDropdownProps {
 export default function CustomDropdown({ label, value, options, onChange }: CustomDropdownProps) {
     return (
 
-        <div className="dropdown flex gap-5 items-center">
+        <div className=" flex gap-5 items-center">
             <h5 className="text-sm min-w-[100px]">{label}</h5>
             <Dropdown
                 offset={[0, 8]}
                 placement="bottom-start"
-                btnClassName="btn min-w-[150px] flex justify-between btn-outline-dark rounded-2xl btn-sm dropdown-toggle "
+                btnClassName=" min-w-[150px] flex justify-between p-2 border-[#6b7280] border-[1px] rounded-2xl   "
                 button={
                     <>
                         <h1>{value}</h1>
