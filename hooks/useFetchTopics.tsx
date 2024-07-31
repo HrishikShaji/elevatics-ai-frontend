@@ -1,5 +1,6 @@
 import { useResearcher } from "@/contexts/ResearcherContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { HFSPACE_TOKEN, TOPICS_URL } from "@/lib/endpoints";
 import { ResearcherTopicsResponse } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -7,13 +8,12 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 
 async function fetchNewTopics({ prompt, topicsNum, subTopicsNum }: { prompt: string, topicsNum: number, subTopicsNum: number }) {
-    const token = process.env.NEXT_PUBLIC_HFSPACE_TOKEN || "";
     const headers = {
-        Authorization: token,
+        Authorization: HFSPACE_TOKEN,
         "Content-Type": "application/json",
     };
     const response = await fetch(
-        "https://pvanand-generate-subtopics.hf.space/generate_topicsv2",
+        TOPICS_URL,
         {
             method: "POST",
             cache: "no-store",

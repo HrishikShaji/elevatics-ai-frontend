@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { useSettings } from '@/contexts/SettingsContext';
 import useSaveReport from '@/hooks/useSaveReport';
 import { PiRocketLaunchThin } from 'react-icons/pi';
+import { NEWS_ASSISTANT_API_KEY, NEWS_ASSISTANT_URL } from '@/lib/endpoints';
 
 type NewsItem = {
     query: string;
@@ -48,11 +49,11 @@ export default function News() {
         setStreamComplete(false)
 
         try {
-            const response = await fetch(process.env.NEXT_PUBLIC_NEWS_API_ENDPOINT || "", {
+            const response = await fetch(NEWS_ASSISTANT_URL, {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
-                    'X-API-KEY': process.env.NEXT_PUBLIC_NEWS_API_KEY || "",
+                    'X-API-KEY': NEWS_ASSISTANT_API_KEY,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({

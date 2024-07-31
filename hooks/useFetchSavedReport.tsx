@@ -1,10 +1,11 @@
 "use client"
 
+import { FETCH_SAVED_REPORT_URL } from "@/lib/endpoints"
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "next/navigation"
 
 async function fetchReportFromDatabase(id: string) {
-    const response = await fetch(`/api/report/${id}`, {
+    const response = await fetch(`${FETCH_SAVED_REPORT_URL}/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     })

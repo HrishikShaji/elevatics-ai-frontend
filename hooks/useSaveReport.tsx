@@ -1,3 +1,4 @@
+import { SAVE_REPORT_URL } from "@/lib/endpoints";
 import { ReportType } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -11,7 +12,7 @@ interface Props {
 async function saveReport({ reportId, reportType, report, name }: Props) {
     if (report) {
         try {
-            const response = await fetch("/api/report", {
+            const response = await fetch(SAVE_REPORT_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

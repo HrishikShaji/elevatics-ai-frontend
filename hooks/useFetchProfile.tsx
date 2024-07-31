@@ -1,11 +1,12 @@
 
 "use client"
 
+import { FETCH_PROFILE_URL } from "@/lib/endpoints"
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "next/navigation"
 
 async function fetchProfileFromDatabase() {
-    const response = await fetch(`/api/profile`, {
+    const response = await fetch(FETCH_PROFILE_URL, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     })

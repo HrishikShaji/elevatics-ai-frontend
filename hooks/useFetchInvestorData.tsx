@@ -1,15 +1,10 @@
-
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { INVESTOR_REPORT_URL } from '@/lib/endpoints';
 import { useMutation } from '@tanstack/react-query';
 
-interface InvestorDataResponse {
-    // Define the structure of your InvestorDataResponse here
-}
 
 
 async function fetchInvestor(formData: FormData) {
-    const response = await fetch("https://nithin1905-investor.hf.space/investor", {
+    const response = await fetch(INVESTOR_REPORT_URL, {
         method: "POST",
         body: formData,
     });

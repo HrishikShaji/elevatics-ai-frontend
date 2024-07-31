@@ -16,6 +16,7 @@ export default function Investor() {
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
+            setIsOpen(false)
             setFileName(event.target.files[0].name);
             setFile(event.target.files[0]);
         }

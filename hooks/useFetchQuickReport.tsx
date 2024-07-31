@@ -1,17 +1,17 @@
 import { useQuickReport } from '@/contexts/QuickReportContext';
 import { useSettings } from '@/contexts/SettingsContext';
+import { QUICK_REPORT_URL } from '@/lib/endpoints';
 import { ReportDataType } from '@/types/types';
 import { useQuery } from '@tanstack/react-query';
 
 
 
 async function generateQuickReport({ generateCharts, prompt, internet, dataFormat, outputFormat }: { generateCharts: boolean, prompt: string; internet: boolean; dataFormat: string; outputFormat: string }) {
-    const token = process.env.NEXT_PUBLIC_HFSPACE_TOKEN || "";
     const headers = {
         "Content-Type": "application/json",
     };
     const response = await fetch(
-        "https://pvanand-search-generate-staging.hf.space/generate_report",
+        QUICK_REPORT_URL,
         {
             method: "POST",
             cache: "no-store",

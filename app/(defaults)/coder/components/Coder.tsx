@@ -7,8 +7,7 @@ import { dark, dracula, oneLight, duotoneLight, gruvboxLight, materialLight } fr
 import useSaveReport from '@/hooks/useSaveReport';
 import { useSettings } from '@/contexts/SettingsContext';
 import { PiRocketLaunchThin } from 'react-icons/pi';
-import { Livvic } from 'next/font/google';
-import { lightfair } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { CODING_ASSISTANT_API_KEY, CODING_ASSISTANT_URL } from '@/lib/endpoints';
 
 type Chat = {
     content: string;
@@ -23,7 +22,6 @@ const Coder = () => {
     const [conversationId, setConverstionId] = useState("");
     const [userId, setUserId] = useState("");
     const chatContainerRef = useRef<HTMLDivElement>(null);
-    const apiKey = process.env.NEXT_PUBLIC_CODER_API_KEY;
     const [streamComplete, setStreamComplete] = useState(false);
     const [reportId, setReportId] = useState("");
 
@@ -88,11 +86,11 @@ const Coder = () => {
         setUserQuery('');
 
         try {
-            const response = await fetch('https://pvanand-general-chat.hf.space/coding-assistant', {
+            const response = await fetch(CODING_ASSISTANT_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-API-Key': apiKey || "",
+                    'X-API-Key': CODING_ASSISTANT_API_KEY || "",
                 },
                 body: JSON.stringify({
                     user_query: userQuery,

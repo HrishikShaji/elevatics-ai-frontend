@@ -1,9 +1,10 @@
 
+import { FETCH_LIBRARY_URL } from '@/lib/endpoints';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 const fetchLibrary = async ({ page, pageSize, reportType }: { page: number, pageSize: number, reportType: "QUICK" | "FULL" | "" }) => {
-    const response = await fetch(`/api/report?page=${page}&pageSize=${pageSize}&reportType=${reportType}`, {
+    const response = await fetch(`${FETCH_LIBRARY_URL}?page=${page}&pageSize=${pageSize}&reportType=${reportType}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });

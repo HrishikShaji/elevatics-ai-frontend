@@ -4,7 +4,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useResearcher } from "@/contexts/ResearcherContext";
 import MainTopic from "./MainTopic";
-import { RefObject } from "@fullcalendar/core/preact";
 import useSaveReport from "@/hooks/useSaveReport";
 import SliderTabs from "./SliderTabs";
 import { Loader } from "@/components/Loader";
@@ -12,21 +11,13 @@ import { reportLoadingSteps } from "@/lib/loadingStatements";
 import { marked } from "marked";
 import DownloadPdfButton from "@/app/(defaults)/quick-report/components/DownloadPdfButton";
 import ShareModal from "@/components/ShareModal";
-type Subtask = {
-    name: string;
-    prompt: string;
-};
-
-type OriginalData = {
-    [key: string]: Subtask[];
-};
-
+import { FULL_REPORT_URL } from "@/lib/endpoints";
 
 const fetchData = async ({ name, prompt }: { name: string, prompt: string }) => {
     const headers = {
         "Content-Type": "application/json",
     };
-    const response = await fetch("https://pvanand-search-generate-staging.hf.space/generate_report", {
+    const response = await fetch(FULL_REPORT_URL, {
         method: "POST",
         cache: "no-store",
         headers: headers,

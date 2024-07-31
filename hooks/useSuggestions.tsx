@@ -2,15 +2,15 @@
 import { ChangeEvent, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useDebounce from './useDebounce';
+import { HFSPACE_TOKEN, SUGGESTIONS_URL } from '@/lib/endpoints';
 
 async function fetchSuggestions(prompt: string) {
-    const token = process.env.NEXT_PUBLIC_HFSPACE_TOKEN || "";
     const headers = {
-        Authorization: token,
+        Authorization: HFSPACE_TOKEN,
         "Content-Type": "application/json",
     };
     const response = await fetch(
-        "https://pvanand-generate-subtopics.hf.space/get_recommendations",
+        SUGGESTIONS_URL,
         {
             method: "POST",
             headers: headers,

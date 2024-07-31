@@ -1,8 +1,9 @@
 
+import { DELETE_REPORT_URL } from '@/lib/endpoints';
 import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 
 async function deleteReport(id: string) {
-    const response = await fetch('/api/report', {
+    const response = await fetch(DELETE_REPORT_URL, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
