@@ -133,6 +133,9 @@ const Sidebar = () => {
                                             <Link href="/news">{t('News')}</Link>
                                         </li>
                                         <li>
+                                            <Link href="/search">{t('Search')}</Link>
+                                        </li>
+                                        <li>
                                             <Link href="/career">{t('Career')}</Link>
                                         </li>
                                         <li>
