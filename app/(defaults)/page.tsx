@@ -48,7 +48,7 @@ const Page = () => {
             </div>
         </> : null}
 
-        <div className={`${initialClick ? "pt-0" : "pt-[120px]"}`}>
+        <div className={`${initialClick ? "pt-0" : "pt-[120px]"} transition-all duration-500`}>
             <SearchBar handleClick={handleClick} isSuccess={isSuccess} input={input} handleRecommendation={handleRecommendation} handleSubmit={handleSubmit} handleChange={handleChange} data={data} />
         </div>
         <SignInButton />
