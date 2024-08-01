@@ -1,8 +1,5 @@
 
-import { ChangeEvent, FormEvent, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useResearcher } from "@/contexts/ResearcherContext"
-import useSuggestions from "@/hooks/useSuggestions"
+import { ChangeEvent, FormEvent } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 

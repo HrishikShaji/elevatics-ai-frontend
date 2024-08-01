@@ -40,7 +40,7 @@ export default function Page() {
             <div className="flex pt-[50px] flex-grow-0 gap-4 w-[800px]">
                 {suggestions.map((item, i) => (
 
-                    <div key={i} onClick={() => handleRecommendationClick(item)} className='cursor-pointer h-[150px] w-full rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
+                    <div key={i} onClick={() => handleRecommendationClick(item)} className='cursor-pointer h-[150px] transition duration-300 hover:-translate-y-3 w-full hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
                 ))}
             </div>
         </> : null}

@@ -1,32 +1,22 @@
 
-
-import { PiGraduationCap, PiRocketLaunchThin } from "react-icons/pi";
-import useSuggestions from "@/hooks/useSuggestions";
-import { useQuickReport } from "@/contexts/QuickReportContext";
-import { FormEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Spinner from "./Spinner";
-import AnimateHeight from "react-animate-height";
-import { useAccount } from "@/contexts/AccountContext";
+import { ChangeEvent, FormEvent } from "react"
+import { PiRocketLaunchThin } from "react-icons/pi"
+import AnimateHeight from "react-animate-height"
 
 interface SearchBarProps {
     handleClick: () => void;
+    input: string;
+    handleSubmit: (e: FormEvent) => void;
+    handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    data: string[];
+    handleRecommendation: (value: string) => void;
+    isSuccess: boolean;
 }
 
-export default function SearchBar({ handleClick }: SearchBarProps) {
-    const { profile } = useAccount()
-    const { setPrompt } = useQuickReport()
-    const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
-    const router = useRouter()
-
-
-    function handleSubmit(e: FormEvent) {
-        e.preventDefault()
-        setPrompt(input)
-        router.push("/quick-report")
-    }
+export default function SearchBar({ data, handleRecommendation, isSuccess, handleClick, input, handleChange, handleSubmit }: SearchBarProps) {
 
     return (
+
         <div className="w-[90vw] sm:w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
             <form onSubmit={handleSubmit} className=" relative  flex items-center justify-center  ">
                 <input
@@ -62,5 +52,5 @@ export default function SearchBar({ handleClick }: SearchBarProps) {
                 </div>
             </AnimateHeight>
         </div>
-    );
+    )
 }
