@@ -8,10 +8,10 @@ interface DeleteReportProps {
 export default function DeleteReport({ id }: DeleteReportProps) {
     const { mutate, isPending } = useDeleteLibraryItem()
     return (
-
-        <button onClick={() => mutate(id)}>
+        <button className="p-1 w-full text-left pl-4 hover:bg-gray-200"
+            onClick={() => mutate(id)}>
             {isPending ? "Deleting..." :
-                <IconTrashLines />}
+                "Delete"}
         </button>
     )
 }

@@ -7,6 +7,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import DeleteReport from "./DeleteReport";
 import Link from "next/link";
 import CustomDropdown from "./CustomDropdown";
+import LibraryActions from "@/app/(defaults)/library/components/LibraryActions";
 
 interface LibraryTableProps {
     rowData: Report[]
@@ -136,15 +137,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                                 accessor: 'action',
                                 title: 'Action',
                                 titleClassName: '!text-center',
-                                render: ({ id }) => (
-                                    <div className="mx-auto flex w-max items-center gap-2">
-                                        <Link href={`${process.env.NEXT_PUBLIC_URL}/saved/${id}`}>
-                                            <IoDocumentTextOutline size={20} />
-                                        </Link>
-                                        <IconPencil />
-                                        <DeleteReport id={id} />
-                                    </div>
-                                ),
+                                render: ({ id }) => <LibraryActions id={id} />,
                             },
                         ]}
                         totalRecords={initialRecords.length}

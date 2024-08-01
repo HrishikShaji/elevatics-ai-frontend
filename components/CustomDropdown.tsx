@@ -12,11 +12,13 @@ export default function CustomDropdown({ label, value, options, onChange }: Cust
     return (
 
         <div className=" flex gap-5 items-center">
-            <h5 className="text-sm min-w-[100px]">{label}</h5>
+            {label ?
+                <h5 className="text-sm min-w-[100px]">{label}</h5>
+                : null}
             <Dropdown
                 offset={[0, 8]}
-                placement="bottom-start"
-                btnClassName=" min-w-[150px] flex justify-between p-2 border-[#6b7280] border-[1px] rounded-2xl   "
+                placement="bottom-end"
+                btnClassName=" min-w-[150px] flex justify-between p-2 border-gray-300 border-[1px] rounded-md   "
                 button={
                     <>
                         <h1>{value}</h1>
@@ -26,11 +28,11 @@ export default function CustomDropdown({ label, value, options, onChange }: Cust
                     </>
                 }
             >
-                <ul className="!min-w-[150px] !shadow-gray-400 !shadow-3xl divide-y-2 !rounded-2xl !overflow-hidden !py-0 ">
+                <ul className="!min-w-[150px] !bg-white !shadow-gray-400 !shadow-3xl divide-y-2 !rounded-2xl !overflow-hidden !py-0 ">
                     {options.map((item, i) => (
 
                         <li key={i}>
-                            <button type="button" className="!pl-4  text-sm !py-1" onClick={() => onChange(item.value)}>{item.title}</button>
+                            <button type="button" className="!pl-4 hover:bg-gray-200 w-full text-left text-sm !py-1" onClick={() => onChange(item.value)}>{item.title}</button>
                         </li>
                     ))}
                 </ul>
