@@ -3,9 +3,7 @@
 
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useState } from 'react';
-import IconMenuChat from './icon/menu/icon-menu-chat';
 import { getTranslation } from '@/i18n';
-import IconSettings from './icon/icon-settings';
 import IconUser from './icon/icon-user';
 import { useAccount } from '@/contexts/AccountContext';
 import Image from 'next/image';
@@ -14,7 +12,6 @@ export default function ProfileModal() {
     const [modal, setModal] = useState(false);
     const { profile } = useAccount()
     const { t } = getTranslation();
-    console.log(profile)
     return (
         <>
             <li className="nav-item">
