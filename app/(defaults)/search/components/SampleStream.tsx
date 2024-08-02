@@ -67,28 +67,21 @@ export default function SampleStream() {
     useEffect(() => {
         fetchStreamData({ setStreamData, query, agentModel });
     }, [query, agentModel]);
-    const onResize = useCallback((target: HTMLDivElement) => {
-        console.log(target.clientHeight)
-    }, []);
-
-    const ref = useResizeObserver(onResize);
 
     const markdownContent = `${displayedText}<span></span>`;
     return (
         <AutoScrollWrapper>
-            <div ref={ref} className='w-[800px] bg-gray-100 rounded-3xl p-5'>
-                <ReactMarkdown
-                    rehypePlugins={[rehypeRaw]}
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                        span: ({ node, ...props }) => {
-                            return <span {...props} className={styles.cursor} ></span>
-                        },
-                    }}
-                >
-                    {markdownContent}
-                </ReactMarkdown>
-            </div>
+            <ReactMarkdown
+                rehypePlugins={[rehypeRaw]}
+                remarkPlugins={[remarkGfm]}
+                components={{
+                    span: ({ node, ...props }) => {
+                        return <span {...props} className={styles.cursor} ></span>
+                    },
+                }}
+            >
+                {markdownContent}
+            </ReactMarkdown>
         </AutoScrollWrapper>
     );
 }
