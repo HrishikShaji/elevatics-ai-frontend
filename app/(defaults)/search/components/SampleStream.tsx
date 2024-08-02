@@ -5,6 +5,8 @@ import { NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL } from '@/lib/endpoints';
 import { AgentModel } from '@/types/types';
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import ReactMarkdown from "react-markdown";
+import styles from "../../../../styles/cursor.module.css"
+import rehypeRaw from 'rehype-raw';
 
 const fetchStreamData = async ({ setStreamData, query, agentModel }: { setStreamData: Dispatch<SetStateAction<string>>; query: string; agentModel: AgentModel }) => {
     const response = await fetch(SEARCH_ASSISTANT_URL, {
@@ -63,11 +65,22 @@ export default function SampleStream() {
         fetchStreamData({ setStreamData, query, agentModel });
     }, [query, agentModel]);
 
+
+    const markdownContent = `${displayedText}<span></span>`;
     return (
-        <div className='p-10 w-[800px]'>
-            <ReactMarkdown>
-                {displayedText}
-            </ReactMarkdown>
+        <div className='flex p-10 w-[800px]'>
+            <div>
+                <ReactMarkdown
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                        span: ({ node, ...props }) => {
+                            return <span {...props} className={styles.cursor} ></span>
+                        },
+                    }}
+                >
+                    {markdownContent}
+                </ReactMarkdown>
+            </div>
         </div>
     );
 }

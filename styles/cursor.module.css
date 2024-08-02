@@ -1,0 +1,8 @@
+.cursor {
+  display: inline-block;
+  width: 5px;
+  height:15px;
+  background:black;
+  margin:0px 0px 0px 5px;
+}
+
