@@ -7,6 +7,9 @@ import { useSettings } from '@/contexts/SettingsContext';
 import { NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL } from '@/lib/endpoints';
 import TypedMarkdown from './TypedMarkdown';
 import AutoScrollWrapper from './AutoScrollWrapper';
+import AgentContainer from '@/components/agent/AgentContainer';
+import AgentOptionsContainer from '@/components/agent/AgentOptionsContainer';
+import AgentInputContainer from '@/components/agent/AgentInputContainer';
 
 
 type NewsItem = {
@@ -100,39 +103,46 @@ export default function SearchAgent() {
     };
 
     return (
-        <div style={{ gap: initialSearch ? "0px" : "20px", paddingTop: initialSearch ? "0px" : "200px" }} className="h-[(100vh_-_40px)] items-center w-full flex flex-col">
+        <AgentContainer>
+            <AgentOptionsContainer><div>options</div> <div>options</div></AgentOptionsContainer>
+
             {initialSearch ? (
                 <AutoScrollWrapper>
                     {renderedReport ?
-                        <TypedMarkdown text={renderedReport} />
+                        <div className='w-[800px] p-5  rounded-3xl bg-gray-200' >
+                            <TypedMarkdown text={renderedReport} />
+                        </div>
                         : null}
                 </AutoScrollWrapper>
             ) : (
-                <>
+                <div className='flex flex-col w-full items-center justify-center gap-10'>
                     <h1 className="text-3xl font-semibold">
                         Search
                     </h1>
                     <h1 className="text-[#8282AD] text-center">
                         Faster Efficient Search.
                     </h1>
-                </>
+                </div>
             )}
-            <div className="w-[800px]  bg-white flex-grow-0  rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col mt-4">
-                <form onSubmit={submitForm} className="relative flex items-center justify-center">
-                    <input
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="What's on your mind..."
-                        className="pr-28 bg-white focus:outline-none p-4 w-full"
-                    />{" "}
-                    <button
-                        type='submit'
-                        className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100 right-2"
-                    >
-                        <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
-                    </button>
-                </form>
-            </div>
-        </div>
+            <AgentInputContainer>
+
+                <div className="w-[800px]  bg-white   rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+                    <form onSubmit={submitForm} className="relative flex items-center justify-center">
+                        <input
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="What's on your mind..."
+                            className="pr-28 bg-white focus:outline-none p-4 w-full"
+                        />{" "}
+                        <button
+                            type='submit'
+                            className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100 right-2"
+                        >
+                            <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
+                        </button>
+                    </form>
+                </div>
+            </AgentInputContainer>
+        </AgentContainer>
     );
 }

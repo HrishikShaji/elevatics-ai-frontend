@@ -64,7 +64,6 @@ export default function TypedMarkdown({ text }: TypedMarkdownProps) {
             rehypePlugins={[rehypeRaw]}
             components={{
                 span: ({ node, ...props }) => {
-                    console.log(node, props)
                     if (props.className === "cursor") {
                         return <span {...props} className={styles.cursor}></span>;
                     }
