@@ -31,11 +31,12 @@ export default function useSuggestions() {
     const [input, setInput] = useState('');
     const debouncedValue = useDebounce(input, 1000);
     const queryClient = useQueryClient();
+    const [inputClick, setInputClick] = useState(false)
 
     const { data, isLoading, isSuccess, isFetching } = useQuery({
         queryKey: ["suggestions", debouncedValue],
         queryFn: () => fetchSuggestions(debouncedValue),
-        enabled: !!debouncedValue, // Only run the query if debouncedValue is not empty
+        enabled: !!debouncedValue,
     }
     );
 
@@ -47,11 +48,15 @@ export default function useSuggestions() {
     }
     );
 
+    function handleInputClick() {
+        setInputClick(true)
+    }
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
         setInput(e.target.value);
     }
 
     function handleRecommendation(prompt: string) {
+        handleInputClick();
         setInput(prompt);
         mutation.mutate(prompt);
     }
@@ -63,5 +68,7 @@ export default function useSuggestions() {
         handleRecommendation,
         handleChange,
         input,
+        handleInputClick,
+        inputClick
     };
 }

@@ -5,5 +5,5 @@ interface AgentInputContainerProps {
 }
 
 export default function AgentInputContainer({ children }: AgentInputContainerProps) {
-    return <div className="w-full flex justify-center h-20 items-center">{children}</div>
+    return <div className="w-full flex  justify-center h-20 items-start">{children}</div>
 }
