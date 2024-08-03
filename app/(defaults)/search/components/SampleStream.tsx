@@ -54,6 +54,7 @@ const fetchStreamData = async ({ setStreamData, query, agentModel }: { setStream
             const { done, value } = await reader.read();
             if (done) break;
             const chunk = decoder.decode(value, { stream: true });
+
             streamData += chunk;
             setStreamData(prev => `${prev}${chunk}`);
         }

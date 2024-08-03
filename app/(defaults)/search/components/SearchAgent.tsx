@@ -5,6 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import { PiRocketLaunchThin } from 'react-icons/pi';
 import { useSettings } from '@/contexts/SettingsContext';
 import { NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL } from '@/lib/endpoints';
+import TypedMarkdown from './TypedMarkdown';
+import AutoScrollWrapper from './AutoScrollWrapper';
 
 
 type NewsItem = {
@@ -100,18 +102,11 @@ export default function SearchAgent() {
     return (
         <div style={{ gap: initialSearch ? "0px" : "20px", paddingTop: initialSearch ? "0px" : "200px" }} className="h-[(100vh_-_40px)] items-center w-full flex flex-col">
             {initialSearch ? (
-                <div ref={containerRef} id="chat-container" style={{ scrollbarGutter: "stable" }} className="custom-scrollbar  flex w-full justify-center  max-h-[80vh] overflow-y-auto  ">
-                    <div ref={contentRef} className='max-w-[800px] h-full flex flex-col gap-4 py-10'>
-                        {renderedReport && (
-                            <div className='w-[800px] bg-gray-200 rounded-3xl p-10 h-full'>
-                                <ReactMarkdown
-                                    children={renderedReport}
-                                />
-                            </div>
-                        )}
-                    </div>
-                    <div ref={bottomRef} />
-                </div>
+                <AutoScrollWrapper>
+                    {renderedReport ?
+                        <TypedMarkdown text={renderedReport} />
+                        : null}
+                </AutoScrollWrapper>
             ) : (
                 <>
                     <h1 className="text-3xl font-semibold">

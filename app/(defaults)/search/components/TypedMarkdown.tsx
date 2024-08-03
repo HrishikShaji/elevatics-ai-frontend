@@ -1,13 +1,11 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from "react-markdown";
-import styles from "../../../../styles/cursor.module.css"
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-import useTypingEffect from '@/hooks/useTypingEffect';
-
+import styles from "../../../../styles/cursor.module.css";
+import { marked } from 'marked';
 
 const useTypewriter = (text: string, speed = 50) => {
     const [displayedText, setDisplayedText] = useState('');
@@ -32,17 +30,25 @@ interface TypedMarkdownProps {
 }
 
 export default function TypedMarkdown({ text }: TypedMarkdownProps) {
+    const displayedText = useTypewriter(text, 10);
+
+    const markdownWithCursor = `${displayedText} <span class="cursor"></span>`;
+
     return (
         <ReactMarkdown
-            rehypePlugins={[rehypeRaw]}
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
             components={{
                 span: ({ node, ...props }) => {
-                    return <span {...props} className={styles.cursor} ></span>
+                    console.log(node, props)
+                    if (props.className === "cursor") {
+                        return <span {...props} className={styles.cursor}></span>;
+                    }
+                    return <span {...props}></span>;
                 },
             }}
         >
-            {text}
+            {markdownWithCursor}
         </ReactMarkdown>
     );
 }
