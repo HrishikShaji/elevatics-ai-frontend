@@ -12,6 +12,7 @@ import AgentOptionsContainer from '@/components/agent/AgentOptionsContainer';
 import AgentInputContainer from '@/components/agent/AgentInputContainer';
 
 
+const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 type NewsItem = {
     query: string;
     report: string;
@@ -26,25 +27,11 @@ export default function SearchAgent() {
     const [renderedReport, setRenderedReport] = useState('');
     const [streamComplete, setStreamComplete] = useState(false);
     const [initialSearch, setInitialSearch] = useState(false)
-    const contentRef = useRef<HTMLDivElement>(null)
-    const bottomRef = useRef<HTMLDivElement>(null)
-    const [contentHeight, setContentHeight] = useState(0);
-    const containerRef = useRef<HTMLDivElement>(null)
+    const [inputClick, setInputClick] = useState(false)
 
-    const scrollToBottom = () => {
-        containerRef.current?.scrollTo({ left: 0, top: containerRef.current.clientHeight, behavior: "smooth" });
-    };
-
-    useEffect(() => {
-        if (contentRef.current) {
-            const currentHeight = contentRef.current.clientHeight;
-            if (currentHeight !== contentHeight) {
-                console.log("ran")
-                setContentHeight(currentHeight);
-                scrollToBottom();
-            }
-        }
-    }, [renderedReport, contentHeight]);
+    function handleInputClick() {
+        setInputClick(true)
+    }
 
     const submitForm = async (e: FormEvent) => {
         e.preventDefault();
@@ -115,20 +102,30 @@ export default function SearchAgent() {
                         : null}
                 </AutoScrollWrapper>
             ) : (
-                <div className='flex flex-col w-full items-center justify-center gap-10'>
+                <div className='flex flex-col w-full pt-[200px]  items-center justify-center gap-5'>
                     <h1 className="text-3xl font-semibold">
                         Search
                     </h1>
                     <h1 className="text-[#8282AD] text-center">
                         Faster Efficient Search.
                     </h1>
+                    {!inputClick
+                        ?
+                        < div className="flex  gap-4 w-[800px] pb-[120px]">
+                            {suggestions.map((item, i) => (
+                                <div key={i} className='cursor-pointer h-[150px] transition duration-300 hover:-translate-y-3 w-full hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
+                            ))}
+                        </div>
+                        : null}
                 </div>
-            )}
+            )
+            }
             <AgentInputContainer>
 
                 <div className="w-[800px]  bg-white   rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
                     <form onSubmit={submitForm} className="relative flex items-center justify-center">
                         <input
+                            onClick={handleInputClick}
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="What's on your mind..."
@@ -143,6 +140,6 @@ export default function SearchAgent() {
                     </form>
                 </div>
             </AgentInputContainer>
-        </AgentContainer>
+        </AgentContainer >
     );
 }
