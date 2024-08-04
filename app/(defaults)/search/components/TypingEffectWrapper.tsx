@@ -8,7 +8,7 @@ interface TypingEffectWrapperProps {
 }
 
 export default function TypingEffectWrapper({ text, onUpdate }: TypingEffectWrapperProps) {
-    const typedContent = useTypingEffect({ text: text, speed: 10, onUpdate });
+    const typedContent = useTypingEffect({ text: text, speed: 10 });
     //const newContent = useTypingEffectTwo({ text: text, onUpdate: onUpdate })
 
     return <ReactMarkdown>{typedContent}</ReactMarkdown>;
