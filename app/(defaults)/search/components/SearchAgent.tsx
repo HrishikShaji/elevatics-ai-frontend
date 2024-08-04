@@ -11,8 +11,11 @@ import AgentInputContainer from '@/components/agent/AgentInputContainer';
 import AgentIntro from '@/components/agent/AgentIntro';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
 import useSuggestions from '@/hooks/useSuggestions';
-import { Chat } from '@/types/types';
+import { AgentModel, Chat } from '@/types/types';
 import AgentChats from '@/components/agent/AgentChats';
+import AgentLeftOptions from '@/components/agent/AgentLeftOptions';
+import AgentRightOptions from '@/components/agent/AgentRightOptions';
+import AgentSelect from '@/components/agent/AgentSelect';
 
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
@@ -24,6 +27,7 @@ export default function SearchAgent() {
     const [initialSearch, setInitialSearch] = useState(false);
     const controllerRef = useRef<AbortController | null>(null)
     const [disableSuggestions, setDisableSuggestions] = useState(false)
+    const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
 
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
 
@@ -48,7 +52,7 @@ export default function SearchAgent() {
 
         const controller = new AbortController();
         controllerRef.current = controller;
-
+        console.log(selectedAgent)
         try {
             const response = await fetch(SEARCH_ASSISTANT_URL, {
                 method: 'POST',
@@ -59,7 +63,7 @@ export default function SearchAgent() {
                 },
                 body: JSON.stringify({
                     query: input,
-                    model_id: agentModel
+                    model_id: selectedAgent
                 }),
                 signal: controller.signal
             });
@@ -101,12 +105,12 @@ export default function SearchAgent() {
 
     return (
         <AgentContainer>
-            <AgentOptionsContainer>
-                <div>options</div>
+            <AgentLeftOptions><AgentSelect selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} /></AgentLeftOptions>
+            <AgentRightOptions>
                 <div>options</div>
                 {!streamComplete ?
                     <button onClick={handleCancel}>Cancel</button> : null}
-            </AgentOptionsContainer>
+            </AgentRightOptions>
 
             {initialSearch ? (
                 <AutoScrollWrapper>

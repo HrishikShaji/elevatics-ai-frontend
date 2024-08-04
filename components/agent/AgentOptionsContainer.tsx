@@ -5,5 +5,5 @@ interface AgentOptionsContainer {
 }
 
 export default function AgentOptionsContainer({ children }: AgentOptionsContainer) {
-    return <div className="flex w-full h-20 items-center justify-between px-10">{children}</div>
+    return <div className="flex absolute top-0 w-full h-20 items-center justify-between px-10">{children}</div>
 }

@@ -9,6 +9,11 @@ interface CustomDropdownProps {
 }
 
 export default function CustomDropdown({ label, value, options, onChange }: CustomDropdownProps) {
+    function getCurrentTitle() {
+        const selectedItem = options.find(item => item.value === value)
+
+        return selectedItem?.title ? selectedItem.title : ""
+    }
     return (
 
         <div className=" flex gap-5 items-center">
@@ -21,7 +26,7 @@ export default function CustomDropdown({ label, value, options, onChange }: Cust
                 btnClassName=" min-w-[150px] flex justify-between p-2 border-gray-300 border-[1px] rounded-md   "
                 button={
                     <>
-                        <h1>{value}</h1>
+                        <h1>{getCurrentTitle()}</h1>
                         <span>
                             <IconCaretDown className="inline-block ltr:ml-1 rtl:mr-1 " />
                         </span>

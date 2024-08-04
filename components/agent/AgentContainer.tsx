@@ -5,5 +5,5 @@ interface AgentContainerProps {
 }
 
 export default function AgentContainer({ children }: AgentContainerProps) {
-    return <div className="h-screen w-full flex flex-col">{children}</div>
+    return <div className="relative h-screen w-full flex flex-col">{children}</div>
 }
