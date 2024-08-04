@@ -24,7 +24,7 @@ export default function AutoScrollWrapper({ children }: AutoScrollWrapperProps) 
 
 
     return (
-        <div ref={containerRef} className="custom-scrollbar  w-full flex justify-center  max-h-[50vh] overflow-y-auto">
+        <div ref={containerRef} className="custom-scrollbar  w-full flex justify-center  min-h-[40vh] max-h-[calc(100vh_-_160px)] overflow-y-auto">
             <div ref={ref} className='h-fit pb-5'>
                 {children}
             </div>

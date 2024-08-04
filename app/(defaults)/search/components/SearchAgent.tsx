@@ -11,11 +11,9 @@ import AgentInputContainer from '@/components/agent/AgentInputContainer';
 import AgentIntro from '@/components/agent/AgentIntro';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
 import useSuggestions from '@/hooks/useSuggestions';
+import { Chat } from '@/types/types';
+import AgentChats from '@/components/agent/AgentChats';
 
-type Chat = {
-    content: string;
-    role: "assistant" | "user";
-}
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
@@ -110,10 +108,8 @@ export default function SearchAgent() {
 
             {initialSearch ? (
                 <AutoScrollWrapper>
-                    <div className='w-[800px] p-5 flex flex-col gap-2 bg-gray-200' >
-                        {chatHistory.map((chat, i) => (
-                            <TypedMarkdown text={chat.content} key={i} />
-                        ))}
+                    <div className='w-[800px] p-5 flex flex-col gap-2 ' >
+                        {chatHistory.map((chat, i) => (<AgentChats key={i} chat={chat} />))}
                     </div>
                 </AutoScrollWrapper>
             ) : (

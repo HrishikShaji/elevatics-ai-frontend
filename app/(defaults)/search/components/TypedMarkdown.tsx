@@ -30,7 +30,7 @@ interface TypedMarkdownProps {
 }
 
 export default function TypedMarkdown({ text }: TypedMarkdownProps) {
-    const newContent = useTyping(text, .1)
+    const newContent = useTyping(text, 1)
 
     const markdownWithCursor = `${newContent} <span class="cursor"></span>`;
 

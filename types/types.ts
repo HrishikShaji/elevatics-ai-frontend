@@ -69,3 +69,10 @@ export type AgentModel = "meta-llama/llama-3-70b-instruct" |
     "openai/gpt-3.5-turbo-instruct" |
     "qwen/qwen-72b-chat" |
     "google/gemma-2-27b-it"
+
+
+
+export type Chat = {
+    content: string;
+    role: "assistant" | "user";
+}

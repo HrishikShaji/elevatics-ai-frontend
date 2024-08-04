@@ -11,13 +11,15 @@ interface AgentIntroProps {
 export default function AgentIntro({ hasClicked, handleSuggestionsClick, title, subTitle, suggestions }: AgentIntroProps) {
     return (
 
-        <div className='flex flex-col w-full pt-[200px]  items-center justify-center gap-5'>
-            <h1 className="text-3xl font-semibold">
-                {title}
-            </h1>
-            <h1 className="text-[#8282AD] text-center">
-                {subTitle}
-            </h1>
+        <div className='flex flex-col w-full   items-center justify-center gap-5'>
+            <div className="h-[40vh] flex flex-col items-center justify-center">
+                <h1 className="text-3xl font-semibold">
+                    {title}
+                </h1>
+                <h1 className="text-[#8282AD] text-center">
+                    {subTitle}
+                </h1>
+            </div>
             <AnimateHeight height={hasClicked ? 0 : 300} duration={500}>
                 < div className="flex  gap-4 w-[800px] pt-10">
                     {suggestions.map((item, i) => (
