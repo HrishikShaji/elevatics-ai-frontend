@@ -23,6 +23,7 @@ export default function SearchAgent() {
     const [streamComplete, setStreamComplete] = useState(false);
     const [initialSearch, setInitialSearch] = useState(false);
     const controllerRef = useRef<AbortController | null>(null)
+    const [disableSuggestions, setDisableSuggestions] = useState(false)
 
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
 
@@ -39,6 +40,7 @@ export default function SearchAgent() {
     };
     const submitForm = async (e: FormEvent) => {
         e.preventDefault();
+        setDisableSuggestions(true)
         setInitialSearch(true);
         setStreamComplete(false);
         addMessage({ role: "user", content: input })
@@ -116,7 +118,7 @@ export default function SearchAgent() {
                 <AgentIntro suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendation} title='Search' subTitle='Faster Efficient Search' />
             )}
             <AgentInputContainer>
-                <AgentSearchBar handleChange={handleChange} data={data} isSuccess={isSuccess} handleSubmit={submitForm} input={input} handleRecommendation={handleRecommendation} handleClick={handleInputClick} />
+                <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} isSuccess={isSuccess} handleSubmit={submitForm} input={input} handleRecommendation={handleRecommendation} handleClick={handleInputClick} />
             </AgentInputContainer>
         </AgentContainer>
     );
