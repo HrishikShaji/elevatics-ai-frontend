@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import styles from "../../../../styles/cursor.module.css";
-import { marked } from 'marked';
 
 const useTyping = (text: string, delay = 10) => {
     const [currentText, setCurrentText] = useState('');
@@ -25,36 +24,13 @@ const useTyping = (text: string, delay = 10) => {
 }
 
 
-const useTypewriter = (text: string, speed = 50) => {
-    const [displayedText, setDisplayedText] = useState('');
-    const [position, setPosition] = useState(0);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-    useEffect(() => {
-        if (position >= text.length) return;
-
-        intervalRef.current = setInterval(() => {
-            setDisplayedText((prev) => prev + text[position]);
-            setPosition((prev) => prev + 1);
-        }, speed);
-
-        return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
-        };
-    }, [text, position, speed]);
-
-    return displayedText;
-};
 
 interface TypedMarkdownProps {
     text: string;
 }
 
 export default function TypedMarkdown({ text }: TypedMarkdownProps) {
-    const displayedText = useTypewriter(text, 1);
-    const newContent = useTyping(text, 1)
+    const newContent = useTyping(text, .1)
 
     const markdownWithCursor = `${newContent} <span class="cursor"></span>`;
 

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import React, { FormEvent, useRef, useState } from 'react';
 import { useSettings } from '@/contexts/SettingsContext';
 import { NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL } from '@/lib/endpoints';
 import TypedMarkdown from './TypedMarkdown';
@@ -21,29 +21,35 @@ const suggestions = ["Find the Latest research about AI", "What is high-yield sa
 
 export default function SearchAgent() {
     const { agentModel } = useSettings();
-    const [query, setQuery] = useState('');
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
-    const [report, setReport] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [renderedReport, setRenderedReport] = useState('');
     const [streamComplete, setStreamComplete] = useState(false);
-    const [initialSearch, setInitialSearch] = useState(false)
+    const [initialSearch, setInitialSearch] = useState(false);
+    const controllerRef = useRef<AbortController | null>(null)
 
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
 
-
+    const addMessage = ({ role, content }: { role: "user" | "assistant", content: string }) => {
+        setChatHistory((prevChatHistory) => {
+            if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
+                const updatedChatHistory = [...prevChatHistory];
+                updatedChatHistory[updatedChatHistory.length - 1].content = content;
+                return updatedChatHistory;
+            } else {
+                return [...prevChatHistory, { role, content }];
+            }
+        });
+    };
     const submitForm = async (e: FormEvent) => {
         e.preventDefault();
         setInitialSearch(true);
-        setIsLoading(true);
-        setReport('');
-        setQuery(input);
+        setStreamComplete(false);
+        addMessage({ role: "user", content: input })
         reset();
-        setStreamComplete(false)
-        setChatHistory(prev => [...prev, { role: "user", content: input }])
+
+        const controller = new AbortController();
+        controllerRef.current = controller;
 
         try {
-            console.log("query:", query, "input:", input)
             const response = await fetch(SEARCH_ASSISTANT_URL, {
                 method: 'POST',
                 headers: {
@@ -54,7 +60,8 @@ export default function SearchAgent() {
                 body: JSON.stringify({
                     query: input,
                     model_id: agentModel
-                })
+                }),
+                signal: controller.signal
             });
 
             if (!response.ok) {
@@ -64,51 +71,57 @@ export default function SearchAgent() {
             if (response.body) {
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                let chunks = '';
+                let assistantResponse = '';
+                let lastUpdateTime = Date.now();
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    chunks += chunk;
-                    setReport((prev) => prev + chunk);
-                    setRenderedReport(chunks);
-                    setIsLoading(false);
-                }
+                    const chunk = decoder.decode(value);
+                    assistantResponse += chunk;
 
-                setChatHistory(prev => [...prev, { role: "assistant", content: chunks }])
+                    if (Date.now() - lastUpdateTime > 100 || done) {
+                        addMessage({ role: 'assistant', content: assistantResponse });
+                        lastUpdateTime = Date.now();
+                    }
+                }
             }
         } catch (error) {
-            setRenderedReport('An error occurred while fetching the report.');
+            addMessage({ role: "assistant", content: "Oops." })
         } finally {
             setStreamComplete(true);
         }
     };
 
+    const handleCancel = () => {
+        if (controllerRef.current) {
+            controllerRef.current.abort();
+        }
+    };
 
     return (
         <AgentContainer>
-            <AgentOptionsContainer><div>options</div><h1>{isLoading ? "loading..." : "done"}</h1> <div>options</div></AgentOptionsContainer>
+            <AgentOptionsContainer>
+                <div>options</div>
+                <div>options</div>
+                {!streamComplete ?
+                    <button onClick={handleCancel}>Cancel</button> : null}
+            </AgentOptionsContainer>
 
             {initialSearch ? (
                 <AutoScrollWrapper>
-
-                    {!isLoading ?
-                        <div className='w-[800px] p-5 flex flex-col gap-2 bg-gray-200' >
-                            {chatHistory.map((chat, i) => (
-                                <TypedMarkdown text={chat.content} key={i} />
-                            )
-                            )}
-                        </div>
-                        : null}
+                    <div className='w-[800px] p-5 flex flex-col gap-2 bg-gray-200' >
+                        {chatHistory.map((chat, i) => (
+                            <TypedMarkdown text={chat.content} key={i} />
+                        ))}
+                    </div>
                 </AutoScrollWrapper>
             ) : (
                 <AgentIntro suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendation} title='Search' subTitle='Faster Efficient Search' />
-            )
-            }
+            )}
             <AgentInputContainer>
                 <AgentSearchBar handleChange={handleChange} data={data} isSuccess={isSuccess} handleSubmit={submitForm} input={input} handleRecommendation={handleRecommendation} handleClick={handleInputClick} />
             </AgentInputContainer>
-        </AgentContainer >
+        </AgentContainer>
     );
 }
