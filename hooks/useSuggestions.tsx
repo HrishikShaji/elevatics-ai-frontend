@@ -48,6 +48,10 @@ export default function useSuggestions() {
     }
     );
 
+    function reset() {
+        setInput("")
+    }
+
     function handleInputClick() {
         setInputClick(true)
     }
@@ -69,6 +73,7 @@ export default function useSuggestions() {
         handleChange,
         input,
         handleInputClick,
-        inputClick
+        inputClick,
+        reset
     };
 }
