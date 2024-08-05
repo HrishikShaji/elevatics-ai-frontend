@@ -6,6 +6,7 @@ import SavedFullReport from "./SavedFullReport"
 import SavedInvestorReport from "./SavedInvestorReport"
 import SavedCoder from "./SavedCoder"
 import SavedNews from "./SavedNews"
+import SavedSearch from "./SavedSearch"
 
 export default function SavedReport() {
     const { data, isLoading } = useFetchSavedReport()
@@ -16,5 +17,6 @@ export default function SavedReport() {
         {data.reportType === "INVESTOR" ? <SavedInvestorReport name={data.name} report={data.data} /> : null}
         {data.reportType === "CODE" ? <SavedCoder id={data.id} history={data.data} /> : null}
         {data.reportType === "NEWS" ? <SavedNews name={data.name} report={data.data} /> : null}
+        {data.reportType === "SEARCH" ? <SavedSearch id={data.id} history={data.data} /> : null}
     </div>
 }

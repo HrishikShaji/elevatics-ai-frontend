@@ -1,8 +1,8 @@
+
 "use client"
 
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL } from '@/lib/endpoints';
-import AutoScrollWrapper from './AutoScrollWrapper';
 import AgentContainer from '@/components/agent/AgentContainer';
 import AgentInputContainer from '@/components/agent/AgentInputContainer';
 import AgentIntro from '@/components/agent/AgentIntro';
@@ -14,16 +14,21 @@ import AgentLeftOptions from '@/components/agent/AgentLeftOptions';
 import AgentRightOptions from '@/components/agent/AgentRightOptions';
 import AgentSelect from '@/components/agent/AgentSelect';
 import useSaveReport from '@/hooks/useSaveReport';
+import AutoScrollWrapper from '@/app/(defaults)/search/components/AutoScrollWrapper';
 
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
-export default function SearchAgent() {
+interface SavedSearchProps {
+    history: string;
+    id: string;
+}
+export default function SavedSearch({ history, id }: SavedSearchProps) {
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
     const [streamComplete, setStreamComplete] = useState(false);
     const [initialSearch, setInitialSearch] = useState(false);
     const controllerRef = useRef<AbortController | null>(null)
-    const [disableSuggestions, setDisableSuggestions] = useState(false)
+    const [disableSuggestions, setDisableSuggestions] = useState(true)
     const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
     const [reportId, setReportId] = useState("");
     const [conversationId, setConversationId] = useState("")
@@ -34,9 +39,12 @@ export default function SearchAgent() {
     const { mutate, isSuccess: isReportSaveSuccess, data: savedReport } = useSaveReport();
 
     useEffect(() => {
-        const conversationId = Date.now().toString();
-        setConversationId(conversationId);
-    }, []);
+        const parsedData = JSON.parse(history)
+        setChatHistory(parsedData.chatHistory)
+        setConversationId(parsedData.conversationId);
+        setReportId(id)
+        setInitialSearch(true)
+    }, [history, id]);
 
 
     useEffect(() => {
