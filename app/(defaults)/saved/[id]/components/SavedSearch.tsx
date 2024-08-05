@@ -58,8 +58,8 @@ export default function SavedSearch({ history, id }: SavedSearchProps) {
     useEffect(() => {
         if (streamComplete) {
             mutate({
-                name: chatHistory[0].content,
-                report: JSON.stringify({ chatHistory: chatHistory, conversationId: conversationId }),
+                name: prevHistory[0].content,
+                report: JSON.stringify({ chatHistory: [...prevHistory, ...chatHistory], conversationId: conversationId }),
                 reportId: reportId,
                 reportType: "SEARCH"
             });
