@@ -56,6 +56,7 @@ FULL
 CODE
 INVESTOR
 NEWS
+SEARCH
 }
 
 model User {

@@ -8,6 +8,7 @@ import DeleteReport from "./DeleteReport";
 import Link from "next/link";
 import CustomDropdown from "./CustomDropdown";
 import LibraryActions from "@/app/(defaults)/library/components/LibraryActions";
+import { current } from "@reduxjs/toolkit";
 
 interface LibraryTableProps {
     rowData: Report[]
@@ -15,7 +16,7 @@ interface LibraryTableProps {
 
 export default function LibraryTable({ rowData }: LibraryTableProps) {
     const [isMounted, setIsMounted] = useState(false);
-    const [currentType, setCurrentType] = useState("");
+    const [currentType, setCurrentType] = useState("ALL");
 
     useEffect(() => {
         setIsMounted(true);
@@ -23,13 +24,14 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
 
     const PAGE_SIZES = [10, 20, 30, 50, 100];
 
-    const typeOptions: { title: string, value: ReportType | "" }[] = [
-        { title: "All", value: "" },
+    const typeOptions: { title: string, value: ReportType | "ALL" }[] = [
+        { title: "All", value: "ALL" },
         { title: "Quick", value: "QUICK" },
         { title: "Full", value: "FULL" },
         { title: "Investor", value: "INVESTOR" },
         { title: "News", value: "NEWS" },
-        { title: "Code", value: "CODE" }
+        { title: "Code", value: "CODE" },
+        { title: "Search", value: "SEARCH" }
     ];
 
     function getValue(value: string | number) {
@@ -70,7 +72,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
         setInitialRecords(() => {
             return rowData.filter((item: Report) => {
                 const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
-                const matchesType = currentType === '' || item.reportType === currentType;
+                const matchesType = currentType === 'ALL' || item.reportType === currentType;
                 return matchesSearch && matchesType;
             });
         });
@@ -95,7 +97,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
         <div className="p-10">
             <div className="mb-5 flex flex-col gap-5 md:flex-row justify-end md:items-center">
                 <div className="ltr:ml-auto flex items-center gap-5 rtl:mr-auto">
-                    <CustomDropdown label="" options={typeOptions} value={getValue(currentType)} onChange={typeChange} />
+                    <CustomDropdown label="" options={typeOptions} value={currentType} onChange={typeChange} />
                     <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
             </div>
