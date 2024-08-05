@@ -78,7 +78,7 @@ export default function SampleStream() {
 
     return (
         <>
-            <TypedMarkdown text={streamData} />
+            <TypedMarkdown disableTyping={false} text={streamData} />
             <button onClick={() => setClick(true)}>click</button>
             {click ? <ReactMarkdown>{data}</ReactMarkdown> : null}
         </>
