@@ -138,7 +138,7 @@ export default function SearchAgent() {
             {initialSearch ? (
                 <AutoScrollWrapper>
                     <div className='w-[800px] p-5 flex flex-col gap-2 ' >
-                        {chatHistory.map((chat, i) => (<AgentChats key={i} chat={chat} />))}
+                        {chatHistory.map((chat, i) => (<AgentChats disableTyping={false} key={i} chat={chat} />))}
                     </div>
                 </AutoScrollWrapper>
             ) : (

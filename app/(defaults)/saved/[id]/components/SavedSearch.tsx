@@ -24,7 +24,8 @@ interface SavedSearchProps {
     id: string;
 }
 export default function SavedSearch({ history, id }: SavedSearchProps) {
-    const [chatHistory, setChatHistory] = useState<Chat[]>([])
+    const [chatHistory, setChatHistory] = useState<Chat[]>([]);
+    const [prevHistory, setPrevHistory] = useState<Chat[]>([]);
     const [streamComplete, setStreamComplete] = useState(false);
     const [initialSearch, setInitialSearch] = useState(false);
     const controllerRef = useRef<AbortController | null>(null)
@@ -32,6 +33,7 @@ export default function SavedSearch({ history, id }: SavedSearchProps) {
     const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
     const [reportId, setReportId] = useState("");
     const [conversationId, setConversationId] = useState("")
+    const [disableTyping, setDisableTyping] = useState(true)
 
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
 
@@ -40,7 +42,7 @@ export default function SavedSearch({ history, id }: SavedSearchProps) {
 
     useEffect(() => {
         const parsedData = JSON.parse(history)
-        setChatHistory(parsedData.chatHistory)
+        setPrevHistory(parsedData.chatHistory);
         setConversationId(parsedData.conversationId);
         setReportId(id)
         setInitialSearch(true)
@@ -76,6 +78,7 @@ export default function SavedSearch({ history, id }: SavedSearchProps) {
     };
     const submitForm = async (e: FormEvent) => {
         e.preventDefault();
+        setDisableTyping(false)
         setDisableSuggestions(true)
         setInitialSearch(true);
         setStreamComplete(false);
@@ -146,7 +149,8 @@ export default function SavedSearch({ history, id }: SavedSearchProps) {
             {initialSearch ? (
                 <AutoScrollWrapper>
                     <div className='w-[800px] p-5 flex flex-col gap-2 ' >
-                        {chatHistory.map((chat, i) => (<AgentChats key={i} chat={chat} />))}
+                        {prevHistory.map((chat, i) => (<AgentChats disableTyping={true} key={i} chat={chat} />))}
+                        {chatHistory.map((chat, i) => (<AgentChats disableTyping={false} key={i} chat={chat} />))}
                     </div>
                 </AutoScrollWrapper>
             ) : (

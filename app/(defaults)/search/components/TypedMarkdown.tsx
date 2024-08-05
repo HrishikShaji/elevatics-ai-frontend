@@ -27,13 +27,15 @@ const useTyping = (text: string, delay = 10) => {
 
 interface TypedMarkdownProps {
     text: string;
+    disableTyping: boolean;
 }
 
-export default function TypedMarkdown({ text }: TypedMarkdownProps) {
+export default function TypedMarkdown({ disableTyping, text }: TypedMarkdownProps) {
     const newContent = useTyping(text, 1)
-
+    console.log(disableTyping)
     const markdownWithCursor = `${newContent} <span class="cursor"></span>`;
 
+    const renderContent = disableTyping ? text : markdownWithCursor
     return (
         <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -47,7 +49,7 @@ export default function TypedMarkdown({ text }: TypedMarkdownProps) {
                 },
             }}
         >
-            {markdownWithCursor}
+            {renderContent}
         </ReactMarkdown>
     );
 }
