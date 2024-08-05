@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useRef, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useSettings } from '@/contexts/SettingsContext';
 import { NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL } from '@/lib/endpoints';
 import TypedMarkdown from './TypedMarkdown';
@@ -16,21 +16,48 @@ import AgentChats from '@/components/agent/AgentChats';
 import AgentLeftOptions from '@/components/agent/AgentLeftOptions';
 import AgentRightOptions from '@/components/agent/AgentRightOptions';
 import AgentSelect from '@/components/agent/AgentSelect';
+import useSaveReport from '@/hooks/useSaveReport';
 
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
 export default function SearchAgent() {
-    const { agentModel } = useSettings();
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
     const [streamComplete, setStreamComplete] = useState(false);
     const [initialSearch, setInitialSearch] = useState(false);
     const controllerRef = useRef<AbortController | null>(null)
     const [disableSuggestions, setDisableSuggestions] = useState(false)
     const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
+    const [reportId, setReportId] = useState("");
+    const [conversationId, setConversationId] = useState("")
 
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
 
+
+    const { mutate, isSuccess: isReportSaveSuccess, data: savedReport } = useSaveReport();
+
+    useEffect(() => {
+        const conversationId = Date.now().toString();
+        setConversationId(conversationId);
+    }, []);
+
+
+    useEffect(() => {
+        if (isReportSaveSuccess && savedReport.id) {
+            setReportId(savedReport.id);
+        }
+    }, [isReportSaveSuccess, savedReport]);
+
+    useEffect(() => {
+        if (streamComplete) {
+            mutate({
+                name: chatHistory[0].content,
+                report: JSON.stringify({ chatHistory: chatHistory, conversationId: conversationId }),
+                reportId: reportId,
+                reportType: "SEARCH"
+            });
+        }
+    }, [streamComplete, reportId, chatHistory, conversationId]);
     const addMessage = ({ role, content }: { role: "user" | "assistant", content: string }) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
@@ -52,7 +79,6 @@ export default function SearchAgent() {
 
         const controller = new AbortController();
         controllerRef.current = controller;
-        console.log(selectedAgent)
         try {
             const response = await fetch(SEARCH_ASSISTANT_URL, {
                 method: 'POST',
