@@ -10,7 +10,7 @@ interface AgentChatsProps {
     disableTyping: boolean;
 }
 
-const AgentChats = memo(({ disableTyping, chat }: AgentChatsProps) => {
+const AgentChats = ({ disableTyping, chat }: AgentChatsProps) => {
     const { profile } = useAccount()
 
     return chat.role === "user" ? (
@@ -34,6 +34,6 @@ const AgentChats = memo(({ disableTyping, chat }: AgentChatsProps) => {
             </div>
         </div>
     );
-});
+};
 
 export default AgentChats;
