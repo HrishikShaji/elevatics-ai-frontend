@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import styles from "../../../../styles/cursor.module.css";
-import RenderChart from "@/components/RenderChart";
+import RenderChart from '@/components/RenderChart';
 
 const useTyping = (text: string, delay = 10) => {
     const [currentText, setCurrentText] = useState('');
@@ -29,38 +29,6 @@ interface TypedMarkdownProps {
     disableTyping: boolean;
 }
 
-const ChartContainer = ({ scriptContent }: { scriptContent: string }) => {
-    const [chartData, setChartData] = useState<any>(null);
-    const [chartLayout, setChartLayout] = useState<any>(null);
-
-    useEffect(() => {
-        console.log(scriptContent)
-        function extractObject(variableName: string, str: string) {
-            const regex = new RegExp(`var ${variableName} = (.*?);`, 's');
-            const match = regex.exec(str);
-            if (match && match[1]) {
-                const jsonString = match[1]
-                    .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":')
-                    .replace(/'/g, '"')
-                    .replace(/,\s*}/g, '}')
-                    .replace(/,\s*]/g, ']');
-                return JSON.parse(jsonString);
-            }
-            return null;
-        }
-
-        const parsedData = extractObject('data', scriptContent);
-        const parsedLayout = extractObject('layout', scriptContent);
-        console.log("parsed", parsedData, parsedLayout)
-        setChartLayout(parsedLayout)
-        setChartData(parsedData)
-
-    }, []);
-
-    if (!chartData || !chartLayout) return null;
-
-    return <RenderChart data={chartData} layout={chartLayout} />;
-};
 
 export default function TypedMarkdown({ disableTyping, text }: TypedMarkdownProps) {
     const newContent = useTyping(text, 1);
@@ -86,7 +54,7 @@ export default function TypedMarkdown({ disableTyping, text }: TypedMarkdownProp
                         const regex = /Plotly\.newPlot\('.*', data, layout\);/;
                         if (regex.test(props.children as string)) {
                             const scriptContent = (props.children as string).replace(/Plotly\.newPlot\(.*\);/, '');
-                            return <ChartContainer scriptContent={scriptContent} />;
+                            return <RenderChart scriptContent={scriptContent} />;
                         }
                     }
                 },

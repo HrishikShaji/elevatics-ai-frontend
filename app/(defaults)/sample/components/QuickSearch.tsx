@@ -55,7 +55,8 @@ export default function QuickSearchAgent() {
                 reportType: "SEARCH"
             });
         }
-    }, [streamComplete, reportId, chatHistory, conversationId]);
+        console.log("rendered")
+    }, [streamComplete]);
     const addMessage = ({ role, content }: { role: "user" | "assistant", content: string }) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
@@ -144,60 +145,6 @@ export default function QuickSearchAgent() {
             addMessage({ role: "assistant", content: reportContent[1] })
         } else {
             addMessage({ role: "assistant", content: markdown })
-        }
-    };
-
-    const submitForm = async (e: FormEvent) => {
-        e.preventDefault();
-        setDisableSuggestions(true)
-        setInitialSearch(true);
-        setStreamComplete(false);
-        addMessage({ role: "user", content: input })
-        reset();
-
-        const controller = new AbortController();
-        controllerRef.current = controller;
-        try {
-            const response = await fetch(SEARCH_ASSISTANT_URL, {
-                method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'X-API-KEY': NEWS_ASSISTANT_API_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    query: input,
-                    model_id: selectedAgent
-                }),
-                signal: controller.signal
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            if (response.body) {
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let assistantResponse = '';
-                let lastUpdateTime = Date.now();
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value);
-                    assistantResponse += chunk;
-
-                    if (Date.now() - lastUpdateTime > 100 || done) {
-                        addMessage({ role: 'assistant', content: assistantResponse });
-                        lastUpdateTime = Date.now();
-                    }
-                }
-            }
-        } catch (error) {
-            addMessage({ role: "assistant", content: "Oops." })
-        } finally {
-            setStreamComplete(true);
         }
     };
 
