@@ -1,13 +1,11 @@
 "use client";
 
-
-//@ts-ignore
-import Plot from "react-plotly.js";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import styles from "../../../../styles/cursor.module.css";
+import RenderChart from "@/components/RenderChart";
 
 const useTyping = (text: string, delay = 10) => {
     const [currentText, setCurrentText] = useState('');
@@ -23,22 +21,52 @@ const useTyping = (text: string, delay = 10) => {
         }
     }, [currentIndex, delay, text]);
 
-    return currentText
+    return currentText;
 }
-
-
 
 interface TypedMarkdownProps {
     text: string;
     disableTyping: boolean;
 }
 
-export default function TypedMarkdown({ disableTyping, text }: TypedMarkdownProps) {
-    const newContent = useTyping(text, 1)
-    console.log(disableTyping)
-    const markdownWithCursor = `${newContent} <span class="cursor"></span>`;
+const ChartContainer = ({ scriptContent }: { scriptContent: string }) => {
+    const [chartData, setChartData] = useState<any>(null);
+    const [chartLayout, setChartLayout] = useState<any>(null);
 
-    const renderContent = disableTyping ? text : markdownWithCursor
+    useEffect(() => {
+        console.log(scriptContent)
+        function extractObject(variableName: string, str: string) {
+            const regex = new RegExp(`var ${variableName} = (.*?);`, 's');
+            const match = regex.exec(str);
+            if (match && match[1]) {
+                const jsonString = match[1]
+                    .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":')
+                    .replace(/'/g, '"')
+                    .replace(/,\s*}/g, '}')
+                    .replace(/,\s*]/g, ']');
+                return JSON.parse(jsonString);
+            }
+            return null;
+        }
+
+        const parsedData = extractObject('data', scriptContent);
+        const parsedLayout = extractObject('layout', scriptContent);
+        console.log("parsed", parsedData, parsedLayout)
+        setChartLayout(parsedLayout)
+        setChartData(parsedData)
+
+    }, []);
+
+    if (!chartData || !chartLayout) return null;
+
+    return <RenderChart data={chartData} layout={chartLayout} />;
+};
+
+export default function TypedMarkdown({ disableTyping, text }: TypedMarkdownProps) {
+    const newContent = useTyping(text, 1);
+    const markdownWithCursor = `${newContent} <span class="cursor"></span>`;
+    const renderContent = disableTyping ? text : markdownWithCursor;
+
     return (
         <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -52,49 +80,22 @@ export default function TypedMarkdown({ disableTyping, text }: TypedMarkdownProp
                 },
                 script: ({ node, ...props }) => {
                     if (props.src === "https://cdn.plot.ly/plotly-latest.min.js") {
-                        return <div>removed cdn</div>
+                        return <div>removed cdn</div>;
                     }
                     if (props.children) {
                         const regex = /Plotly\.newPlot\('.*', data, layout\);/;
-
                         if (regex.test(props.children as string)) {
-                            console.log('The line exists in the string.');
-                            const modifiedString = (props.children as string).replace(/Plotly\.newPlot\(.*\);/, '')
-                            const cleanedScriptContent = modifiedString.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, '');
-
-                            const dataMatch = cleanedScriptContent.match(/var data = ([\s\S]*?);/);
-                            const layoutMatch = cleanedScriptContent.match(/var layout = ([\s\S]*?);/);
-
-                            if (dataMatch && layoutMatch) {
-                                try {
-                                    const data = new Function(`return ${dataMatch[1]}`)();
-                                    const layout = new Function(`return ${layoutMatch[1]}`)();
-                                    console.log("data:", data)
-                                    console.log("layout:", layout)
-                                    if (data && layout) {
-                                        return <Plot className="rounded-3xl" data={data} layout={{ title: layout.title, width: "100%" }} />
-                                    } else {
-                                        return null
-                                    }
-
-                                } catch (error) {
-                                    console.error('Error parsing chart data:', error);
-                                    return null;
-                                }
-                            } else {
-                                return null;
-                            }
-                        } else {
-                            console.log('The line does not exist in the string.');
+                            const scriptContent = (props.children as string).replace(/Plotly\.newPlot\(.*\);/, '');
+                            return <ChartContainer scriptContent={scriptContent} />;
                         }
                     }
                 },
                 div: ({ node, ...props }) => {
-                    return <div>got div</div>
+                    return <div>got div</div>;
                 }
             }}
         >
-            {renderContent}
+            {text}
         </ReactMarkdown>
     );
 }
