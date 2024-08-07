@@ -29,9 +29,9 @@ const TypedMarkdown = ({ disableTyping, text }: TypedMarkdownProps) => {
                     }
                     return <span {...props}></span>;
                 },
-                script: image,
+                script: script,
                 div: ({ node, ...props }) => {
-                    return <div>got div</div>;
+                    return null;
                 }
             }}
         >
@@ -39,11 +39,20 @@ const TypedMarkdown = ({ disableTyping, text }: TypedMarkdownProps) => {
         </ReactMarkdown>
     );
 };
-const image = memo(
-    (
-        props: any) => {
-        return <Image alt="" height={1000} width={1000} className="h-[300px] w-[400px" src={`https://images.unsplash.com/photo-1487088678257-3a541e6e3922?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c3VidGxlJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D`} />
-            ;
+
+interface ScriptProps {
+    src?: string;
+    children?: React.ReactNode;
+}
+const script = memo(
+    //@ts-ignore
+    ({ src, children }: ScriptProps) => {
+        if (src === "https://cdn.plot.ly/plotly-latest.min.js") {
+            return null;
+        }
+        if (children) {
+            return <RenderChart scriptContent={children as string} />
+        }
     }
 );
 export default TypedMarkdown;

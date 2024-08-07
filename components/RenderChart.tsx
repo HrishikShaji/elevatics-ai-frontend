@@ -1,7 +1,6 @@
 //@ts-ignore
 import Plot from "react-plotly.js";
 import React, { memo, useEffect, useState, useCallback } from 'react';
-import Image from "next/image";
 
 interface RenderChartProps {
     scriptContent: string;
@@ -45,13 +44,13 @@ const RenderChart = memo(({ scriptContent }: RenderChartProps) => {
                 setChartData(parsedData);
                 setChartLayout(parsedLayout);
                 setIsComplete(true);
-                console.log("Chart rendered", { parsedData, parsedLayout });
             }
         }
     }, [scriptContent, extractObject, chartData, chartLayout]);
 
     if (!isComplete) return null;
-    return <Image alt="" height={1000} width={1000} className="h-[300px] w-[400px" src={`https://images.unsplash.com/photo-1487088678257-3a541e6e3922?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c3VidGxlJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D`} />;
+    return <div className="rounded-3xl overflow-hidden bg-white">
+        <Plot className="rounded-3xl" data={chartData} layout={chartLayout} />  </div>;
 });
 
 export default RenderChart;
