@@ -55,7 +55,6 @@ export default function QuickSearchAgent() {
                 reportType: "SEARCH"
             });
         }
-        console.log("rendered")
     }, [streamComplete]);
     const addMessage = ({ role, content }: { role: "user" | "assistant", content: string }) => {
         setChatHistory((prevChatHistory) => {
@@ -126,7 +125,7 @@ export default function QuickSearchAgent() {
                         }
                     } else {
                         markdown += chunk;
-                        renderMarkdown(markdown);
+                        addMessage({ role: "assistant", content: markdown })
                     }
                 }
             }

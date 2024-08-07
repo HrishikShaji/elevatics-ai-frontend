@@ -1,16 +1,17 @@
 //@ts-ignore
 import Plot from "react-plotly.js";
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
 interface RenderChartProps {
     scriptContent: string;
 }
 
-const RenderChart = React.memo(({ scriptContent }: RenderChartProps) => {
+const RenderChart = memo(({ scriptContent }: RenderChartProps) => {
     const [chartData, setChartData] = useState<any>(null);
     const [chartLayout, setChartLayout] = useState<any>(null);
+    const [isComplete, setIsComplete] = useState(false)
 
-    const extractObject = useCallback((variableName: string, str: string) => {
+    const extractObject = (variableName: string, str: string) => {
         const regex = new RegExp(`var ${variableName} = (.*?);`, 's');
         const match = regex.exec(str);
         if (match && match[1]) {
@@ -19,23 +20,31 @@ const RenderChart = React.memo(({ scriptContent }: RenderChartProps) => {
                 .replace(/'/g, '"')
                 .replace(/,\s*}/g, '}')
                 .replace(/,\s*]/g, ']');
-            return JSON.parse(jsonString);
+            try {
+                return JSON.parse(jsonString);
+            } catch (error) {
+                console.error(`Error parsing JSON for ${variableName}:`, error, jsonString);
+                return null;
+            }
         }
         return null;
-    }, []);
+    };
 
     useEffect(() => {
-        const parsedData = extractObject('data', scriptContent);
-        const parsedLayout = extractObject('layout', scriptContent);
-        setChartData(parsedData);
-        setChartLayout(parsedLayout);
-    }, [scriptContent, extractObject]);
+        const regex = /Plotly\.newPlot\('.*', data, layout\);/;
+        if (regex.test(scriptContent)) {
+            const completeScript = scriptContent.replace(/Plotly\.newPlot\(.*\);/, '');
+            const parsedData = extractObject('data', completeScript);
+            const parsedLayout = extractObject('layout', completeScript);
+            setChartData(parsedData);
+            setChartLayout(parsedLayout);
+            setIsComplete(true)
+            console.log("Chart rendered", { parsedData, parsedLayout });
+        }
+    }, [scriptContent]);
 
-    const memoizedChartData = useMemo(() => chartData, [chartData]);
-    const memoizedChartLayout = useMemo(() => chartLayout, [chartLayout]);
-
-    if (!memoizedChartData || !memoizedChartLayout) return null;
-    return <Plot className="rounded-3xl" data={memoizedChartData} layout={memoizedChartLayout} />
+    if (!isComplete) return null;
+    return <Plot className="rounded-3xl" data={chartData} layout={chartLayout} />;
 });
 
 export default RenderChart;

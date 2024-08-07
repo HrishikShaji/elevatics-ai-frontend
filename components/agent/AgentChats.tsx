@@ -11,8 +11,7 @@ interface AgentChatsProps {
 }
 
 const AgentChats = ({ disableTyping, chat }: AgentChatsProps) => {
-    const { profile } = useAccount()
-
+    const { profile } = useAccount();
     return chat.role === "user" ? (
         <div className='w-full  flex justify-end '>
             <div className='  flex items-center pl-2 gap-2 p-1'>
