@@ -56,14 +56,15 @@ export default function QuickSearchAgent() {
             });
         }
     }, [streamComplete]);
-    const addMessage = ({ role, content }: { role: "user" | "assistant", content: string }) => {
+    const addMessage = ({ role, content, metadata }: Chat) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
                 const updatedChatHistory = [...prevChatHistory];
                 updatedChatHistory[updatedChatHistory.length - 1].content = content;
+                updatedChatHistory[updatedChatHistory.length - 1].metadata = metadata
                 return updatedChatHistory;
             } else {
-                return [...prevChatHistory, { role, content }];
+                return [...prevChatHistory, { role, content, metadata }];
             }
         });
     };
@@ -72,7 +73,7 @@ export default function QuickSearchAgent() {
         setDisableSuggestions(true)
         setInitialSearch(true);
         setStreamComplete(false);
-        addMessage({ role: "user", content: input })
+        addMessage({ role: "user", content: input, metadata: null })
         reset();
 
         try {
@@ -121,31 +122,22 @@ export default function QuickSearchAgent() {
                         metadata += chunk;
                         if (chunk.includes('</report-metadata>')) {
                             isReadingMetadata = false;
-                            //                    processMetadata(metadata);
                         }
                     } else {
                         markdown += chunk;
-                        addMessage({ role: "assistant", content: markdown })
+                        addMessage({ role: "assistant", content: markdown, metadata: metadata })
                     }
                 }
             }
         } catch (error) {
-            addMessage({ role: "assistant", content: "Oops." })
+            addMessage({ role: "assistant", content: "Oops.", metadata: null })
         } finally {
             setStreamComplete(true);
         }
 
     };
 
-    const renderMarkdown = (markdown: string) => {
-        const reportContent = markdown.match(/<report>([\s\S]*)<\/report>/);
 
-        if (reportContent) {
-            addMessage({ role: "assistant", content: reportContent[1] })
-        } else {
-            addMessage({ role: "assistant", content: markdown })
-        }
-    };
 
     const handleCancel = () => {
         if (controllerRef.current) {

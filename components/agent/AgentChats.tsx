@@ -4,12 +4,23 @@ import { useAccount } from "@/contexts/AccountContext";
 import { Chat } from "@/types/types";
 import Image from "next/image";
 import { SiInternetcomputer } from "react-icons/si";
+import SourcesModal from '../SourcesModal';
 
 interface AgentChatsProps {
     chat: Chat;
     disableTyping: boolean;
 }
 
+const processMetadata = (metadata: string) => {
+    const metadataMatch = metadata.match(/all-text-with-urls: (.+)/);
+    if (metadataMatch) {
+        const metadataObj = JSON.parse(metadataMatch[1]);
+        console.log(metadataObj)
+        return metadataObj;
+    } else {
+        return null
+    }
+}
 const AgentChats = ({ disableTyping, chat }: AgentChatsProps) => {
     const { profile } = useAccount();
     return chat.role === "user" ? (
@@ -28,7 +39,13 @@ const AgentChats = ({ disableTyping, chat }: AgentChatsProps) => {
                     <SiInternetcomputer color="white" />
                 </div>
                 <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
-                    <TypedMarkdown text={chat.content} disableTyping={disableTyping} />
+                    <div>
+                        <TypedMarkdown text={chat.content} disableTyping={disableTyping} />
+                    </div>
+                    <div className='w-full bg-gray-300 flex justify-end p-2'>
+                        <SourcesModal metadata={chat.metadata as string} />
+                        <div className='p-1 rounded-xl bg-white text-black ' onClick={() => processMetadata(chat.metadata as string)}>sources</div>
+                    </div>
                 </div>
             </div>
         </div>
