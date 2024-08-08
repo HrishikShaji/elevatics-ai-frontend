@@ -2,6 +2,7 @@ import { Chat } from "@/types/types";
 import { SiInternetcomputer } from "react-icons/si";
 import TypedMarkdown from "../../search/components/TypedMarkdown";
 import { useEffect, useState } from "react";
+import SourcesModal from "@/components/SourcesModal";
 
 interface AdvancedReportContainerProps {
     chat: Chat
@@ -32,6 +33,9 @@ export default function AdvancedReportContainer({ chat }: AdvancedReportContaine
                                 <TypedMarkdown text={report.report} disableTyping={false} />
                             </div>
                         ))}
+                    </div>
+                    <div className="w-full flex justify-end">
+                        <SourcesModal metadata={chat.metadata as string} />
                     </div>
                 </div>
             </div>

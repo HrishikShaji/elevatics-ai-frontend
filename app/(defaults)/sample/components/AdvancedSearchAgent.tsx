@@ -13,7 +13,6 @@ import AgentRightOptions from '@/components/agent/AgentRightOptions';
 import AgentSelect from '@/components/agent/AgentSelect';
 import AutoScrollWrapper from '../../search/components/AutoScrollWrapper';
 import { useAccount } from '@/contexts/AccountContext';
-import TypedMarkdown from '../../search/components/TypedMarkdown';
 import { SiInternetcomputer } from 'react-icons/si';
 import Image from 'next/image';
 import { useResearcher } from '@/contexts/ResearcherContext';
@@ -31,7 +30,6 @@ export default function AdvancedSearchAgent() {
     const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const { profile } = useAccount()
-    const [currentParentKey, setCurrentParentKey] = useState("")
     const { selectedSubtasks } = useResearcher()
 
 
@@ -66,9 +64,10 @@ export default function AdvancedSearchAgent() {
                     if (reportExist) {
                         console.log("report exist")
                         reportExist.report = report
+                        reportExist.metadata = metadata
                     } else {
                         console.log("new report created")
-                        currentReports?.push({ name: name, parentKey: parentKey, report: report })
+                        currentReports?.push({ name: name, parentKey: parentKey, report: report, metadata: metadata })
                     }
                 }
 
@@ -172,7 +171,7 @@ export default function AdvancedSearchAgent() {
                             }
                         } else {
                             markdown += chunk;
-                            addReport({ role: 'assistant', content: markdown, metadata: null, name: topic.name, parentKey: topic.parentKey, report: markdown, sliderKeys: sliderKeys });
+                            addReport({ role: 'assistant', content: markdown, metadata: metadata, name: topic.name, parentKey: topic.parentKey, report: markdown, sliderKeys: sliderKeys });
                         }
                     }
                 }

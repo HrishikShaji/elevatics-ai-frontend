@@ -1,63 +1,19 @@
 
 import React, { useEffect, useState, MouseEvent } from 'react';
+import AnimateHeight from 'react-animate-height';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import IconMinusCircle from './icon/icon-minus-circle';
+import IconPlusCircle from './icon/icon-plus-circle';
 
-interface SourceItemProps {
-    content: string;
-    url: string;
-}
 
 interface SourcesComponentProps {
     metadata: string;
 }
 
-const SourceItem: React.FC<SourceItemProps> = ({ content, url }) => {
-    const snippet = content.length > 400 ? content.substring(0, 400) + '...' : content;
-    const [expanded, setExpanded] = useState(false);
-
-    const toggleExpand = (e: MouseEvent<HTMLDivElement>) => {
-        if (expanded) {
-            if (e.clientY > (e.currentTarget.getBoundingClientRect().bottom - 20)) {
-                setExpanded(false);
-            }
-        } else {
-            setExpanded(true);
-        }
-    };
-
-    return (
-        <div
-            className={`source-item ${expanded ? 'expanded' : ''} mb-4 p-4 border rounded-lg shadow-md cursor-pointer`}
-            onClick={toggleExpand}
-        >
-            <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="source-url block font-bold mb-2 text-blue-500 underline"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {url}
-            </a>
-            <div className="source-content">
-                <div className={`source-snippet ${expanded ? 'hidden' : 'block'}`}>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{snippet}</ReactMarkdown>
-                </div>
-                <div className={`source-full ${expanded ? 'block' : 'hidden'}`}>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-                </div>
-                <div className="expand-indicator mt-2 text-sm text-gray-500">
-                    {expanded ? 'Click to collapse' : 'Click to expand'}
-                </div>
-            </div>
-        </div>
-    );
-};
-
 const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
-    const [sources, setSources] = useState<{ content: string; url: string }[]>([]);
-
+    const [sources, setSources] = useState<string[][]>([]);
+    const [active, setActive] = useState<number | null>(null)
     useEffect(() => {
         const metadataMatch = metadata.match(/all-text-with-urls: (.+)/);
         if (metadataMatch) {
@@ -66,12 +22,42 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
         }
     }, [metadata]);
 
+    function handleClick({ index, content }: { index: number, content: string }) {
+        if (content.length > 0) {
+
+            setActive(active === index + 1 ? null : index + 1)
+        }
+    }
+
     return (
         <div>
-            <h2 className="text-xl font-bold mb-4">Sources</h2>
-            <div id="sourcesContainer">
-                {sources.map((source, index) => (
-                    <SourceItem key={index} content={source[0]} url={source[1]} />
+            <div className="w-[75vw] divide-y divide-white-light px-6  dark:divide-dark">
+                {(sources as string[][]).map((task, i) => (
+                    <div>
+                        <div
+                            className={`flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary
+            ${active === i + 1 ? 'bg-primary-light !text-primary dark:bg-[#1B2E4B]' : ''}`}
+                            onClick={() => handleClick({ index: i, content: task[0] })}
+                        >
+                            <span>{task[1]}</span>
+                            {active !== i + 1 ? (
+                                <span className="shrink-0">
+                                    {task[0].length > 0 ? <IconPlusCircle duotone={false} /> : null}
+                                </span>
+                            ) : (
+                                <span className="shrink-0">
+                                    {task[0].length > 0 ?
+                                        <IconMinusCircle fill={true} /> : null}
+                                </span>
+                            )}
+                        </div>
+                        <AnimateHeight duration={300} height={active === i + 1 ? 'auto' : 0}>
+                            <div className=" px-1 py-3 font-semibold text-white-dark h-[200px] overflow-y-scroll custom-scrollbar">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{task[0]}</ReactMarkdown>
+
+                            </div>
+                        </AnimateHeight>
+                    </div>
                 ))}
             </div>
         </div>

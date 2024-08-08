@@ -75,6 +75,7 @@ export type SingleReport = {
     parentKey: string;
     name: string;
     report: string;
+    metadata: string;
 }
 
 export type Chat = {
