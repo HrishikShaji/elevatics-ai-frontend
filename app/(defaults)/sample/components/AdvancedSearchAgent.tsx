@@ -18,6 +18,7 @@ import { SiInternetcomputer } from 'react-icons/si';
 import Image from 'next/image';
 import { useResearcher } from '@/contexts/ResearcherContext';
 import AdvancedTopics from './AdvancedTopics';
+import AdvancedReportContainer from './AdvancedReportContainer';
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
@@ -242,25 +243,7 @@ export default function AdvancedSearchAgent() {
                                     </div>
                                 </div>
                                 : (
-                                    <div key={i} className='w-full justify-start'>
-                                        <div className='  flex gap-2 p-1'>
-                                            <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
-                                                <SiInternetcomputer color="white" />
-                                            </div>
-                                            <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
-                                                <div className='w-full bg-blue-500 flex gap-2'>
-                                                    {chat.sliderKeys?.map((item, k) => (<button className='p-1 rounded-md bg-black text-white' onClick={() => setCurrentParentKey(item)}>{item}</button>))}
-                                                </div>
-                                                <div className='flex flex-col gap-10 max-h-[60vh] overflow-y-scroll custom-scrollbar'>
-                                                    {chat.reports?.map((report, j) => (
-                                                        <div key={j} style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} className='bg-gray-100'>
-                                                            <TypedMarkdown text={report.report} disableTyping={false} />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <AdvancedReportContainer chat={chat} key={i} />
                                 );
                         })}
                     </div>
