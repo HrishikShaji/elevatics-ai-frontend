@@ -74,6 +74,6 @@ export type AgentModel = "meta-llama/llama-3-70b-instruct" |
 
 export type Chat = {
     content: string;
-    role: "assistant" | "user";
+    role: "assistant" | "user" | "options";
     metadata: string | null
 }
