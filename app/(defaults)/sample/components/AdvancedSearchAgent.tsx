@@ -3,7 +3,7 @@
 "use client"
 
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
-import { NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL } from '@/lib/endpoints';
+import { HFSPACE_TOKEN, NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL, TOPICS_URL } from '@/lib/endpoints';
 import AgentContainer from '@/components/agent/AgentContainer';
 import AgentInputContainer from '@/components/agent/AgentInputContainer';
 import AgentIntro from '@/components/agent/AgentIntro';
@@ -91,13 +91,37 @@ export default function AdvancedSearchAgent() {
         setPrompt(input)
         addMessage({ role: "user", content: input, metadata: null })
         reset();
+        console.log(isTopicSearch)
         if (isTopicSearch) {
+
             try {
-                addMessage({ role: "assistant", content: JSON.stringify(topicsData), metadata: null })
+                const headers = {
+                    Authorization: HFSPACE_TOKEN,
+                    "Content-Type": "application/json",
+                };
+                const response = await fetch(
+                    TOPICS_URL,
+                    {
+                        method: "POST",
+                        cache: "no-store",
+                        headers: headers,
+                        body: JSON.stringify({
+                            user_input: prompt,
+                            num_topics: 5,
+                            num_subtopics: 3
+                        }),
+                    },
+                );
+
+                if (!response.ok) {
+                    throw new Error("Error fetching topics");
+                }
+
+                const result = await response.json()
+                addMessage({ role: "assistant", content: JSON.stringify(result.topics), metadata: null })
             } catch (error) {
                 addMessage({ role: "assistant", content: "Oops.", metadata: null })
             } finally {
-                setIsTopicSearch(prev => !prev)
                 setStreamComplete(true);
             }
         } else {
