@@ -71,9 +71,30 @@ export type AgentModel = "meta-llama/llama-3-70b-instruct" |
     "google/gemma-2-27b-it"
 
 
+export type SingleReport = {
+    parentKey: string;
+    name: string;
+    report: string;
+}
 
 export type Chat = {
     content: string;
     role: "assistant" | "user" | "options";
-    metadata: string | null
+    metadata: string | null;
+    reports?: SingleReport[]
 }
+
+
+type Subtask = {
+    name: string;
+    prompt: string;
+};
+
+export type OriginalData = {
+    [key: string]: Subtask[];
+};
+export type TransformedData = {
+    parentKey: string;
+    name: string;
+    prompt: string;
+};

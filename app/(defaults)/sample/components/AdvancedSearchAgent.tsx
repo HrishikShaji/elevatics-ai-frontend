@@ -1,5 +1,3 @@
-
-
 "use client"
 
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
@@ -9,26 +7,17 @@ import AgentInputContainer from '@/components/agent/AgentInputContainer';
 import AgentIntro from '@/components/agent/AgentIntro';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
 import useSuggestions from '@/hooks/useSuggestions';
-import { AgentModel, Chat } from '@/types/types';
-import AgentChats from '@/components/agent/AgentChats';
+import { AgentModel, Chat, OriginalData, SingleReport, TransformedData } from '@/types/types';
 import AgentLeftOptions from '@/components/agent/AgentLeftOptions';
 import AgentRightOptions from '@/components/agent/AgentRightOptions';
 import AgentSelect from '@/components/agent/AgentSelect';
-import useSaveReport from '@/hooks/useSaveReport';
 import AutoScrollWrapper from '../../search/components/AutoScrollWrapper';
 import { useAccount } from '@/contexts/AccountContext';
 import TypedMarkdown from '../../search/components/TypedMarkdown';
 import { SiInternetcomputer } from 'react-icons/si';
 import Image from 'next/image';
-import useFetchTopics from '@/hooks/useFetchTopics';
-import IconPlusCircle from '@/components/icon/icon-plus-circle';
-import IconMinusCircle from '@/components/icon/icon-minus-circle';
-import AnimateHeight from 'react-animate-height';
-import Topic from '../../iresearcher/topics/components/Topic';
 import { useResearcher } from '@/contexts/ResearcherContext';
-import Advanced from '../../datatables/advanced/page';
 import AdvancedTopics from './AdvancedTopics';
-
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
@@ -40,58 +29,31 @@ export default function AdvancedSearchAgent() {
     const controllerRef = useRef<AbortController | null>(null)
     const [disableSuggestions, setDisableSuggestions] = useState(false)
     const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
-    const [reportId, setReportId] = useState("");
-    const [conversationId, setConversationId] = useState("")
-    const { data: topicsData, isLoading } = useFetchTopics();
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const { profile } = useAccount()
+    const { selectedSubtasks } = useResearcher()
 
-    const { mutate, isSuccess: isReportSaveSuccess, data: savedReport } = useSaveReport();
-    console.log(topicsData)
-    useEffect(() => {
-        const conversationId = Date.now().toString();
-        setConversationId(conversationId);
-    }, []);
-
-
-    useEffect(() => {
-        if (isReportSaveSuccess && savedReport.id) {
-            setReportId(savedReport.id);
-        }
-    }, [isReportSaveSuccess, savedReport]);
-
-    useEffect(() => {
-        if (streamComplete) {
-            mutate({
-                name: chatHistory[0].content,
-                report: JSON.stringify({ chatHistory: chatHistory, conversationId: conversationId }),
-                reportId: reportId,
-                reportType: "SEARCH"
-            });
-        }
-    }, [streamComplete]);
-    const addMessage = ({ role, content, metadata }: Chat) => {
+    const addMessage = ({ role, content, metadata, reports }: Chat) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
                 const updatedChatHistory = [...prevChatHistory];
                 updatedChatHistory[updatedChatHistory.length - 1].content = content;
-                updatedChatHistory[updatedChatHistory.length - 1].metadata = metadata
+                updatedChatHistory[updatedChatHistory.length - 1].metadata = metadata;
+                updatedChatHistory[updatedChatHistory.length - 1].reports = reports;
                 return updatedChatHistory;
             } else {
-                return [...prevChatHistory, { role, content, metadata }];
+                return [...prevChatHistory, { role, content, metadata, reports }];
             }
         });
     };
 
     const generateTopics = async (e: FormEvent) => {
-
         e.preventDefault();
         setDisableSuggestions(true)
         setInitialSearch(true);
         setStreamComplete(false);
-        addMessage({ role: "user", content: input, metadata: null })
+        addMessage({ role: "user", content: input, metadata: null, reports: [] })
         reset();
-        console.log(isTopicSearch)
 
         try {
             const headers = {
@@ -117,19 +79,20 @@ export default function AdvancedSearchAgent() {
             }
 
             const result = await response.json()
-            addMessage({ role: "options", content: JSON.stringify(result.topics), metadata: null })
+            addMessage({ role: "options", content: JSON.stringify(result.topics), metadata: null, reports: [] })
         } catch (error) {
-            addMessage({ role: "assistant", content: "Oops.", metadata: null })
+            addMessage({ role: "assistant", content: "Oops.", metadata: null, reports: [] })
         } finally {
             setStreamComplete(true);
         }
     }
 
     const generateReport = async (inputTopics: string) => {
-        console.log(inputTopics)
-        addMessage({ role: "user", content: "user clicked continue", metadata: null })
-        setIsTopicSearch(false)
-        try {
+        addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] })
+        const topics = transformData(selectedSubtasks)
+        console.log(topics)
+        let result: SingleReport[] = []
+        for (const topic of topics) {
             const response = await fetch('https://pvanand-search-generate-prod.hf.space/generate_report', {
                 method: 'POST',
                 headers: {
@@ -137,7 +100,7 @@ export default function AdvancedSearchAgent() {
                     'Accept': 'text/plain'
                 },
                 body: JSON.stringify({
-                    description: inputTopics,
+                    description: topic.prompt,
                     user_id: "test",
                     user_name: "John Doe",
                     internet: true,
@@ -153,7 +116,6 @@ export default function AdvancedSearchAgent() {
             }
 
             if (response.body) {
-
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let markdown = '';
@@ -178,20 +140,44 @@ export default function AdvancedSearchAgent() {
                         }
                     } else {
                         markdown += chunk;
-                        addMessage({ role: "assistant", content: markdown, metadata: metadata })
+                        result.push({ name: topic.name, parentKey: topic.parentKey, report: markdown })
+                        console.log(result)
+                        setChatHistory((prevChatHistory) => {
+                            const updatedChatHistory = [...prevChatHistory];
+                            const assistantIndex = updatedChatHistory.findIndex(chat => chat.role === "assistant");
+                            if (assistantIndex !== -1) {
+                                if (updatedChatHistory[assistantIndex].reports) {
+                                    updatedChatHistory[assistantIndex].reports.push({ name: topic.name, parentKey: topic.parentKey, report: markdown });
+                                } else {
+                                    updatedChatHistory[assistantIndex].reports = [{ name: topic.name, parentKey: topic.parentKey, report: markdown }];
+                                }
+                                return updatedChatHistory;
+                            }
+                            return prevChatHistory;
+                        });
                     }
                 }
             }
-        } catch (error) {
-            addMessage({ role: "assistant", content: "Oops.", metadata: null })
-        } finally {
-            setStreamComplete(true);
         }
-
-
     };
 
+    const transformData = (data: OriginalData): TransformedData[] => {
+        const result: TransformedData[] = [];
 
+        for (const parentKey in data) {
+            if (data.hasOwnProperty(parentKey)) {
+                data[parentKey].forEach(subtask => {
+                    result.push({
+                        parentKey,
+                        name: subtask.name,
+                        prompt: subtask.prompt,
+                    });
+                });
+            }
+        }
+
+        return result;
+    };
 
     const handleCancel = () => {
         if (controllerRef.current) {
@@ -241,8 +227,10 @@ export default function AdvancedSearchAgent() {
                                                 <SiInternetcomputer color="white" />
                                             </div>
                                             <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
-                                                <div>
-                                                    <TypedMarkdown text={chat.content} disableTyping={false} />
+                                                <div className='flex flex-col gap-10'>
+                                                    {chat.reports?.map((report, i) => (
+                                                        <TypedMarkdown text={report.report} disableTyping={false} key={i} />
+                                                    ))}
                                                 </div>
                                             </div>
                                         </div>
