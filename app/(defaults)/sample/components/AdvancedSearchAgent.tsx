@@ -23,7 +23,6 @@ const suggestions = ["Find the Latest research about AI", "What is high-yield sa
 
 export default function AdvancedSearchAgent() {
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
-    const [isTopicSearch, setIsTopicSearch] = useState(true)
     const [streamComplete, setStreamComplete] = useState(false);
     const [initialSearch, setInitialSearch] = useState(false);
     const controllerRef = useRef<AbortController | null>(null)
@@ -88,77 +87,72 @@ export default function AdvancedSearchAgent() {
     }
 
     const generateReport = async (inputTopics: string) => {
-        addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] })
-        const topics = transformData(selectedSubtasks)
-        console.log(topics)
-        let result: SingleReport[] = []
+        addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] });
+        const topics = transformData(selectedSubtasks);
+        let result: SingleReport[] = [];
+
         for (const topic of topics) {
-            const response = await fetch('https://pvanand-search-generate-prod.hf.space/generate_report', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'text/plain'
-                },
-                body: JSON.stringify({
-                    description: topic.prompt,
-                    user_id: "test",
-                    user_name: "John Doe",
-                    internet: true,
-                    output_format: "report_table",
-                    data_format: "Structured data",
-                    generate_charts: true,
-                    output_as_md: true
-                })
-            });
+            try {
+                const response = await fetch('https://pvanand-search-generate-prod.hf.space/generate_report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/plain'
+                    },
+                    body: JSON.stringify({
+                        description: topic.prompt,
+                        user_id: "test",
+                        user_name: "John Doe",
+                        internet: true,
+                        output_format: "report_table",
+                        data_format: "Structured data",
+                        generate_charts: true,
+                        output_as_md: true
+                    })
+                });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            if (response.body) {
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let markdown = '';
-                let metadata = '';
-                let isReadingMetadata = false;
-
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value, { stream: true });
-
-                    if (chunk.includes('<report-metadata>')) {
-                        isReadingMetadata = true;
-                        metadata = '';
-                    }
-
-                    if (isReadingMetadata) {
-                        metadata += chunk;
-                        if (chunk.includes('</report-metadata>')) {
-                            isReadingMetadata = false;
-                        }
-                    } else {
-                        markdown += chunk;
-                        result.push({ name: topic.name, parentKey: topic.parentKey, report: markdown })
-                        console.log(result)
-                        setChatHistory((prevChatHistory) => {
-                            const updatedChatHistory = [...prevChatHistory];
-                            const assistantIndex = updatedChatHistory.findIndex(chat => chat.role === "assistant");
-                            if (assistantIndex !== -1) {
-                                if (updatedChatHistory[assistantIndex].reports) {
-                                    updatedChatHistory[assistantIndex].reports.push({ name: topic.name, parentKey: topic.parentKey, report: markdown });
-                                } else {
-                                    updatedChatHistory[assistantIndex].reports = [{ name: topic.name, parentKey: topic.parentKey, report: markdown }];
-                                }
-                                return updatedChatHistory;
-                            }
-                            return prevChatHistory;
-                        });
-                    }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
+                if (response.body) {
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let markdown = '';
+                    let metadata = '';
+                    let isReadingMetadata = false;
+
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+
+                        const chunk = decoder.decode(value, { stream: true });
+
+                        if (chunk.includes('<report-metadata>')) {
+                            isReadingMetadata = true;
+                            metadata = '';
+                        }
+
+                        if (isReadingMetadata) {
+                            metadata += chunk;
+                            if (chunk.includes('</report-metadata>')) {
+                                isReadingMetadata = false;
+                            }
+                        } else {
+                            markdown += chunk;
+                        }
+                    }
+                    // Push the fully accumulated report to the result array
+                    result.push({ name: topic.name, parentKey: topic.parentKey, report: markdown });
+                }
+            } catch (error) {
+                console.error("Error fetching report:", error);
+                addMessage({ role: "assistant", content: "Failed to generate report.", metadata: null, reports: [] });
             }
         }
+        console.log(result)
+        addMessage({ role: 'assistant', content: "", metadata: null, reports: result })
+        // Update chat history once all topics have been processed
     };
 
     const transformData = (data: OriginalData): TransformedData[] => {
@@ -200,7 +194,7 @@ export default function AdvancedSearchAgent() {
                         {chatHistory.map((chat, i) => {
 
                             return chat.role === "user" ? (
-                                <div className='w-full  flex justify-end '>
+                                <div key={i} className='w-full  flex justify-end '>
                                     <div className='  flex items-center pl-2 gap-2 p-1'>
                                         <h1 className='bg-gray-200 py-2 px-4 rounded-3xl '>{chat.content}</h1>
                                         <div className='h-8 w-8 rounded-full bg-blue-500 overflow-hidden'>
@@ -210,7 +204,7 @@ export default function AdvancedSearchAgent() {
                                 </div>
                             ) : chat.role === "options" ?
 
-                                <div className='w-full justify-start'>
+                                <div key={i} className='w-full justify-start'>
                                     <div className='  flex gap-2 p-1'>
                                         <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
                                             <SiInternetcomputer color="white" />
@@ -221,15 +215,17 @@ export default function AdvancedSearchAgent() {
                                     </div>
                                 </div>
                                 : (
-                                    <div className='w-full justify-start'>
+                                    <div key={i} className='w-full justify-start'>
                                         <div className='  flex gap-2 p-1'>
                                             <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
                                                 <SiInternetcomputer color="white" />
                                             </div>
                                             <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
                                                 <div className='flex flex-col gap-10'>
-                                                    {chat.reports?.map((report, i) => (
-                                                        <TypedMarkdown text={report.report} disableTyping={false} key={i} />
+                                                    {chat.reports?.map((report, j) => (
+                                                        <div key={j} className='bg-gray-100'>
+                                                            <TypedMarkdown text={report.report} disableTyping={false} />
+                                                        </div>
                                                     ))}
                                                 </div>
                                             </div>
