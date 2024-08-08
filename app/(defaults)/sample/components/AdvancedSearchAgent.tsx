@@ -30,7 +30,9 @@ export default function AdvancedSearchAgent() {
     const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const { profile } = useAccount()
+    const [currentParentKey, setCurrentParentKey] = useState("")
     const { selectedSubtasks } = useResearcher()
+
 
     const addMessage = ({ role, content, metadata, reports }: Chat) => {
         setChatHistory((prevChatHistory) => {
@@ -49,12 +51,13 @@ export default function AdvancedSearchAgent() {
 
 
 
-    const addReport = ({ role, content, metadata, name, parentKey, report }: any) => {
+    const addReport = ({ role, content, metadata, name, parentKey, report, sliderKeys }: any) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
                 const updatedChatHistory = [...prevChatHistory];
                 updatedChatHistory[updatedChatHistory.length - 1].content = content;
                 updatedChatHistory[updatedChatHistory.length - 1].metadata = metadata;
+                updatedChatHistory[updatedChatHistory.length - 1].sliderKeys = sliderKeys;
                 const currentReports = updatedChatHistory[updatedChatHistory.length - 1].reports
                 if (currentReports) {
 
@@ -113,10 +116,11 @@ export default function AdvancedSearchAgent() {
             setStreamComplete(true);
         }
     }
-
+    console.log(Object.keys(selectedSubtasks))
     const generateReport = async (inputTopics: string) => {
         addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] });
         const topics = transformData(selectedSubtasks);
+        const sliderKeys = Object.keys(selectedSubtasks)
 
         for (const topic of topics) {
             try {
@@ -167,7 +171,7 @@ export default function AdvancedSearchAgent() {
                             }
                         } else {
                             markdown += chunk;
-                            addReport({ role: 'assistant', content: markdown, metadata: null, name: topic.name, parentKey: topic.parentKey, report: markdown });
+                            addReport({ role: 'assistant', content: markdown, metadata: null, name: topic.name, parentKey: topic.parentKey, report: markdown, sliderKeys: sliderKeys });
                         }
                     }
                 }
@@ -215,7 +219,7 @@ export default function AdvancedSearchAgent() {
                 <AutoScrollWrapper>
                     <div className='w-[800px] p-5 flex flex-col gap-2 ' >
                         {chatHistory.map((chat, i) => {
-
+                            console.log(chat.reports)
                             return chat.role === "user" ? (
                                 <div key={i} className='w-full  flex justify-end '>
                                     <div className='  flex items-center pl-2 gap-2 p-1'>
@@ -244,9 +248,12 @@ export default function AdvancedSearchAgent() {
                                                 <SiInternetcomputer color="white" />
                                             </div>
                                             <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
-                                                <div className='flex flex-col gap-10'>
+                                                <div className='w-full bg-blue-500 flex gap-2'>
+                                                    {chat.sliderKeys?.map((item, k) => (<button className='p-1 rounded-md bg-black text-white' onClick={() => setCurrentParentKey(item)}>{item}</button>))}
+                                                </div>
+                                                <div className='flex flex-col gap-10 max-h-[60vh] overflow-y-scroll custom-scrollbar'>
                                                     {chat.reports?.map((report, j) => (
-                                                        <div key={j} className='bg-gray-100'>
+                                                        <div key={j} style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} className='bg-gray-100'>
                                                             <TypedMarkdown text={report.report} disableTyping={false} />
                                                         </div>
                                                     ))}

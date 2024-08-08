@@ -81,7 +81,8 @@ export type Chat = {
     content: string;
     role: "assistant" | "user" | "options";
     metadata: string | null;
-    reports?: SingleReport[]
+    reports?: SingleReport[];
+    sliderKeys?: string[]
 }
 
 
