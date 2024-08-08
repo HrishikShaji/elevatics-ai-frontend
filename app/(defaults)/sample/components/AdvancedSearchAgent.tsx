@@ -89,7 +89,6 @@ export default function AdvancedSearchAgent() {
     const generateReport = async (inputTopics: string) => {
         addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] });
         const topics = transformData(selectedSubtasks);
-        let result: SingleReport[] = [];
 
         for (const topic of topics) {
             try {
@@ -140,19 +139,15 @@ export default function AdvancedSearchAgent() {
                             }
                         } else {
                             markdown += chunk;
+                            addMessage({ role: 'assistant', content: markdown, metadata: null, reports: [{ name: topic.name, parentKey: topic.parentKey, report: markdown }] });
                         }
                     }
-                    // Push the fully accumulated report to the result array
-                    result.push({ name: topic.name, parentKey: topic.parentKey, report: markdown });
                 }
             } catch (error) {
                 console.error("Error fetching report:", error);
                 addMessage({ role: "assistant", content: "Failed to generate report.", metadata: null, reports: [] });
             }
         }
-        console.log(result)
-        addMessage({ role: 'assistant', content: "", metadata: null, reports: result })
-        // Update chat history once all topics have been processed
     };
 
     const transformData = (data: OriginalData): TransformedData[] => {
