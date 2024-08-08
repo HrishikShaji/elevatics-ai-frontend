@@ -39,6 +39,7 @@ export default function AdvancedSearchAgent() {
                 updatedChatHistory[updatedChatHistory.length - 1].content = content;
                 updatedChatHistory[updatedChatHistory.length - 1].metadata = metadata;
                 updatedChatHistory[updatedChatHistory.length - 1].reports = reports;
+
                 return updatedChatHistory;
             } else {
                 return [...prevChatHistory, { role, content, metadata, reports }];
@@ -46,6 +47,33 @@ export default function AdvancedSearchAgent() {
         });
     };
 
+
+
+    const addReport = ({ role, content, metadata, name, parentKey, report }: any) => {
+        setChatHistory((prevChatHistory) => {
+            if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
+                const updatedChatHistory = [...prevChatHistory];
+                updatedChatHistory[updatedChatHistory.length - 1].content = content;
+                updatedChatHistory[updatedChatHistory.length - 1].metadata = metadata;
+                const currentReports = updatedChatHistory[updatedChatHistory.length - 1].reports
+                if (currentReports) {
+
+                    const reportExist = currentReports.find((report) => report.name === name)
+                    if (reportExist) {
+                        console.log("report exist")
+                        reportExist.report = report
+                    } else {
+                        console.log("new report created")
+                        currentReports?.push({ name: name, parentKey: parentKey, report: report })
+                    }
+                }
+
+                return updatedChatHistory;
+            } else {
+                return [...prevChatHistory, { role, content, metadata, reports: [] }];
+            }
+        });
+    };
     const generateTopics = async (e: FormEvent) => {
         e.preventDefault();
         setDisableSuggestions(true)
@@ -139,7 +167,7 @@ export default function AdvancedSearchAgent() {
                             }
                         } else {
                             markdown += chunk;
-                            addMessage({ role: 'assistant', content: markdown, metadata: null, reports: [{ name: topic.name, parentKey: topic.parentKey, report: markdown }] });
+                            addReport({ role: 'assistant', content: markdown, metadata: null, name: topic.name, parentKey: topic.parentKey, report: markdown });
                         }
                     }
                 }
