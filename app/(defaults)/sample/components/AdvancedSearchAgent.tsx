@@ -28,23 +28,28 @@ export default function AdvancedSearchAgent() {
     const { profile } = useAccount()
     console.log("rendered")
 
-    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+
+    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
-    }
 
-    function handleReset() {
+    }, [])
+
+    const handleReset = useCallback(() => {
         setInput("")
-    }
 
-    function handleInputClick() {
+    }, [])
+
+    const handleInputClick = useCallback(() => {
         setInputClick(true)
-    }
+    }, [])
 
-    function handleRecommendation(recommendation: string) {
+    const handleRecommendationClick = useCallback((recommendation: string) => {
+
         setInput(recommendation)
         handleInputClick()
         mutate(recommendation)
-    }
+    }, [])
+
 
     const addMessage = useCallback(({ role, content, metadata, reports }: Chat) => {
         setChatHistory((prevChatHistory) => {
@@ -258,10 +263,10 @@ export default function AdvancedSearchAgent() {
                     </div>
                 </AutoScrollWrapper>
             ) : (
-                <AgentIntro suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendation} title='Search' subTitle='Faster Efficient Search' />
+                <AgentIntro suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendationClick} title='Search' subTitle='Faster Efficient Search' />
             )}
             <AgentInputContainer>
-                <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} handleSubmit={generateTopics} input={input} handleRecommendation={handleRecommendation} handleClick={handleInputClick} />
+                <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} handleSubmit={generateTopics} input={input} handleRecommendation={handleRecommendationClick} handleClick={handleInputClick} />
             </AgentInputContainer>
         </AgentContainer>
     );
