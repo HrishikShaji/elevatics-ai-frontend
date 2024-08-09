@@ -1,6 +1,4 @@
-"use client"
-
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { HFSPACE_TOKEN, TOPICS_URL } from '@/lib/endpoints';
 import AgentContainer from '@/components/agent/AgentContainer';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
@@ -11,14 +9,22 @@ import { SiInternetcomputer } from 'react-icons/si';
 import Image from 'next/image';
 import AdvancedTopics from './AdvancedTopics';
 import AdvancedReportContainer from './AdvancedReportContainer';
-import UserMessageWrapper from './UserMessageWrapper';
-import AgentMessageWrapper from './BotMessageWrapper';
 
+interface AdvancedChatProps {
+    handleInitialSearch: () => void;
+}
 
-export default function AdvancedSearchAgent() {
+export default function AdvancedChat({ handleInitialSearch }: AdvancedChatProps) {
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
     const [topicsLoading, setTopicsLoading] = useState(false);
+    const { profile } = useAccount()
     console.log("rendered")
+
+    useEffect(() => {
+        if (chatHistory.length > 0) {
+            handleInitialSearch()
+        }
+    }, [chatHistory])
 
 
     const addMessage = useCallback(({ role, content, metadata, reports }: Chat) => {
@@ -183,34 +189,52 @@ export default function AdvancedSearchAgent() {
 
 
     return (
-        <AgentContainer>
+        <>
             {chatHistory.length > 0 ? (
                 <AutoScrollWrapper>
                     <div className='w-[1000px] py-5 flex flex-col gap-2 ' >
                         {chatHistory.map((chat, i) => {
                             return chat.role === "user" ? (
-                                <UserMessageWrapper key={i} >
-                                    {chat.content}
-                                </UserMessageWrapper>
+                                <div key={i} className='w-full  flex justify-end '>
+                                    <div className='  flex items-center pl-2 gap-2 p-1'>
+                                        <h1 className='bg-gray-200 py-2 px-4 rounded-3xl '>{chat.content}</h1>
+                                        <div className='h-8 w-8 rounded-full bg-blue-500 overflow-hidden'>
+                                            {profile?.image ? <Image src={profile.image} alt="profile" height={1000} width={1000} className="h-full w-full object-cover" /> : null}
+                                        </div>
+                                    </div>
+                                </div>
                             ) : chat.role === "options" ?
-                                <AgentMessageWrapper key={i}>
-                                    <AdvancedTopics generateReport={generateReport} content={chat.content} />
-                                </AgentMessageWrapper>
+
+                                <div key={i} className='w-full justify-start'>
+                                    <div className=' w-full flex gap-2 p-1'>
+                                        <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
+                                            <SiInternetcomputer color="white" />
+                                        </div>
+                                        <div className='flex w-full p-4 rounded-3xl bg-gray-200 flex-col'>
+                                            <AdvancedTopics generateReport={generateReport} content={chat.content} />
+                                        </div>
+                                    </div>
+                                </div>
                                 : (
-                                    <AgentMessageWrapper key={i}>
-                                        <AdvancedReportContainer chat={chat} key={i} />
-                                    </AgentMessageWrapper>
+                                    <AdvancedReportContainer chat={chat} key={i} />
                                 );
                         })}
                         {topicsLoading ?
-                            <AgentMessageWrapper>
-                                Loading...
-                            </AgentMessageWrapper>
+
+                            <div className='w-full justify-start'>
+                                <div className='  flex gap-2 p-1'>
+                                    <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
+                                        <SiInternetcomputer color="white" />
+                                    </div>
+                                    <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
+                                        Loading...
+                                    </div>
+                                </div>
+                            </div>
                             : null}
                     </div>
                 </AutoScrollWrapper>
             ) : null}
-            <AgentSearchBar title='Advanced Search' subTitle='advanced' disableSuggestions={chatHistory.length > 0} handleSubmit={generateTopics} />
-        </AgentContainer>
+        </>
     );
 }
