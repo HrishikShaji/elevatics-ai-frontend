@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { HFSPACE_TOKEN, NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL, TOPICS_URL } from '@/lib/endpoints';
 import AgentContainer from '@/components/agent/AgentContainer';
 import AgentInputContainer from '@/components/agent/AgentInputContainer';
@@ -8,14 +8,10 @@ import AgentIntro from '@/components/agent/AgentIntro';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
 import useSuggestions from '@/hooks/useSuggestions';
 import { AgentModel, Chat, OriginalData, SelectedSubtasks, SingleReport, TransformedData } from '@/types/types';
-import AgentLeftOptions from '@/components/agent/AgentLeftOptions';
-import AgentRightOptions from '@/components/agent/AgentRightOptions';
-import AgentSelect from '@/components/agent/AgentSelect';
 import AutoScrollWrapper from '../../search/components/AutoScrollWrapper';
 import { useAccount } from '@/contexts/AccountContext';
 import { SiInternetcomputer } from 'react-icons/si';
 import Image from 'next/image';
-import { useResearcher } from '@/contexts/ResearcherContext';
 import AdvancedTopics from './AdvancedTopics';
 import AdvancedReportContainer from './AdvancedReportContainer';
 
@@ -23,17 +19,14 @@ const suggestions = ["Find the Latest research about AI", "What is high-yield sa
 
 export default function AdvancedSearchAgent() {
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
-    const [streamComplete, setStreamComplete] = useState(false);
     const [initialSearch, setInitialSearch] = useState(false);
-    const controllerRef = useRef<AbortController | null>(null)
     const [disableSuggestions, setDisableSuggestions] = useState(false)
-    const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
     const [topicsLoading, setTopicsLoading] = useState(false);
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const { profile } = useAccount()
+    console.log("rendered")
 
-
-    const addMessage = ({ role, content, metadata, reports }: Chat) => {
+    const addMessage = useCallback(({ role, content, metadata, reports }: Chat) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
                 const updatedChatHistory = [...prevChatHistory];
@@ -46,11 +39,11 @@ export default function AdvancedSearchAgent() {
                 return [...prevChatHistory, { role, content, metadata, reports }];
             }
         });
-    };
+    }, [chatHistory])
 
 
 
-    const addReport = ({ role, content, metadata, name, parentKey, report, sliderKeys }: any) => {
+    const addReport = useCallback(({ role, content, metadata, name, parentKey, report, sliderKeys }: any) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
                 const updatedChatHistory = [...prevChatHistory];
@@ -74,13 +67,12 @@ export default function AdvancedSearchAgent() {
                 return [...prevChatHistory, { role, content, metadata, reports: [] }];
             }
         });
-    };
+    }, [chatHistory]);
     const generateTopics = async (e: FormEvent) => {
         e.preventDefault();
         setDisableSuggestions(true)
         setInitialSearch(true);
         setTopicsLoading(true);
-        setStreamComplete(false);
         addMessage({ role: "user", content: input, metadata: null, reports: [] })
         reset();
 
@@ -112,7 +104,6 @@ export default function AdvancedSearchAgent() {
         } catch (error) {
             addMessage({ role: "assistant", content: "Oops.", metadata: null, reports: [] })
         } finally {
-            setStreamComplete(true);
             setTopicsLoading(false);
         }
     }
@@ -199,26 +190,13 @@ export default function AdvancedSearchAgent() {
         return result;
     };
 
-    const handleCancel = () => {
-        if (controllerRef.current) {
-            controllerRef.current.abort();
-        }
-    };
 
     return (
         <AgentContainer>
-            <AgentLeftOptions><AgentSelect selectedAgent={selectedAgent} setSelectedAgent={setSelectedAgent} /></AgentLeftOptions>
-            <AgentRightOptions>
-                <div>options</div>
-                {!streamComplete ?
-                    <button onClick={handleCancel}>Cancel</button> : null}
-            </AgentRightOptions>
-
             {initialSearch ? (
                 <AutoScrollWrapper>
                     <div className='w-[800px] p-5 flex flex-col gap-2 ' >
                         {chatHistory.map((chat, i) => {
-                            console.log(chat.reports)
                             return chat.role === "user" ? (
                                 <div key={i} className='w-full  flex justify-end '>
                                     <div className='  flex items-center pl-2 gap-2 p-1'>

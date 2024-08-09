@@ -44,15 +44,15 @@ export default function AdvancedReportContainer({ chat }: AdvancedReportContaine
                     <SiInternetcomputer color="white" />
                 </div>
                 <div className='flex p-4 rounded-3xl  flex-col justify-between bg-gray-200'>
-                    <div className="flex py-1 pb-3 justify-between w-full">
+                    <div className="flex py-1 pb-3 justify-between w-full overflow-hiiden">
                         <button
                             onClick={() => scrollLeft(containerRef)}
                             className=" size-6 flex items-center justify-center bg-black text-white hover:text-black  hover:bg-gray-300 rounded-full"
                         >
                             {"<"}
                         </button>
-                        <div className='w-[630px]  flex gap-2' ref={containerRef}>
-                            {chat.sliderKeys?.map((item, k) => (<button className='p-1 rounded-md bg-black text-white' onClick={() => setCurrentParentKey(item)}>{item}</button>))}
+                        <div className='w-[630px]  flex gap-2 overflow-hidden' ref={containerRef}>
+                            {chat.sliderKeys?.map((item, k) => (<button className='p-1 text-nowrap px-3 rounded-md bg-black text-white' onClick={() => setCurrentParentKey(item)}>{item}</button>))}
                         </div>
                         <button
                             onClick={() => scrollRight(containerRef)}
