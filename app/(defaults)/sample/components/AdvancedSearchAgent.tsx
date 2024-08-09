@@ -7,7 +7,7 @@ import AgentInputContainer from '@/components/agent/AgentInputContainer';
 import AgentIntro from '@/components/agent/AgentIntro';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
 import useSuggestions from '@/hooks/useSuggestions';
-import { AgentModel, Chat, OriginalData, SingleReport, TransformedData } from '@/types/types';
+import { AgentModel, Chat, OriginalData, SelectedSubtasks, SingleReport, TransformedData } from '@/types/types';
 import AgentLeftOptions from '@/components/agent/AgentLeftOptions';
 import AgentRightOptions from '@/components/agent/AgentRightOptions';
 import AgentSelect from '@/components/agent/AgentSelect';
@@ -31,7 +31,6 @@ export default function AdvancedSearchAgent() {
     const [topicsLoading, setTopicsLoading] = useState(false);
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const { profile } = useAccount()
-    const { selectedSubtasks } = useResearcher()
 
 
     const addMessage = ({ role, content, metadata, reports }: Chat) => {
@@ -117,8 +116,7 @@ export default function AdvancedSearchAgent() {
             setTopicsLoading(false);
         }
     }
-    console.log(Object.keys(selectedSubtasks))
-    const generateReport = async (inputTopics: string) => {
+    const generateReport = async (selectedSubtasks: SelectedSubtasks) => {
         addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] });
         const topics = transformData(selectedSubtasks);
         const sliderKeys = Object.keys(selectedSubtasks)
@@ -233,11 +231,11 @@ export default function AdvancedSearchAgent() {
                             ) : chat.role === "options" ?
 
                                 <div key={i} className='w-full justify-start'>
-                                    <div className='  flex gap-2 p-1'>
+                                    <div className=' w-full flex gap-2 p-1'>
                                         <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
                                             <SiInternetcomputer color="white" />
                                         </div>
-                                        <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
+                                        <div className='flex w-full p-4 rounded-3xl bg-gray-200 flex-col'>
                                             <AdvancedTopics generateReport={generateReport} content={chat.content} />
                                         </div>
                                     </div>

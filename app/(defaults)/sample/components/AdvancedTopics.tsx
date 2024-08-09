@@ -1,22 +1,21 @@
 import IconMinusCircle from "@/components/icon/icon-minus-circle";
 import IconPlusCircle from "@/components/icon/icon-plus-circle";
 import AnimateHeight from "react-animate-height";
-import Topic from "../../iresearcher/topics/components/Topic";
 import { useState } from "react";
-import { useResearcher } from "@/contexts/ResearcherContext";
+import { SelectedSubtasks } from "@/types/types";
+import AdvancedTopic from "./AdvancedTopic";
 
 interface AdvancedTopicsProps {
     content: string;
-    generateReport: (value: string) => void;
+    generateReport: (selectedSubtasks: SelectedSubtasks) => void;
 }
 
 export default function AdvancedTopics({ content, generateReport }: AdvancedTopicsProps) {
     const [active, setActive] = useState<number | null>(0)
-    const [openTopic, setOpenTopic] = useState<string | null>(null);
-    const { selectedSubtasks } = useResearcher()
+    const [selectedSubtasks, setSelectedSubtasks] = useState<SelectedSubtasks>({});
 
     return (
-        <div>
+        <div className="w-full">
             <h1>Select the topics to be included in the Report</h1>
             <div className="flex">
                 <div className="divide-y divide-white-light px-6 py-4.5 dark:divide-dark w-[50%]">
@@ -41,11 +40,10 @@ export default function AdvancedTopics({ content, generateReport }: AdvancedTopi
                             </div>
                             <AnimateHeight duration={300} height={active === i + 1 ? 'auto' : 0}>
                                 <div className="px-1 py-3 font-semibold text-white-dark">
-                                    <Topic
+                                    <AdvancedTopic
                                         currentTopic={task}
-                                        isOpen={openTopic === task.task}
-                                        setOpenTopic={setOpenTopic}
-                                        title={task.task}
+                                        selectedSubtasks={selectedSubtasks}
+                                        setSelectedSubtasks={setSelectedSubtasks}
                                         key={i}
                                     />
                                 </div>
@@ -77,7 +75,7 @@ export default function AdvancedTopics({ content, generateReport }: AdvancedTopi
                     </div>
                 </div>
             </div>
-            <button className="p-2 rounded-md bg-black text-white" onClick={() => generateReport("singularity")}>continue</button>
+            <button className="p-2 rounded-md bg-black text-white" onClick={() => generateReport(selectedSubtasks)}>continue</button>
         </div>
     )
 }
