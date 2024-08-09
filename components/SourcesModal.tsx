@@ -18,11 +18,9 @@ export default function SourcesModal({ metadata }: SourcesModalProps) {
 
     return (
         <>
-            <li className="nav-item">
-                <button type="button" onClick={() => setModal(true)} className="group">
-                    sources
-                </button>
-            </li>
+            <button type="button" onClick={() => setModal(true)} className="bg-black px-2 py-1 rounded-lg text-white">
+                sources
+            </button>
             <Transition appear show={modal} as={Fragment}>
                 <Dialog as="div" open={modal} onClose={() => setModal(false)}>
                     <Transition.Child
