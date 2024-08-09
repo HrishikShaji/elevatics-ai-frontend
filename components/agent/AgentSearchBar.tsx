@@ -11,11 +11,10 @@ interface AgentSearchBarProps {
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
     data: string[];
     handleRecommendation: (value: string) => void;
-    isSuccess: boolean;
     disableSuggestions: boolean;
 }
 
-export default function AgentSearchBar({ disableSuggestions, data, handleRecommendation, isSuccess, handleClick, input, handleChange, handleSubmit }: AgentSearchBarProps) {
+export default function AgentSearchBar({ disableSuggestions, data, handleRecommendation, handleClick, input, handleChange, handleSubmit }: AgentSearchBarProps) {
 
     return (
 
@@ -35,7 +34,7 @@ export default function AgentSearchBar({ disableSuggestions, data, handleRecomme
                     <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                 </button>
             </form>
-            <AnimateHeight height={isSuccess && !disableSuggestions ? 300 : 0} duration={300}>
+            <AnimateHeight height={data.length > 0 && !disableSuggestions ? 300 : 0} duration={300}>
                 <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
                     <span className="text-[#535353] ">Here are some suggestions</span>
                     <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { HFSPACE_TOKEN, NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL, TOPICS_URL } from '@/lib/endpoints';
 import AgentContainer from '@/components/agent/AgentContainer';
 import AgentInputContainer from '@/components/agent/AgentInputContainer';
@@ -22,9 +22,29 @@ export default function AdvancedSearchAgent() {
     const [initialSearch, setInitialSearch] = useState(false);
     const [disableSuggestions, setDisableSuggestions] = useState(false)
     const [topicsLoading, setTopicsLoading] = useState(false);
-    const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
+    const [input, setInput] = useState("")
+    const [inputClick, setInputClick] = useState(false)
+    const { data, mutate } = useSuggestions(input)
     const { profile } = useAccount()
     console.log("rendered")
+
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+        setInput(e.target.value)
+    }
+
+    function handleReset() {
+        setInput("")
+    }
+
+    function handleInputClick() {
+        setInputClick(true)
+    }
+
+    function handleRecommendation(recommendation: string) {
+        setInput(recommendation)
+        handleInputClick()
+        mutate(recommendation)
+    }
 
     const addMessage = useCallback(({ role, content, metadata, reports }: Chat) => {
         setChatHistory((prevChatHistory) => {
@@ -74,7 +94,7 @@ export default function AdvancedSearchAgent() {
         setInitialSearch(true);
         setTopicsLoading(true);
         addMessage({ role: "user", content: input, metadata: null, reports: [] })
-        reset();
+        handleReset()
 
         try {
             const headers = {
@@ -241,7 +261,7 @@ export default function AdvancedSearchAgent() {
                 <AgentIntro suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendation} title='Search' subTitle='Faster Efficient Search' />
             )}
             <AgentInputContainer>
-                <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} isSuccess={isSuccess} handleSubmit={generateTopics} input={input} handleRecommendation={handleRecommendation} handleClick={handleInputClick} />
+                <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} handleSubmit={generateTopics} input={input} handleRecommendation={handleRecommendation} handleClick={handleInputClick} />
             </AgentInputContainer>
         </AgentContainer>
     );

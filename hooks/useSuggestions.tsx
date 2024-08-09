@@ -1,5 +1,4 @@
 
-import { ChangeEvent, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useDebounce from './useDebounce';
 import { HFSPACE_TOKEN, SUGGESTIONS_URL } from '@/lib/endpoints';
@@ -27,11 +26,12 @@ async function fetchSuggestions(prompt: string) {
 
     return response.json();
 }
-export default function useSuggestions() {
-    const [input, setInput] = useState('');
+
+
+
+export default function useSuggestions(input: string) {
     const debouncedValue = useDebounce(input, 1000);
     const queryClient = useQueryClient();
-    const [inputClick, setInputClick] = useState(false)
 
     const { data, isLoading, isSuccess, isFetching } = useQuery({
         queryKey: ["suggestions", debouncedValue],
@@ -40,7 +40,7 @@ export default function useSuggestions() {
     }
     );
 
-    const mutation = useMutation({
+    const { mutate } = useMutation({
         mutationFn: (prompt: string) => fetchSuggestions(prompt),
         onSuccess: (data) => {
             queryClient.setQueryData(['suggestions', debouncedValue], data);
@@ -48,32 +48,11 @@ export default function useSuggestions() {
     }
     );
 
-    function reset() {
-        setInput("")
-    }
-
-    function handleInputClick() {
-        setInputClick(true)
-    }
-    function handleChange(e: ChangeEvent<HTMLInputElement>) {
-        setInput(e.target.value);
-    }
-
-    function handleRecommendation(prompt: string) {
-        handleInputClick();
-        setInput(prompt);
-        mutation.mutate(prompt);
-    }
-
     return {
         isLoading: isLoading || isFetching,
         isSuccess,
         data: data ? data.recommendations : [],
-        handleRecommendation,
-        handleChange,
+        mutate,
         input,
-        handleInputClick,
-        inputClick,
-        reset
     };
 }
