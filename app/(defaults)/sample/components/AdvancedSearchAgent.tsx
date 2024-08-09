@@ -1,13 +1,10 @@
 "use client"
 
-import React, { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { HFSPACE_TOKEN, NEWS_ASSISTANT_API_KEY, SEARCH_ASSISTANT_URL, TOPICS_URL } from '@/lib/endpoints';
+import React, { useCallback, useState } from 'react';
+import { HFSPACE_TOKEN, TOPICS_URL } from '@/lib/endpoints';
 import AgentContainer from '@/components/agent/AgentContainer';
-import AgentInputContainer from '@/components/agent/AgentInputContainer';
-import AgentIntro from '@/components/agent/AgentIntro';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
-import useSuggestions from '@/hooks/useSuggestions';
-import { AgentModel, Chat, OriginalData, SelectedSubtasks, SingleReport, TransformedData } from '@/types/types';
+import { Chat, OriginalData, SelectedSubtasks, TransformedData } from '@/types/types';
 import AutoScrollWrapper from '../../search/components/AutoScrollWrapper';
 import { useAccount } from '@/contexts/AccountContext';
 import { SiInternetcomputer } from 'react-icons/si';
@@ -15,40 +12,12 @@ import Image from 'next/image';
 import AdvancedTopics from './AdvancedTopics';
 import AdvancedReportContainer from './AdvancedReportContainer';
 
-const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
 export default function AdvancedSearchAgent() {
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
-    const [initialSearch, setInitialSearch] = useState(false);
-    const [disableSuggestions, setDisableSuggestions] = useState(false)
     const [topicsLoading, setTopicsLoading] = useState(false);
-    const [input, setInput] = useState("")
-    const [inputClick, setInputClick] = useState(false)
-    const { data, mutate } = useSuggestions(input)
     const { profile } = useAccount()
     console.log("rendered")
-
-
-    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        setInput(e.target.value)
-
-    }, [])
-
-    const handleReset = useCallback(() => {
-        setInput("")
-
-    }, [])
-
-    const handleInputClick = useCallback(() => {
-        setInputClick(true)
-    }, [])
-
-    const handleRecommendationClick = useCallback((recommendation: string) => {
-
-        setInput(recommendation)
-        handleInputClick()
-        mutate(recommendation)
-    }, [])
 
 
     const addMessage = useCallback(({ role, content, metadata, reports }: Chat) => {
@@ -93,13 +62,9 @@ export default function AdvancedSearchAgent() {
             }
         });
     }, [chatHistory]);
-    const generateTopics = async (e: FormEvent) => {
-        e.preventDefault();
-        setDisableSuggestions(true)
-        setInitialSearch(true);
+    const generateTopics = async (input: string) => {
         setTopicsLoading(true);
         addMessage({ role: "user", content: input, metadata: null, reports: [] })
-        handleReset()
 
         try {
             const headers = {
@@ -134,6 +99,23 @@ export default function AdvancedSearchAgent() {
     }
     const generateReport = async (selectedSubtasks: SelectedSubtasks) => {
         addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] });
+        const transformData = (data: OriginalData): TransformedData[] => {
+            const result: TransformedData[] = [];
+
+            for (const parentKey in data) {
+                if (data.hasOwnProperty(parentKey)) {
+                    data[parentKey].forEach(subtask => {
+                        result.push({
+                            parentKey,
+                            name: subtask.name,
+                            prompt: subtask.prompt,
+                        });
+                    });
+                }
+            }
+
+            return result;
+        };
         const topics = transformData(selectedSubtasks);
         const sliderKeys = Object.keys(selectedSubtasks)
 
@@ -197,30 +179,13 @@ export default function AdvancedSearchAgent() {
         }
     };
 
-    const transformData = (data: OriginalData): TransformedData[] => {
-        const result: TransformedData[] = [];
-
-        for (const parentKey in data) {
-            if (data.hasOwnProperty(parentKey)) {
-                data[parentKey].forEach(subtask => {
-                    result.push({
-                        parentKey,
-                        name: subtask.name,
-                        prompt: subtask.prompt,
-                    });
-                });
-            }
-        }
-
-        return result;
-    };
 
 
     return (
         <AgentContainer>
-            {initialSearch ? (
+            {chatHistory.length > 0 ? (
                 <AutoScrollWrapper>
-                    <div className='w-[800px] p-5 flex flex-col gap-2 ' >
+                    <div className='w-[1000px] py-5 flex flex-col gap-2 ' >
                         {chatHistory.map((chat, i) => {
                             return chat.role === "user" ? (
                                 <div key={i} className='w-full  flex justify-end '>
@@ -262,12 +227,8 @@ export default function AdvancedSearchAgent() {
                             : null}
                     </div>
                 </AutoScrollWrapper>
-            ) : (
-                <AgentIntro suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendationClick} title='Search' subTitle='Faster Efficient Search' />
-            )}
-            <AgentInputContainer>
-                <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} handleSubmit={generateTopics} input={input} handleRecommendation={handleRecommendationClick} handleClick={handleInputClick} />
-            </AgentInputContainer>
+            ) : null}
+            <AgentSearchBar title='Advanced Search' subTitle='advanced' disableSuggestions={chatHistory.length > 0} handleSubmit={generateTopics} />
         </AgentContainer>
     );
 }

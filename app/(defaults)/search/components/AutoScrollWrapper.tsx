@@ -19,12 +19,8 @@ export default function AutoScrollWrapper({ children }: AutoScrollWrapperProps) 
     }, []);
 
     const ref = useResizeObserver(onResize);
-
-
-
-
     return (
-        <div ref={containerRef} className="custom-scrollbar  w-full flex justify-center  min-h-[35vh] max-h-[calc(100vh_-_80px)] overflow-y-auto">
+        <div ref={containerRef} className="custom-scrollbar  w-full flex justify-center   h-[calc(100vh_-_80px)] overflow-y-auto">
             <div ref={ref} className='h-fit '>
                 {children}
             </div>

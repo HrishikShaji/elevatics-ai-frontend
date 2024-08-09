@@ -1,58 +1,67 @@
 "use client"
 
+import AgentsContainer from '@/components/AgentsContainer';
 import SearchBar from '@/components/SearchBar';
 import SignInButton from '@/components/SignInButton';
+import AgentContainer from '@/components/agent/AgentContainer';
+import AgentInputContainer from '@/components/agent/AgentInputContainer';
+import AgentSearchBar from '@/components/agent/AgentSearchBar';
 import { useQuickReport } from '@/contexts/QuickReportContext';
 import useSuggestions from '@/hooks/useSuggestions';
 import { useRouter } from 'next/navigation';
-import React, { FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { AiFillAmazonCircle } from 'react-icons/ai';
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
+
+const agents = [
+    { title: "", url: "/" },
+]
+
 const Page = () => {
-
+    const [disableSuggestions, setDisableSuggestions] = useState(false)
+    const [inputClick, setInputClick] = useState(false)
     const [initialClick, setInitialClick] = useState(false)
-
+    const [input, setInput] = useState("")
     const { setPrompt } = useQuickReport()
     const router = useRouter()
 
 
-    const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
+    const { isLoading, isSuccess, data, mutate } = useSuggestions(input)
     function handleSubmit(e: FormEvent) {
         e.preventDefault()
         setPrompt(input)
         router.push("/quick-report")
     }
-    function handleClick() {
-        setInitialClick(true);
-    }
+    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        setInput(e.target.value)
+    }, [])
 
-    function handleRecommendationClick(item: string) {
-        setInitialClick(true);
-        handleRecommendation(item);
-    }
+    const handleReset = useCallback(() => {
+        setInput("")
+    }, [])
 
-    return <div className="relative flex flex-col px-10 gap-5 items-center h-screen pt-[200px] sm:pt-[200px] w-full">
-        <h1 className="text-3xl font-semibold">
-            Quick Search
-        </h1>
-        {!initialClick ? <>
-            <h1 className="text-[#8282AD] text-center">
-                Unlock over 200 million resources and advanced features for effortless, in-depth research.
-            </h1>
-            <div className="flex pt-[50px] gap-4 w-[800px]">
-                {suggestions.map((item, i) => (
+    const handleInputClick = useCallback(() => {
+        setInputClick(true)
+    }, [])
 
-                    <div onClick={() => handleRecommendationClick(item)} key={i} className='cursor-pointer h-[150px] transition duration-300 hover:-translate-y-3 w-full hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
-                ))}
-            </div>
-        </> : null}
+    const handleRecommendationClick = useCallback((recommendation: string) => {
+        setInput(recommendation)
+        handleInputClick()
+        mutate(recommendation)
+    }, [])
 
-        <div className={`${initialClick ? "pt-0" : "pt-[120px]"} transition-all duration-500`}>
-            <SearchBar handleClick={handleClick} isSuccess={isSuccess} input={input} handleRecommendation={handleRecommendation} handleSubmit={handleSubmit} handleChange={handleChange} data={data} />
-        </div>
+
+
+    return <AgentContainer>
+        <AgentsContainer suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendationClick} title='Home' subTitle='Faster Efficient Search' />
         <SignInButton />
-    </div>;
+        <AgentInputContainer>
+            <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} handleSubmit={handleSubmit} input={input} handleRecommendation={handleRecommendationClick} handleClick={handleInputClick} />
+        </AgentInputContainer>
+    </AgentContainer>
+
 };
 
 export default Page;
