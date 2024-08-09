@@ -12,6 +12,7 @@ interface AdvancedTopicsProps {
 export default function AdvancedTopics({ content, generateReport }: AdvancedTopicsProps) {
     const [active, setActive] = useState<number | null>(0)
     const [openTopic, setOpenTopic] = useState<string | null>(null);
+
     return (
         <div>
             <div className="divide-y divide-white-light px-6 py-4.5 dark:divide-dark">

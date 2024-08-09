@@ -28,6 +28,7 @@ export default function AdvancedSearchAgent() {
     const controllerRef = useRef<AbortController | null>(null)
     const [disableSuggestions, setDisableSuggestions] = useState(false)
     const [selectedAgent, setSelectedAgent] = useState<AgentModel>("meta-llama/llama-3-70b-instruct")
+    const [topicsLoading, setTopicsLoading] = useState(false);
     const { reset, handleInputClick, inputClick, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
     const { profile } = useAccount()
     const { selectedSubtasks } = useResearcher()
@@ -62,11 +63,9 @@ export default function AdvancedSearchAgent() {
 
                     const reportExist = currentReports.find((report) => report.name === name)
                     if (reportExist) {
-                        console.log("report exist")
                         reportExist.report = report
                         reportExist.metadata = metadata
                     } else {
-                        console.log("new report created")
                         currentReports?.push({ name: name, parentKey: parentKey, report: report, metadata: metadata })
                     }
                 }
@@ -81,6 +80,7 @@ export default function AdvancedSearchAgent() {
         e.preventDefault();
         setDisableSuggestions(true)
         setInitialSearch(true);
+        setTopicsLoading(true);
         setStreamComplete(false);
         addMessage({ role: "user", content: input, metadata: null, reports: [] })
         reset();
@@ -114,6 +114,7 @@ export default function AdvancedSearchAgent() {
             addMessage({ role: "assistant", content: "Oops.", metadata: null, reports: [] })
         } finally {
             setStreamComplete(true);
+            setTopicsLoading(false);
         }
     }
     console.log(Object.keys(selectedSubtasks))
@@ -245,6 +246,19 @@ export default function AdvancedSearchAgent() {
                                     <AdvancedReportContainer chat={chat} key={i} />
                                 );
                         })}
+                        {topicsLoading ?
+
+                            <div className='w-full justify-start'>
+                                <div className='  flex gap-2 p-1'>
+                                    <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
+                                        <SiInternetcomputer color="white" />
+                                    </div>
+                                    <div className='flex p-4 rounded-3xl bg-gray-200 flex-col'>
+                                        Loading...
+                                    </div>
+                                </div>
+                            </div>
+                            : null}
                     </div>
                 </AutoScrollWrapper>
             ) : (
