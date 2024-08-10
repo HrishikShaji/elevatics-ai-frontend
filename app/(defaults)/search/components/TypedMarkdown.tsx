@@ -8,6 +8,8 @@ import styles from "../../../../styles/cursor.module.css";
 import RenderChart from '@/components/RenderChart';
 import { useTyping } from '@/hooks/useTyping';
 import Image from 'next/image';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dark, dracula, oneLight, duotoneLight, gruvboxLight, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 
 interface TypedMarkdownProps {
@@ -29,6 +31,7 @@ const TypedMarkdown = memo(({ disableTyping, text }: TypedMarkdownProps) => {
                     }
                     return <span {...props}></span>;
                 },
+                code: code,
                 script: script,
                 div: ({ node, ...props }) => {
                     return null;
@@ -55,4 +58,16 @@ const script = memo(
         }
     }
 );
+
+const code = memo(({ node, className, children, ...props }: any) => {
+    return <SyntaxHighlighter
+        useInlineStyles={true}
+        customStyle={{ width: "100%", padding: "20px", borderRadius: "24px" }}
+        style={materialLight}
+        language="tsx"
+        PreTag="div"
+    >{String(children).replace(/\n$/, '')}
+    </SyntaxHighlighter>
+})
+
 export default TypedMarkdown;
