@@ -1,15 +1,34 @@
 
 
 "use client"
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import AgentContainer from '@/components/agent/AgentContainer';
 import { CoderProvider, useCoder } from '../contexts/CoderContext';
 import CoderChats from './CoderChats';
 import CoderSearchBar from './CoderSearchBar';
 
-export default function AgentCoder() {
+interface AgentCoderProps {
+    initialChatHistory: string;
+    reportId: string;
+}
 
-    const { sendMessage, loading, chatHistory } = useCoder()
+export default function AgentCoder({ initialChatHistory, reportId }: AgentCoderProps) {
+
+    const { sendMessage, loading, chatHistory, setChatHistory, setReportId, setConverstionId } = useCoder()
+
+    useEffect(() => {
+        if (initialChatHistory === "") {
+            setChatHistory([])
+            setConverstionId("");
+            setReportId("")
+        } else {
+            const parsedData = JSON.parse(initialChatHistory)
+            setChatHistory(parsedData.chatHistory)
+            setConverstionId(parsedData.conversationId);
+            setReportId(reportId)
+        }
+    }, [initialChatHistory, reportId]);
+
     return (
         <AgentContainer>
             <CoderChats chatHistory={chatHistory} loading={loading} />

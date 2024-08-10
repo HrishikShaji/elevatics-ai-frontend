@@ -13,12 +13,17 @@ import React, {
     ReactNode,
     useCallback,
     useEffect,
+    SetStateAction,
+    Dispatch,
 } from "react";
 
 interface CoderData {
     sendMessage: (input: string) => void;
     chatHistory: Chat[]
     loading: boolean;
+    setConverstionId: Dispatch<SetStateAction<string>>;
+    setChatHistory: Dispatch<SetStateAction<Chat[]>>;
+    setReportId: Dispatch<SetStateAction<string>>;
 }
 
 export const CoderContext = createContext<CoderData | undefined>(undefined);
@@ -143,7 +148,10 @@ export const CoderProvider = ({ children }: CoderProviderProps) => {
     const coderData: CoderData = {
         chatHistory,
         loading,
-        sendMessage
+        sendMessage,
+        setChatHistory,
+        setConverstionId,
+        setReportId
     }
     return (
         <CoderContext.Provider value={coderData}>{children}</CoderContext.Provider>

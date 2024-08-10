@@ -1,8 +1,5 @@
-import AgentCoder from "./components/AgentCoder";
-import { CoderProvider } from "./contexts/CoderContext";
+import Coder from "./components/Coder";
 
 export default function Page() {
-    return <CoderProvider>
-        <AgentCoder />
-    </CoderProvider>
+    return <Coder />
 }
