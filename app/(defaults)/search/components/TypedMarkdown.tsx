@@ -16,7 +16,7 @@ interface TypedMarkdownProps {
 }
 
 
-const TypedMarkdown = ({ disableTyping, text }: TypedMarkdownProps) => {
+const TypedMarkdown = memo(({ disableTyping, text }: TypedMarkdownProps) => {
 
     return (
         <ReactMarkdown
@@ -38,7 +38,7 @@ const TypedMarkdown = ({ disableTyping, text }: TypedMarkdownProps) => {
             {text}
         </ReactMarkdown>
     );
-};
+});
 
 interface ScriptProps {
     src?: string;

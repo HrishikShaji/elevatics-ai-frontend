@@ -1,11 +1,12 @@
-import { ReactNode } from "react";
+import { ReactNode, memo } from "react";
 import { SiInternetcomputer } from "react-icons/si";
 
 interface AgentMessageWrapperProps {
     children: ReactNode
 }
 
-export default function AgentMessageWrapper({ children }: AgentMessageWrapperProps) {
+const AgentMessageWrapper = memo(({ children }: AgentMessageWrapperProps) => {
+    console.log("agent message rendered")
     return (
         <div className='w-full justify-start'>
             <div className=' w-full flex gap-2 p-1'>
@@ -18,4 +19,6 @@ export default function AgentMessageWrapper({ children }: AgentMessageWrapperPro
             </div>
         </div>
     )
-}
+})
+
+export default AgentMessageWrapper

@@ -5,13 +5,13 @@ import AdvancedReportContainer from "./AdvancedReportContainer";
 import { useAdvanced } from "./AdvancedContext";
 import AutoScrollWrapper from "../../search/components/AutoScrollWrapper";
 import ContextTopics from "./ContextTopics";
+import SliderWrapper from "./SliderWrapper";
+import SourcesModal from "@/components/SourcesModal";
+import AdvancedReportWrapper from "./AdvancedReportWrapper";
 
 
 export default function ContextChat() {
     const { chatHistory, topicsLoading } = useAdvanced()
-    const MemoizedUserMessageWrapper = useMemo(() => UserMessageWrapper, []);
-    const MemoizedAgentMessageWrapper = useMemo(() => AgentMessageWrapper, []);
-    const MemoizedAdvancedReportContainer = useMemo(() => AdvancedReportContainer, []);
 
     if (chatHistory.length === 0) return null;
 
@@ -19,23 +19,26 @@ export default function ContextChat() {
         <div className="w-[1000px] py-5 flex flex-col gap-2">
             {chatHistory.map((chat, i) => (
                 chat.role === "user" ? (
-                    <MemoizedUserMessageWrapper key={i}>
+                    <UserMessageWrapper key={i}>
                         {chat.content}
-                    </MemoizedUserMessageWrapper>
+                    </UserMessageWrapper>
                 ) : chat.role === "options" ? (
-                    <MemoizedAgentMessageWrapper key={i}>
+                    <AgentMessageWrapper key={i}>
                         <ContextTopics content={chat.content} />
-                    </MemoizedAgentMessageWrapper>
+                    </AgentMessageWrapper>
                 ) : (
-                    <MemoizedAgentMessageWrapper key={i}>
-                        <MemoizedAdvancedReportContainer chat={chat} key={i} />
-                    </MemoizedAgentMessageWrapper>
+                    <AgentMessageWrapper key={i}>
+                        <AdvancedReportWrapper chat={chat} key={i} />
+                        <div className="w-full flex justify-end pt-2">
+                            <SourcesModal metadata={chat.metadata as string} />
+                        </div>
+                    </AgentMessageWrapper>
                 )
             ))}
             {topicsLoading && (
-                <MemoizedAgentMessageWrapper>
+                <AgentMessageWrapper>
                     Loading...
-                </MemoizedAgentMessageWrapper>
+                </AgentMessageWrapper>
             )}
         </div>
     </AutoScrollWrapper>

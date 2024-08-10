@@ -49,7 +49,6 @@ export const AdvancedProvider = ({ children }: AdvancedProviderProps) => {
 
     const [chatHistory, setChatHistory] = useState<Chat[]>([]);
     const [topicsLoading, setTopicsLoading] = useState(false);
-    console.log("rendered")
     const addMessage = useCallback(({ role, content, metadata, reports }: Chat) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {

@@ -2,7 +2,7 @@
 import IconMinusCircle from "@/components/icon/icon-minus-circle";
 import IconPlusCircle from "@/components/icon/icon-plus-circle";
 import AnimateHeight from "react-animate-height";
-import { useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { OriginalData, SelectedSubtasks, TransformedData } from "@/types/types";
 import AdvancedTopic from "./AdvancedTopic";
 import { useAdvanced } from "./AdvancedContext";
@@ -11,10 +11,11 @@ interface ContextTopicsProps {
     content: string;
 }
 
-export default function ContextTopics({ content }: ContextTopicsProps) {
+const ContextTopics = memo(({ content }: ContextTopicsProps) => {
     const [active, setActive] = useState<number | null>(0)
     const [selectedSubtasks, setSelectedSubtasks] = useState<SelectedSubtasks>({});
     const { addReport, addMessage } = useAdvanced()
+    console.log("context topics rendered")
 
     const generateReport = useCallback(async (selectedSubtasks: SelectedSubtasks) => {
         addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] });
@@ -163,4 +164,6 @@ export default function ContextTopics({ content }: ContextTopicsProps) {
             <button className="p-2 rounded-md bg-black text-white" onClick={() => generateReport(selectedSubtasks)}>continue</button>
         </div>
     )
-}
+})
+
+export default ContextTopics
