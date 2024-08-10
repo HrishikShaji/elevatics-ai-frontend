@@ -3,6 +3,7 @@
 "use client";
 
 import { useSettings } from "@/contexts/SettingsContext";
+import useSaveReport from "@/hooks/useSaveReport";
 import { CODING_ASSISTANT_API_KEY, CODING_ASSISTANT_URL } from "@/lib/endpoints";
 import { Chat } from "@/types/types";
 import React, {
@@ -41,6 +42,27 @@ export const CoderProvider = ({ children }: CoderProviderProps) => {
     const [userId, setUserId] = useState("");
     const [chatHistory, setChatHistory] = useState<Chat[]>([]);
     const [loading, setLoading] = useState(false)
+    const [reportId, setReportId] = useState("")
+    const [streamComplete, setStreamComplete] = useState(false)
+
+    const { mutate, isSuccess, data } = useSaveReport();
+    useEffect(() => {
+        if (isSuccess && data.id) {
+            setReportId(data.id);
+        }
+    }, [isSuccess, data]);
+
+    useEffect(() => {
+        if (streamComplete) {
+            console.log("ran saving")
+            mutate({
+                name: chatHistory[0].content,
+                report: JSON.stringify({ chatHistory: chatHistory, conversationId: conversationId }),
+                reportId: reportId,
+                reportType: "CODE"
+            });
+        }
+    }, [streamComplete]);
 
     useEffect(() => {
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -71,6 +93,7 @@ export const CoderProvider = ({ children }: CoderProviderProps) => {
     const sendMessage = async (input: string) => {
         addMessage({ role: 'user', content: input, metadata: null });
         setLoading(true)
+        setStreamComplete(false)
         try {
             const response = await fetch(CODING_ASSISTANT_URL, {
                 method: 'POST',
@@ -113,6 +136,7 @@ export const CoderProvider = ({ children }: CoderProviderProps) => {
             addMessage({ role: 'assistant', content: 'Sorry, an error occurred while processing your request.', metadata: null });
         } finally {
             setLoading(false)
+            setStreamComplete(true)
         }
     };
 

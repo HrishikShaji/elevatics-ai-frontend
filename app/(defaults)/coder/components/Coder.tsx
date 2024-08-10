@@ -25,7 +25,6 @@ const Coder = () => {
     const [streamComplete, setStreamComplete] = useState(false);
     const [reportId, setReportId] = useState("");
 
-    const { mutate, isSuccess, data } = useSaveReport();
 
     useEffect(() => {
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -34,13 +33,8 @@ const Coder = () => {
         setConverstionId(conversationId);
     }, []);
 
-    const displayMessages = () => {
-        // Scroll to the bottom of the chat container
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
-    };
 
+    const { mutate, isSuccess, data } = useSaveReport();
     useEffect(() => {
         if (isSuccess && data.id) {
             setReportId(data.id);
@@ -58,6 +52,12 @@ const Coder = () => {
         }
     }, [streamComplete, reportId, chatHistory, conversationId]);
 
+    const displayMessages = () => {
+        // Scroll to the bottom of the chat container
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    };
     useEffect(() => {
         displayMessages();
     }, [chatHistory]);
