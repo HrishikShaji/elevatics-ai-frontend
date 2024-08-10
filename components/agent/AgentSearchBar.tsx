@@ -1,6 +1,6 @@
 
 
-import { ChangeEvent, FormEvent, useCallback, useState } from "react"
+import { ChangeEvent, FormEvent, memo, useCallback, useState } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
@@ -9,15 +9,15 @@ interface AgentSearchBarProps {
     handleSubmit: (input: string) => void;
     title: string;
     subTitle: string;
-    disableSuggestions: boolean;
 
 }
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
-export default function AgentSearchBar({ title, subTitle, disableSuggestions, handleSubmit }: AgentSearchBarProps) {
+const AgentSearchBar = memo(({ title, subTitle, handleSubmit }: AgentSearchBarProps) => {
     const [input, setInput] = useState("")
-
+    console.log("rendered searchbar")
+    const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
 
@@ -43,13 +43,14 @@ export default function AgentSearchBar({ title, subTitle, disableSuggestions, ha
 
     function onSubmit(e: FormEvent) {
         e.preventDefault()
+        setInitialSearch(true)
         handleSubmit(input)
         handleReset()
     }
 
     return (
         <>
-            {!disableSuggestions ?
+            {!initialSearch ?
                 <div className='flex flex-col w-full   items-center justify-center '>
                     <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
                         <h1 className="text-3xl font-semibold">
@@ -85,11 +86,11 @@ export default function AgentSearchBar({ title, subTitle, disableSuggestions, ha
                             <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                         </button>
                     </form>
-                    <AnimateHeight height={data.length > 0 && !disableSuggestions ? 300 : 0} duration={300}>
+                    <AnimateHeight height={data.length > 0 && !initialSearch ? 300 : 0} duration={300}>
                         <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
                             <span className="text-[#535353] ">Here are some suggestions</span>
                             <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
-                                {!disableSuggestions ? data.map((recommendation: string, i: number) => (
+                                {!initialSearch ? data.map((recommendation: string, i: number) => (
                                     <div
                                         onClick={() => handleRecommendationClick(recommendation)}
                                         key={i}
@@ -107,4 +108,6 @@ export default function AgentSearchBar({ title, subTitle, disableSuggestions, ha
             </div>
         </>
     )
-}
+})
+
+export default AgentSearchBar
