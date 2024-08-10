@@ -20,7 +20,7 @@ export default function SavedReport() {
         {data.reportType === "NEWS" ? <SavedNews name={data.name} report={data.data} /> : null}
         {data.reportType === "SEARCH" ? <SavedSearch id={data.id} history={data.data} /> : null}
         {data.reportType === "CODE" ? <CoderProvider>
-            <AgentCoder initialChatHistory={data.data} reportId={data.id} />
+            <AgentCoder disable={true} initialChatHistory={data.data} reportId={data.id} />
         </CoderProvider>
             : null}
     </div>

@@ -9,12 +9,12 @@ interface CoderSearchBarProps {
     title: string;
     subTitle: string;
     handleSubmit: (input: string) => void
-
+    disable: boolean;
 }
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
-const CoderSearchBar = memo(({ title, subTitle, handleSubmit }: CoderSearchBarProps) => {
+const CoderSearchBar = memo(({ disable, title, subTitle, handleSubmit }: CoderSearchBarProps) => {
     const [input, setInput] = useState("")
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
@@ -47,7 +47,7 @@ const CoderSearchBar = memo(({ title, subTitle, handleSubmit }: CoderSearchBarPr
 
     return (
         <>
-            {!initialSearch ?
+            {!initialSearch && !disable ?
                 <div className='flex flex-col w-full   items-center justify-center '>
                     <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
                         <h1 className="text-3xl font-semibold">
@@ -83,24 +83,25 @@ const CoderSearchBar = memo(({ title, subTitle, handleSubmit }: CoderSearchBarPr
                             <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                         </button>
                     </form>
-                    <AnimateHeight height={data.length > 0 && !initialSearch ? 300 : 0} duration={300}>
-                        <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
-                            <span className="text-[#535353] ">Here are some suggestions</span>
-                            <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
-                                {!initialSearch ? data.map((recommendation: string, i: number) => (
-                                    <div
-                                        onClick={() => handleRecommendationClick(recommendation)}
-                                        key={i}
-                                        className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
-                                    >
-                                        <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
-                                            {recommendation}
-                                        </h1>
-                                    </div>
-                                )) : null}
+                    {!disable ?
+                        <AnimateHeight height={data.length > 0 && !initialSearch ? 300 : 0} duration={300}>
+                            <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
+                                <span className="text-[#535353] ">Here are some suggestions</span>
+                                <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
+                                    {!initialSearch ? data.map((recommendation: string, i: number) => (
+                                        <div
+                                            onClick={() => handleRecommendationClick(recommendation)}
+                                            key={i}
+                                            className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
+                                        >
+                                            <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
+                                                {recommendation}
+                                            </h1>
+                                        </div>
+                                    )) : null}
+                                </div>
                             </div>
-                        </div>
-                    </AnimateHeight>
+                        </AnimateHeight> : null}
                 </div>
             </div>
         </>

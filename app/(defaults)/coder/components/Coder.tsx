@@ -5,7 +5,7 @@ import AgentCoder from "./AgentCoder";
 export default function Coder() {
     return (
         <CoderProvider>
-            <AgentCoder initialChatHistory="" reportId="" />
+            <AgentCoder disable={false} initialChatHistory="" reportId="" />
         </CoderProvider>
     )
 }

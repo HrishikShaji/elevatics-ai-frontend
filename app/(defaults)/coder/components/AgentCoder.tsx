@@ -10,9 +10,10 @@ import CoderSearchBar from './CoderSearchBar';
 interface AgentCoderProps {
     initialChatHistory: string;
     reportId: string;
+    disable: boolean;
 }
 
-export default function AgentCoder({ initialChatHistory, reportId }: AgentCoderProps) {
+export default function AgentCoder({ disable, initialChatHistory, reportId }: AgentCoderProps) {
 
     const { sendMessage, loading, chatHistory, setChatHistory, setReportId, setConverstionId } = useCoder()
 
@@ -32,7 +33,7 @@ export default function AgentCoder({ initialChatHistory, reportId }: AgentCoderP
     return (
         <AgentContainer>
             <CoderChats chatHistory={chatHistory} loading={loading} />
-            <CoderSearchBar title="Coder" subTitle='Efficient coding' handleSubmit={sendMessage} />
+            <CoderSearchBar disable={disable} title="Coder" subTitle='Efficient coding' handleSubmit={sendMessage} />
         </AgentContainer >
     );
 }
