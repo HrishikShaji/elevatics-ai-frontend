@@ -1,5 +1,5 @@
-import AdvancedSearchAgent from "../../sample/components/AdvancedSearchAgent";
+import ContextAgent from "../../sample/components/ContextAgent";
 
 export default function Page() {
-    return <AdvancedSearchAgent />
+    return <ContextAgent />
 }
