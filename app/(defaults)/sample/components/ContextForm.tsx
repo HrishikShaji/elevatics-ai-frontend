@@ -11,7 +11,6 @@ interface ContextFormProps {
 const ContextForm = memo(({ handleInitialSearch, handleInitialClick }: ContextFormProps) => {
     const { setTopicsLoading, addMessage } = useAdvanced()
     const [input, setInput] = useState("")
-    console.log("context form rendered")
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
     }, [])

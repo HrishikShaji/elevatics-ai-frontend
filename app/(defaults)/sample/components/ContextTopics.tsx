@@ -15,7 +15,6 @@ const ContextTopics = memo(({ content }: ContextTopicsProps) => {
     const [active, setActive] = useState<number | null>(0)
     const [selectedSubtasks, setSelectedSubtasks] = useState<SelectedSubtasks>({});
     const { addReport, addMessage } = useAdvanced()
-    console.log("context topics rendered")
 
     const generateReport = useCallback(async (selectedSubtasks: SelectedSubtasks) => {
         addMessage({ role: "user", content: "user clicked continue", metadata: null, reports: [] });
@@ -105,7 +104,7 @@ const ContextTopics = memo(({ content }: ContextTopicsProps) => {
             <h1>Select the topics to be included in the Report</h1>
             <div className="flex">
                 <div className="divide-y divide-white-light px-6 py-4.5 dark:divide-dark w-[50%]">
-                    {JSON.parse(content)?.map((task, i) => (
+                    {JSON.parse(content)?.map((task: any, i: number) => (
 
                         <div key={i}>
                             <div
