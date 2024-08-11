@@ -1,23 +1,25 @@
+
 import { ChangeEvent, FormEvent, memo, useCallback, useState } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
+import { useDocument } from "../contexts/DocumentContext";
 
-interface CoderSearchBarProps {
+interface DocumentSearchBarProps {
     title: string;
     subTitle: string;
-    handleSubmit: (input: string) => void
     disable: boolean;
 }
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
-const CoderSearchBar = memo(({ disable, title, subTitle, handleSubmit }: CoderSearchBarProps) => {
+const DocumentSearchBar = memo(({ disable, title, subTitle }: DocumentSearchBarProps) => {
     const [input, setInput] = useState("")
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
 
+    const { sendMessage } = useDocument()
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
     }, [])
@@ -39,7 +41,7 @@ const CoderSearchBar = memo(({ disable, title, subTitle, handleSubmit }: CoderSe
     function onSubmit(e: FormEvent) {
         e.preventDefault()
         setInitialSearch(true)
-        handleSubmit(input);
+        sendMessage({ input: input, agent: "documind" });
         handleReset()
     }
 
@@ -106,4 +108,4 @@ const CoderSearchBar = memo(({ disable, title, subTitle, handleSubmit }: CoderSe
     )
 })
 
-export default CoderSearchBar
+export default DocumentSearchBar

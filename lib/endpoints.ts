@@ -27,4 +27,6 @@ export const NEWS_ASSISTANT_URL = "https://pvanand-general-chat.hf.space/news-as
 export const CODING_ASSISTANT_URL = "https://pvanand-general-chat.hf.space/coding-assistant"
 export const IRESEARCHER_PDF = "https://nithin1905-pdf.hf.space/generate_report_iresearcher"
 export const INVESTOR_PDF = "https://nithin1905-pdf.hf.space/generate_pdf_investor"
-export const CODE_INTERPRETER_URL = "https://ashishbangwal-code-interpreter.hf.space/docs"
+export const CODE_INTERPRETER_URL = "https://ashishbangwal-code-interpreter.hf.space/response"
+export const DOCUMIND_INITIATE = "https://ashishbangwal-documind-api.hf.space/initiate_conversation"
+export const DOCUMIND_RESPONSE = "https://ashishbangwal-documind-api.hf.space/get_response"
