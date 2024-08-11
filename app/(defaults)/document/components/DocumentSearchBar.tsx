@@ -1,9 +1,11 @@
 
-import { ChangeEvent, FormEvent, memo, useCallback, useState } from "react"
+import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useState } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
 import { useDocument } from "../contexts/DocumentContext";
+import { DOCUMIND_INITIATE, DOCUMIND_RESPONSE } from "@/lib/endpoints";
+import { v4 as uuidv4 } from 'uuid';
 
 interface DocumentSearchBarProps {
     title: string;
@@ -18,8 +20,16 @@ const DocumentSearchBar = memo(({ disable, title, subTitle }: DocumentSearchBarP
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
-
+    const [conversationId, setConversationId] = useState("")
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const { sendMessage } = useDocument()
+    const [query, setQuery] = useState("")
+
+    useEffect(() => {
+        const conversationID = uuidv4();
+        setConversationId(conversationID)
+    }, [])
+
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
     }, [])
@@ -45,6 +55,83 @@ const DocumentSearchBar = memo(({ disable, title, subTitle }: DocumentSearchBarP
         handleReset()
     }
 
+    // Handle file selection
+    const handleFileChange = (event) => {
+        setSelectedFiles(event.target.files);
+    };
+
+    // Convert file to base64
+    const encodeFileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]); // Get only the base64 string
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    // Handle form submission
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (selectedFiles.length === 0) {
+            alert('Please select a file!');
+            return;
+        }
+
+        const fileNames = [];
+        const fileTypes = [];
+        const fileData = [];
+
+        // Process each file
+        for (const file of selectedFiles) {
+            fileNames.push(file.name);
+            fileTypes.push(file.type.split('/')[1]); // Extract file extension
+            const base64String = await encodeFileToBase64(file);
+            fileData.push(base64String);
+        }
+
+        // Prepare the data object
+        const data = {
+            ConversationID: conversationId,
+            FileNames: fileNames,
+            FileTypes: fileTypes,
+            FileData: fileData,
+        };
+
+        try {
+            const response = await fetch(DOCUMIND_INITIATE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            const result = await response.json()
+            console.log('Success:', result);
+            alert('Files uploaded successfully!');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to upload files.');
+        }
+    };
+
+
+    const handleQuery = async (e: FormEvent) => {
+        e.preventDefault()
+
+        try {
+
+            const response = await fetch(DOCUMIND_RESPONSE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ConversationID: conversationId, Query: query })
+            })
+            const result = await response.text()
+            console.log('Success:query', result);
+        } catch (error) {
+            console.log("error", error)
+        }
+    }
+
     return (
         <>
             {!initialSearch && !disable ?
@@ -68,6 +155,14 @@ const DocumentSearchBar = memo(({ disable, title, subTitle }: DocumentSearchBarP
                 : null}
             <div className="w-full flex pt-3 justify-center h-20 items-start">
                 <div className="w-[1000px]  bg-white   rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+                    <form onSubmit={handleSubmit}>
+                        <input type="file" multiple onChange={handleFileChange} />
+                        <button type="submit">Upload</button>
+                    </form>
+                    <form onSubmit={handleQuery}>
+                        <input type="text" multiple onChange={(e) => setQuery(e.target.value)} />
+                        <button type="submit">send query</button>
+                    </form>
                     <form onSubmit={onSubmit} className=" relative  flex items-center justify-center  ">
                         <input
                             onClick={handleInputClick}
