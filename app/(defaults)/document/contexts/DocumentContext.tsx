@@ -19,6 +19,7 @@ import React, {
     Dispatch,
 } from "react";
 import fetchDocumentResponse from '../lib/fetchDocumentResponse';
+import fetchCodeInterpreterResponse from '../lib/fetchCodeInterpreterResponse';
 
 interface DocumentData {
     sendMessage: ({ input, agent }: { input: string, agent: string }) => void;
@@ -103,7 +104,12 @@ export const DocumentProvider = ({ children }: DocumentProviderProps) => {
         addMessage({ role: 'user', content: input, metadata: null });
         setLoading(true)
         setStreamComplete(false)
+
+        const history: { role: string; content: string }[] = chatHistory.map((chat) => { return { role: chat.role, content: chat.content } })
+        const latestHistory = [...history, { role: "user", content: input }]
+
         try {
+            //await fetchCodeInterpreterResponse({ addMessage: addMessage, query: input, history: latestHistory })
             await fetchDocumentResponse({ addMessage: addMessage, query: input, conversationId: conversationId })
         } catch (error) {
             console.error('Error:', error);
