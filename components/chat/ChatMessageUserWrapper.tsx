@@ -1,12 +1,13 @@
+
 import { useAccount } from "@/contexts/AccountContext"
 import Image from "next/image";
 import { ReactNode, memo } from "react";
 
-interface UserMessageWrapperProps {
+interface ChatMessageUserWrapperProps {
     children: ReactNode;
 }
 
-const UserMessageWrapper = memo(({ children }: UserMessageWrapperProps) => {
+const ChatMessageUserWrapper = memo(({ children }: ChatMessageUserWrapperProps) => {
     const { profile } = useAccount()
     return (
         <div className='w-full  flex justify-end '>
@@ -20,4 +21,4 @@ const UserMessageWrapper = memo(({ children }: UserMessageWrapperProps) => {
     )
 })
 
-export default UserMessageWrapper
+export default ChatMessageUserWrapper

@@ -78,9 +78,12 @@ export type SingleReport = {
     metadata: string;
 }
 
+export type ChatType = "text" | "plotly" | "iresearcher-report" | "iresearcher-topics" | "investor" | "coder" | "code-interpreter" | "search" | "news" | "document"
+
 export type Chat = {
     content: string;
-    role: "assistant" | "user" | "options";
+    role: "assistant" | "user";
+    type: ChatType;
     metadata: string | null;
     reports?: SingleReport[];
     sliderKeys?: string[]

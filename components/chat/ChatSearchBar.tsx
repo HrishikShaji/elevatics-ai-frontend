@@ -1,29 +1,28 @@
 
-
-
-
-import { ChangeEvent, FormEvent, memo, useCallback, useState } from "react"
+import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useState } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
-import { useAdvanced } from "./AdvancedContext";
-import { HFSPACE_TOKEN, TOPICS_URL } from "@/lib/endpoints";
+import { DOCUMIND_INITIATE, DOCUMIND_RESPONSE } from "@/lib/endpoints";
+import { useChat } from "@/contexts/ChatContext";
+import { ChatType } from "@/types/types";
 
-interface CoderSearchBarProps {
+interface ChatSearchBarProps {
     title: string;
     subTitle: string;
-
+    disable: boolean;
+    responseType: ChatType;
 }
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
-const CoderSearchBar = memo(({ title, subTitle }: CoderSearchBarProps) => {
+const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSearchBarProps) => {
     const [input, setInput] = useState("")
-    console.log("rendered searchbar")
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
-    const { setTopicsLoading, addMessage } = useAdvanced()
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const { sendMessage, conversationId } = useChat()
 
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
@@ -43,48 +42,77 @@ const CoderSearchBar = memo(({ title, subTitle }: CoderSearchBarProps) => {
         mutate(recommendation)
     }, [])
 
-    const generateTopics = async (input: string) => {
-        setTopicsLoading(true);
-        addMessage({ role: "user", content: input, metadata: null, reports: [] });
-
-        try {
-            const headers = {
-                Authorization: HFSPACE_TOKEN,
-                "Content-Type": "application/json",
-            };
-            const response = await fetch(TOPICS_URL, {
-                method: "POST",
-                cache: "no-store",
-                headers: headers,
-                body: JSON.stringify({
-                    user_input: input,
-                    num_topics: 5,
-                    num_subtopics: 3,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error("Error fetching topics");
-            }
-
-            const result = await response.json();
-            addMessage({ role: "options", content: JSON.stringify(result.topics), metadata: null, reports: [] });
-        } catch (error) {
-            addMessage({ role: "assistant", content: "Oops.", metadata: null, reports: [] });
-        } finally {
-            setTopicsLoading(false);
-        }
-    };
     function onSubmit(e: FormEvent) {
         e.preventDefault()
         setInitialSearch(true)
-        generateTopics(input)
+        sendMessage({ input: input, responseType: responseType });
         handleReset()
     }
 
+    // Handle file selection
+    const handleFileChange = (event) => {
+        setSelectedFiles(event.target.files);
+    };
+
+    // Convert file to base64
+    const encodeFileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]); // Get only the base64 string
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    // Handle form submission
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (selectedFiles.length === 0) {
+            alert('Please select a file!');
+            return;
+        }
+
+        const fileNames = [];
+        const fileTypes = [];
+        const fileData = [];
+
+        // Process each file
+        for (const file of selectedFiles) {
+            fileNames.push(file.name);
+            fileTypes.push(file.type.split('/')[1]); // Extract file extension
+            const base64String = await encodeFileToBase64(file);
+            fileData.push(base64String);
+        }
+
+        // Prepare the data object
+        const data = {
+            ConversationID: conversationId,
+            FileNames: fileNames,
+            FileTypes: fileTypes,
+            FileData: fileData,
+        };
+
+        try {
+            const response = await fetch(DOCUMIND_INITIATE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            const result = await response.json()
+            console.log('Success:', result);
+            alert('Files uploaded successfully!');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to upload files.');
+        }
+    };
+
+
+
     return (
         <>
-            {!initialSearch ?
+            {!initialSearch && !disable ?
                 <div className='flex flex-col w-full   items-center justify-center '>
                     <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
                         <h1 className="text-3xl font-semibold">
@@ -105,6 +133,10 @@ const CoderSearchBar = memo(({ title, subTitle }: CoderSearchBarProps) => {
                 : null}
             <div className="w-full flex pt-3 justify-center h-20 items-start">
                 <div className="w-[1000px]  bg-white   rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
+                    <form onSubmit={handleSubmit}>
+                        <input type="file" multiple onChange={handleFileChange} />
+                        <button type="submit">Upload</button>
+                    </form>
                     <form onSubmit={onSubmit} className=" relative  flex items-center justify-center  ">
                         <input
                             onClick={handleInputClick}
@@ -120,28 +152,29 @@ const CoderSearchBar = memo(({ title, subTitle }: CoderSearchBarProps) => {
                             <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                         </button>
                     </form>
-                    <AnimateHeight height={data.length > 0 && !initialSearch ? 300 : 0} duration={300}>
-                        <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
-                            <span className="text-[#535353] ">Here are some suggestions</span>
-                            <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
-                                {!initialSearch ? data.map((recommendation: string, i: number) => (
-                                    <div
-                                        onClick={() => handleRecommendationClick(recommendation)}
-                                        key={i}
-                                        className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
-                                    >
-                                        <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
-                                            {recommendation}
-                                        </h1>
-                                    </div>
-                                )) : null}
+                    {!disable ?
+                        <AnimateHeight height={data.length > 0 && !initialSearch ? 300 : 0} duration={300}>
+                            <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
+                                <span className="text-[#535353] ">Here are some suggestions</span>
+                                <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
+                                    {!initialSearch ? data.map((recommendation: string, i: number) => (
+                                        <div
+                                            onClick={() => handleRecommendationClick(recommendation)}
+                                            key={i}
+                                            className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
+                                        >
+                                            <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
+                                                {recommendation}
+                                            </h1>
+                                        </div>
+                                    )) : null}
+                                </div>
                             </div>
-                        </div>
-                    </AnimateHeight>
+                        </AnimateHeight> : null}
                 </div>
             </div>
         </>
     )
 })
 
-export default CoderSearchBar
+export default ChatSearchBar
