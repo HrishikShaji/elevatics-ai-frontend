@@ -78,7 +78,7 @@ export type SingleReport = {
     metadata: string;
 }
 
-export type ChatType = "text" | "plotly" | "iresearcher-report" | "iresearcher-topics" | "investor" | "coder" | "code-interpreter" | "search" | "news" | "document"
+export type ChatType = "text" | "plotly" | "iresearcher-reports" | "iresearcher-report" | "iresearcher-topics" | "investor" | "coder" | "code-interpreter" | "search" | "news" | "document"
 
 export type Chat = {
     content: string;
@@ -103,3 +103,15 @@ export type TransformedData = {
     name: string;
     prompt: string;
 };
+
+export type ReportProps = {
+    role: "assistant" | "user";
+    content: string;
+    metadata: string;
+    name: string;
+    parentKey: string;
+    report: string;
+    sliderKeys: string[];
+    type: ChatType
+}
+

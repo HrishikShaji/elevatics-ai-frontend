@@ -144,6 +144,9 @@ const Sidebar = () => {
                                         <li>
                                             <Link href="/document">{t('Document')}</Link>
                                         </li>
+                                        <li>
+                                            <Link href="/researcher-chat">{t('Researcher-Chat')}</Link>
+                                        </li>
                                     </ul>
                                 </AnimateHeight>
                             </li>

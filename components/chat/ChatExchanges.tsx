@@ -3,6 +3,8 @@ import ChatScrollWrapper from "./ChatScrollWrapper";
 import ChatMessageUserWrapper from "./ChatMessageUserWrapper";
 import ChatMessageAgentWrapper from "./ChatMessageAgentWrapper";
 import ChatMarkdownRender from "./ChatMarkdownRender";
+import AdvancedTopics from "@/app/(defaults)/researcher-chat/components/AdvancedTopics";
+import AdvancedReportContainer from "@/app/(defaults)/researcher-chat/components/AdvancedReportContainer";
 
 interface ChatExchangesProps {
     chatHistory: Chat[];
@@ -21,7 +23,15 @@ export default function ChatExchanges({ chatHistory, loading }: ChatExchangesPro
                     </ChatMessageUserWrapper>
                 ) : (
                     <ChatMessageAgentWrapper key={i}>
-                        <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                        {chat.type === "iresearcher-report" ?
+                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            : null}
+                        {chat.type === "iresearcher-topics" ?
+                            <AdvancedTopics content={chat.content} />
+                            : null}
+                        {chat.type === "iresearcher-reports" ?
+                            <AdvancedReportContainer chat={chat} />
+                            : null}
                     </ChatMessageAgentWrapper>
                 )))}
         </div>

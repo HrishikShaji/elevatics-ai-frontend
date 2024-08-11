@@ -3,7 +3,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useSettings } from "@/contexts/SettingsContext";
 import useSaveReport from "@/hooks/useSaveReport";
-import { Chat, ChatType } from "@/types/types";
+import { Chat, ChatType, ReportProps } from "@/types/types";
 import React, {
     createContext,
     useContext,
@@ -21,6 +21,8 @@ import fetchNewsResponse from '@/lib/fetchNewsResponse';
 import fetchCoderResponse from '@/lib/fetchCoderResponse';
 import fetchDocumentResponse from '@/lib/fetchDocumentResponse';
 import { ReportType } from '@prisma/client';
+import fetchResearcherReports from '@/lib/fetchResearcherReports';
+import fetchResearcherTopics from '@/lib/fetchResearcherTopics';
 
 interface ChatData {
     sendMessage: ({ input, responseType }: { input: string, responseType: ChatType }) => void;
@@ -103,6 +105,39 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
         });
     }, []);
 
+    const addReports = useCallback(({ type, role, content, metadata, name, parentKey, report, sliderKeys }: ReportProps) => {
+        setChatHistory((prevChatHistory) => {
+            if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
+                const updatedChatHistory = [...prevChatHistory];
+                const lastMessage = updatedChatHistory[updatedChatHistory.length - 1];
+
+                if (lastMessage.content !== content || lastMessage.metadata !== metadata || lastMessage.sliderKeys !== sliderKeys) {
+                    lastMessage.content = content;
+                    lastMessage.metadata = metadata;
+                    lastMessage.sliderKeys = sliderKeys;
+                    lastMessage.type = type;
+
+                    const currentReports = lastMessage.reports;
+                    if (currentReports) {
+                        const reportExist = currentReports.find((r) => r.name === name);
+                        if (reportExist) {
+                            reportExist.report = report;
+                            reportExist.metadata = metadata;
+
+                        } else {
+                            currentReports.push({ name: name, parentKey: parentKey, report: report, metadata: metadata });
+                        }
+                    }
+                }
+
+                return updatedChatHistory;
+            } else {
+                return [...prevChatHistory, { type, role, content, metadata, reports: [] }];
+            }
+        });
+    }, []);
+
+
     const sendMessage = async ({ input, responseType }: { input: string, responseType: ChatType }) => {
         addMessage({ role: 'user', content: input, metadata: null, type: "text" });
         setLoading(true)
@@ -118,7 +153,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
             }
 
             if (responseType === "code-interpreter") {
-                setCurrentReportType("CODE")
+                setCurrentReportType("INTERPRETER")
                 await fetchCodeInterpreterResponse({ addMessage: addMessage, history: latestHistory, query: input })
             }
 
@@ -138,8 +173,18 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
             }
 
             if (responseType === "document") {
-                setCurrentReportType("INVESTOR")
+                setCurrentReportType("DOCUMENT")
                 await fetchDocumentResponse({ addMessage: addMessage, query: input, conversationId: conversationId })
+            }
+
+            if (responseType === "iresearcher-topics") {
+                setCurrentReportType("RESEARCHERCHAT")
+                await fetchResearcherTopics({ addMessage: addMessage, query: input })
+            }
+
+            if (responseType === "iresearcher-reports") {
+                setCurrentReportType("RESEARCHERCHAT")
+                await fetchResearcherReports({ addReports: addReports, query: input })
             }
 
         } catch (error) {

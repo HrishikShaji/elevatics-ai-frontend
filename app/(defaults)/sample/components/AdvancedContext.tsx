@@ -1,7 +1,7 @@
 
 "use client";
 
-import { AgentModel, Chat, ReportOptions, TopicsLimit } from "@/types/types";
+import { AgentModel, Chat, ChatType, ReportOptions, TopicsLimit } from "@/types/types";
 import React, {
     createContext,
     useContext,
@@ -14,13 +14,14 @@ import React, {
 
 
 type ReportProps = {
-    role: "assistant" | "user" | "options";
+    role: "assistant" | "user";
     content: string;
     metadata: string;
     name: string;
     parentKey: string;
     report: string;
-    sliderKeys: string[]
+    sliderKeys: string[];
+    type: ChatType
 }
 
 interface AdvancedData {
@@ -68,7 +69,7 @@ export const AdvancedProvider = ({ children }: AdvancedProviderProps) => {
         });
     }, []);
 
-    const addReport = useCallback(({ role, content, metadata, name, parentKey, report, sliderKeys }: any) => {
+    const addReport = useCallback(({ type, role, content, metadata, name, parentKey, report, sliderKeys }: ReportProps) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
                 const updatedChatHistory = [...prevChatHistory];
@@ -78,6 +79,7 @@ export const AdvancedProvider = ({ children }: AdvancedProviderProps) => {
                     lastMessage.content = content;
                     lastMessage.metadata = metadata;
                     lastMessage.sliderKeys = sliderKeys;
+                    lastMessage.type = type;
 
                     const currentReports = lastMessage.reports;
                     if (currentReports) {
@@ -85,6 +87,7 @@ export const AdvancedProvider = ({ children }: AdvancedProviderProps) => {
                         if (reportExist) {
                             reportExist.report = report;
                             reportExist.metadata = metadata;
+
                         } else {
                             currentReports.push({ name: name, parentKey: parentKey, report: report, metadata: metadata });
                         }
@@ -93,7 +96,7 @@ export const AdvancedProvider = ({ children }: AdvancedProviderProps) => {
 
                 return updatedChatHistory;
             } else {
-                return [...prevChatHistory, { role, content, metadata, reports: [] }];
+                return [...prevChatHistory, { type, role, content, metadata, reports: [] }];
             }
         });
     }, []);
