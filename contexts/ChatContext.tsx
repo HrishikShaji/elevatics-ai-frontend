@@ -20,6 +20,7 @@ import fetchSearchResponse from '@/lib/fetchSearchResponse';
 import fetchNewsResponse from '@/lib/fetchNewsResponse';
 import fetchCoderResponse from '@/lib/fetchCoderResponse';
 import fetchDocumentResponse from '@/lib/fetchDocumentResponse';
+import { ReportType } from '@prisma/client';
 
 interface ChatData {
     sendMessage: ({ input, responseType }: { input: string, responseType: ChatType }) => void;
@@ -54,6 +55,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     const [loading, setLoading] = useState(false)
     const [reportId, setReportId] = useState("")
     const [streamComplete, setStreamComplete] = useState(false)
+    const [currentReportType, setCurrentReportType] = useState<ReportType | null>(null)
 
     const { mutate, isSuccess, data } = useSaveReport();
     useEffect(() => {
@@ -63,13 +65,13 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     }, [isSuccess, data]);
 
     useEffect(() => {
-        if (streamComplete) {
+        if (streamComplete && currentReportType !== null) {
             console.log("ran saving")
             mutate({
                 name: chatHistory[0].content,
                 report: JSON.stringify({ chatHistory: chatHistory, conversationId: conversationId }),
                 reportId: reportId,
-                reportType: "CODE"
+                reportType: currentReportType
             });
         }
     }, [streamComplete]);
@@ -111,26 +113,32 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
         try {
             if (responseType === "iresearcher-report") {
+                setCurrentReportType("QUICK")
                 await fetchQuickReport({ query: input, addMessage: addMessage })
             }
 
             if (responseType === "code-interpreter") {
+                setCurrentReportType("CODE")
                 await fetchCodeInterpreterResponse({ addMessage: addMessage, history: latestHistory, query: input })
             }
 
             if (responseType === "search") {
+                setCurrentReportType("SEARCH")
                 await fetchSearchResponse({ addMessage: addMessage, query: input, model: agentModel })
             }
 
             if (responseType === "news") {
+                setCurrentReportType("NEWS")
                 await fetchNewsResponse({ addMessage: addMessage, query: input, model: agentModel })
             }
 
             if (responseType === "coder") {
+                setCurrentReportType("CODE")
                 await fetchCoderResponse({ addMessage: addMessage, query: input, model: agentModel, userId: userId, conversationId: conversationId })
             }
 
             if (responseType === "document") {
+                setCurrentReportType("INVESTOR")
                 await fetchDocumentResponse({ addMessage: addMessage, query: input, conversationId: conversationId })
             }
 

@@ -6,6 +6,8 @@ import SignInButton from '@/components/SignInButton';
 import AgentContainer from '@/components/agent/AgentContainer';
 import AgentInputContainer from '@/components/agent/AgentInputContainer';
 import AgentSearchBar from '@/components/agent/AgentSearchBar';
+import ChatWindow from '@/components/chat/ChatWindow';
+import { ChatContext, ChatProvider } from '@/contexts/ChatContext';
 import { useQuickReport } from '@/contexts/QuickReportContext';
 import useSuggestions from '@/hooks/useSuggestions';
 import { useRouter } from 'next/navigation';
@@ -54,14 +56,11 @@ const Page = () => {
 
 
 
-    return <AgentContainer>
-        <AgentsContainer suggestions={suggestions} hasClicked={inputClick} handleSuggestionsClick={handleRecommendationClick} title='Home' subTitle='Faster Efficient Search' />
-        <SignInButton />
-        <AgentInputContainer>
-            <AgentSearchBar disableSuggestions={disableSuggestions} handleChange={handleChange} data={data} handleSubmit={handleSubmit} input={input} handleRecommendation={handleRecommendationClick} handleClick={handleInputClick} />
-        </AgentInputContainer>
-    </AgentContainer>
-
+    return (
+        <ChatProvider>
+            <ChatWindow title='Quick Search' subTitle='Efficient Quick Search' responseType='iresearcher-report' initialChatHistory='' reportId='' disable={false} />
+        </ChatProvider>
+    )
 };
 
 export default Page;
