@@ -28,14 +28,19 @@ export default async function fetchNewsResponse({ query, model, addMessage }: Pr
     if (response.body) {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-        let chunks = '';
+        let assistantResponse = '';
+        let lastUpdateTime = Date.now();
 
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            const chunk = decoder.decode(value, { stream: true });
-            chunks += chunk;
-            addMessage({ type: "news", content: chunks, metadata: null, role: "assistant" })
+            const chunk = decoder.decode(value);
+            assistantResponse += chunk;
+            console.log(assistantResponse)
+            if (Date.now() - lastUpdateTime > 100 || done) {
+                addMessage({ role: 'assistant', content: assistantResponse, metadata: null, type: 'news' });
+                lastUpdateTime = Date.now();
+            }
         }
 
     }

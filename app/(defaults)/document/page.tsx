@@ -1,9 +1,9 @@
-import AgentContainer from "@/components/agent/AgentContainer";
-import { DocumentProvider } from "./contexts/DocumentContext";
-import AgentDocument from "./components/DocumentAgent";
+import { ChatProvider } from "@/contexts/ChatContext";
+import ChatWindow from "@/components/chat/ChatWindow";
 
 export default function Page() {
-    return <DocumentProvider>
-        <AgentDocument initialChatHistory="" reportId="" disable={false} />
-    </DocumentProvider>
+    return <ChatProvider>
+        <ChatWindow title="Document" subTitle='Efficient Document Search' responseType='document' initialChatHistory='' reportId='' disable={false} />
+    </ChatProvider>
+
 }

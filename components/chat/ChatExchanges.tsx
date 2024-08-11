@@ -32,6 +32,24 @@ export default function ChatExchanges({ chatHistory, loading }: ChatExchangesPro
                         {chat.type === "iresearcher-reports" ?
                             <AdvancedReportContainer chat={chat} />
                             : null}
+                        {chat.type === "document" ?
+                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            : null}
+                        {chat.type === "search" ?
+                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            : null}
+                        {chat.type === "news" ?
+                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            : null}
+                        {chat.type === "coder" ?
+                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            : null}
+                        {chat.type === "text" ?
+                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            : null}
+                        {chat.type === "plotly" ?
+                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            : null}
                     </ChatMessageAgentWrapper>
                 )))}
         </div>

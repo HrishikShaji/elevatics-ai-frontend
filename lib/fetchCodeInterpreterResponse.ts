@@ -3,6 +3,11 @@
 import { CODE_INTERPRETER_URL, DOCUMIND_RESPONSE } from "@/lib/endpoints";
 import { Chat } from "@/types/types";
 
+type InterpreterResponseType = {
+    content: string;
+    type: "text" | "plotly"
+}
+
 interface Props {
     history: { content: string; role: string }[];
     query: string;
@@ -23,7 +28,8 @@ export default async function fetchCodeInterpreterResponse({ addMessage, history
     }
 
     const result = await response.json();
-    console.log(result)
-    //             addMessage({ role: 'assistant', content: markdown, metadata: metadata });
+    (result.response as InterpreterResponseType[]).forEach((item, i) => {
+        addMessage({ role: 'assistant', content: item.content, metadata: null, type: item.type });
+    })
 
 }
