@@ -2,10 +2,11 @@
 
 
 "use client";
-
+//@ts-ignore
+import { v4 as uuidv4 } from 'uuid';
 import { useSettings } from "@/contexts/SettingsContext";
 import useSaveReport from "@/hooks/useSaveReport";
-import { CODING_ASSISTANT_API_KEY, CODING_ASSISTANT_URL } from "@/lib/endpoints";
+import { CODING_ASSISTANT_API_KEY, CODING_ASSISTANT_URL, DOCUMIND_RESPONSE } from "@/lib/endpoints";
 import { Chat } from "@/types/types";
 import React, {
     createContext,
@@ -17,14 +18,16 @@ import React, {
     SetStateAction,
     Dispatch,
 } from "react";
+import fetchDocumentResponse from '../lib/fetchDocumentResponse';
 
 interface DocumentData {
     sendMessage: ({ input, agent }: { input: string, agent: string }) => void;
     chatHistory: Chat[];
     loading: boolean;
-    setConverstionId: Dispatch<SetStateAction<string>>;
+    setConversationId: Dispatch<SetStateAction<string>>;
     setChatHistory: Dispatch<SetStateAction<Chat[]>>;
     setReportId: Dispatch<SetStateAction<string>>;
+    conversationId: string;
 }
 
 export const DocumentContext = createContext<DocumentData | undefined>(undefined);
@@ -44,7 +47,7 @@ type DocumentProviderProps = {
 export const DocumentProvider = ({ children }: DocumentProviderProps) => {
 
     const { agentModel } = useSettings();
-    const [conversationId, setConverstionId] = useState("");
+    const [conversationId, setConversationId] = useState("");
     const [userId, setUserId] = useState("");
     const [chatHistory, setChatHistory] = useState<Chat[]>([]);
     const [loading, setLoading] = useState(false)
@@ -72,9 +75,9 @@ export const DocumentProvider = ({ children }: DocumentProviderProps) => {
 
     useEffect(() => {
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
-        const conversationId = Date.now().toString();
+        const conversationID = uuidv4();
+        setConversationId(conversationID)
         setUserId(userId);
-        setConverstionId(conversationId);
     }, []);
 
     const addMessage = useCallback(({ role, content, metadata, reports }: Chat) => {
@@ -101,42 +104,7 @@ export const DocumentProvider = ({ children }: DocumentProviderProps) => {
         setLoading(true)
         setStreamComplete(false)
         try {
-            const response = await fetch(CODING_ASSISTANT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': CODING_ASSISTANT_API_KEY || "",
-                },
-                body: JSON.stringify({
-                    user_query: input,
-                    model_id: agentModel,
-                    conversation_id: conversationId,
-                    user_id: userId,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('API request failed');
-            }
-
-            if (response.body) {
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let assistantResponse = '';
-                let lastUpdateTime = Date.now();
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value);
-                    assistantResponse += chunk;
-
-                    if (Date.now() - lastUpdateTime > 100 || done) {
-                        addMessage({ role: 'assistant', content: assistantResponse, metadata: null });
-                        lastUpdateTime = Date.now();
-                    }
-                }
-            }
+            await fetchDocumentResponse({ addMessage: addMessage, query: input, conversationId: conversationId })
         } catch (error) {
             console.error('Error:', error);
             addMessage({ role: 'assistant', content: 'Sorry, an error occurred while processing your request.', metadata: null });
@@ -151,8 +119,9 @@ export const DocumentProvider = ({ children }: DocumentProviderProps) => {
         loading,
         sendMessage,
         setChatHistory,
-        setConverstionId,
-        setReportId
+        setConversationId,
+        setReportId,
+        conversationId
     }
     return (
         <DocumentContext.Provider value={documentData}>{children}</DocumentContext.Provider>

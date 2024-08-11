@@ -14,7 +14,7 @@ interface DocumentChatsProps {
 export default function DocumentChats({ chatHistory, loading }: DocumentChatsProps) {
 
     if (chatHistory.length === 0) return null;
-
+    console.log(chatHistory)
     return (<AutoScrollWrapper>
         <div className="w-[1000px] py-5 flex flex-col gap-2">
             {chatHistory.map((chat, i) => (

@@ -5,7 +5,6 @@ import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
 import { useDocument } from "../contexts/DocumentContext";
 import { DOCUMIND_INITIATE, DOCUMIND_RESPONSE } from "@/lib/endpoints";
-import { v4 as uuidv4 } from 'uuid';
 
 interface DocumentSearchBarProps {
     title: string;
@@ -20,15 +19,10 @@ const DocumentSearchBar = memo(({ disable, title, subTitle }: DocumentSearchBarP
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
-    const [conversationId, setConversationId] = useState("")
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const { sendMessage } = useDocument()
+    const { sendMessage, conversationId } = useDocument()
     const [query, setQuery] = useState("")
 
-    useEffect(() => {
-        const conversationID = uuidv4();
-        setConversationId(conversationID)
-    }, [])
 
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
@@ -115,22 +109,6 @@ const DocumentSearchBar = memo(({ disable, title, subTitle }: DocumentSearchBarP
     };
 
 
-    const handleQuery = async (e: FormEvent) => {
-        e.preventDefault()
-
-        try {
-
-            const response = await fetch(DOCUMIND_RESPONSE, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ConversationID: conversationId, Query: query })
-            })
-            const result = await response.text()
-            console.log('Success:query', result);
-        } catch (error) {
-            console.log("error", error)
-        }
-    }
 
     return (
         <>
@@ -158,10 +136,6 @@ const DocumentSearchBar = memo(({ disable, title, subTitle }: DocumentSearchBarP
                     <form onSubmit={handleSubmit}>
                         <input type="file" multiple onChange={handleFileChange} />
                         <button type="submit">Upload</button>
-                    </form>
-                    <form onSubmit={handleQuery}>
-                        <input type="text" multiple onChange={(e) => setQuery(e.target.value)} />
-                        <button type="submit">send query</button>
                     </form>
                     <form onSubmit={onSubmit} className=" relative  flex items-center justify-center  ">
                         <input

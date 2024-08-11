@@ -13,17 +13,16 @@ interface AgentDocumentProps {
 
 export default function AgentDocument({ disable, initialChatHistory, reportId }: AgentDocumentProps) {
 
-    const { loading, chatHistory, setChatHistory, setReportId, setConverstionId } = useDocument()
+    const { loading, chatHistory, setChatHistory, setReportId, setConversationId } = useDocument()
 
     useEffect(() => {
         if (initialChatHistory === "") {
             setChatHistory([])
-            setConverstionId("");
             setReportId("")
         } else {
             const parsedData = JSON.parse(initialChatHistory)
             setChatHistory(parsedData.chatHistory)
-            setConverstionId(parsedData.conversationId);
+            setConversationId(parsedData.conversationId);
             setReportId(reportId)
         }
     }, [initialChatHistory, reportId]);
