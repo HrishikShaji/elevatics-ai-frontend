@@ -28,8 +28,6 @@ export default async function fetchCodeInterpreterResponse({ addMessage, history
     }
 
     const result = await response.json();
-    (result.response as InterpreterResponseType[]).forEach((item, i) => {
-        addMessage({ role: 'assistant', content: item.content, metadata: null, type: item.type });
-    })
+    addMessage({ role: 'assistant', content: JSON.stringify(result.response), metadata: null, type: "code-interpreter" });
 
 }
