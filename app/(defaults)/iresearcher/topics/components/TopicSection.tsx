@@ -27,7 +27,7 @@ export type TransformedData = {
 };
 export default function TopicSection() {
     const [openTopic, setOpenTopic] = useState<string | null>(null);
-    const { prompt, selectedSubtasks, setTopics } = useResearcher();
+    const { prompt, selectedSubtasks, setTopics, sendMessage } = useResearcher();
     const { data, isLoading } = useFetchTopics();
     const [active, setActive] = useState<number | null>(0)
     const router = useRouter()
@@ -53,6 +53,8 @@ export default function TopicSection() {
 
     function handleNext() {
         const data = transformData(selectedSubtasks)
+        const stringifiedTasks = JSON.stringify(selectedSubtasks)
+        sendMessage({ input: stringifiedTasks, responseType: "iresearcher-reports" })
         setTopics(data)
         router.push("/iresearcher/topics/report")
     }
