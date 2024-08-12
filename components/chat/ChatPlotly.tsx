@@ -10,15 +10,19 @@ export default function ChatPlotly({ chat }: ChatPlotlyProps) {
 
     useEffect(() => {
         const parsedGraph = JSON.parse(chat.content);
+        console.log("data is", parsedGraph.data)
+        console.log("layout is", parsedGraph.layout)
         setGraphData(parsedGraph);
     }, [chat.content]);
 
     return (
-        <Plot
-            data={graphData.data}
-            layout={graphData.layout}
-            config={{ responsive: true }}
-            style={{ width: '100%', height: '100%' }}
-        />
+        <div>
+            <div className="h-[700px] w-full">
+                <Plot
+                    data={graphData.data}
+                    layout={graphData.layout}
+                />
+            </div>
+        </div>
     );
 };

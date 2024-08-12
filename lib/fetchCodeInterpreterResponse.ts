@@ -5,7 +5,7 @@ import { Chat } from "@/types/types";
 
 type InterpreterResponseType = {
     content: string;
-    type: "text" | "plotly"
+    type: "text" | "plotly" | "HTML"
 }
 
 interface Props {
@@ -28,6 +28,7 @@ export default async function fetchCodeInterpreterResponse({ addMessage, history
     }
 
     const result = await response.json();
+    console.log("this is the response", result)
     addMessage({ role: 'assistant', content: JSON.stringify(result.response), metadata: null, type: "code-interpreter" });
 
 }
