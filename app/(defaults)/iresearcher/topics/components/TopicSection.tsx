@@ -56,7 +56,7 @@ export default function TopicSection() {
         setTopics(data)
         router.push("/iresearcher/topics/report")
     }
-
+    console.log(prompt)
     if (isLoading) return <Loader steps={topicLoadingSteps} />
     return (
         <div

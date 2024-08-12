@@ -1,5 +1,5 @@
 "use client"
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import { useResearcher } from "@/contexts/ResearcherContext";
 import { useRouter } from "next/navigation";
@@ -9,12 +9,12 @@ const suggestions = ["How to setup a pizza business", "Suggest me university for
 
 export default function Page() {
     const [initialClick, setInitialClick] = useState(false)
-
+    const [input, setInput] = useState("")
     const { setPrompt } = useResearcher()
     const router = useRouter()
 
 
-    const { isLoading, isSuccess, data, handleChange, handleRecommendation, input } = useSuggestions()
+    const { isLoading, isSuccess, data } = useSuggestions(input)
     function handleSubmit(e: FormEvent) {
         e.preventDefault()
         setPrompt(input)
@@ -23,10 +23,13 @@ export default function Page() {
     function handleClick() {
         setInitialClick(true);
     }
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+        setInput(e.target.value)
+    }
 
     function handleRecommendationClick(item: string) {
         setInitialClick(true);
-        handleRecommendation(item);
+        setInput(item)
     }
 
     return <div className="relative flex flex-col px-10 gap-5 items-center h-full pt-[200px] sm:pt-[200px] w-full">
@@ -46,7 +49,7 @@ export default function Page() {
         </> : null}
 
         <div className={`${initialClick ? "pt-0" : "pt-[120px]"}`}>
-            <SearchBar handleClick={handleClick} isSuccess={isSuccess} input={input} handleRecommendation={handleRecommendation} handleSubmit={handleSubmit} handleChange={handleChange} data={data} />
+            <SearchBar handleClick={handleClick} isSuccess={isSuccess} input={input} handleRecommendation={handleRecommendationClick} handleSubmit={handleSubmit} handleChange={handleChange} data={data} />
         </div>
     </div>;
 
