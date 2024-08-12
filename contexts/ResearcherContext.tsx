@@ -1,9 +1,10 @@
 
 "use client"
 
+import useSaveReport from "@/hooks/useSaveReport";
 import fetchResearcherReports from "@/lib/fetchResearcherReports";
 import { Chat, ChatType, ReportProps, ResearcherTopicsResponse, SelectedSubtasks, Topic } from "@/types/types";
-import { createContext, Dispatch, ReactNode, SetStateAction, useCallback, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useCallback, useContext, useEffect, useState } from "react";
 
 
 type ResearcherProviderProps = {
@@ -35,7 +36,20 @@ export const ResearchProvider = ({ children }: ResearcherProviderProps) => {
     const [selectedSubtasks, setSelectedSubtasks] = useState<SelectedSubtasks>({});
     const [loading, setLoading] = useState(false)
     const [chatHistory, setChatHistory] = useState<Chat[]>([])
+    const [streamComplete, setStreamComplete] = useState(false)
+    const { mutate } = useSaveReport()
 
+    useEffect(() => {
+        if (streamComplete) {
+            console.log("ran saving")
+            mutate({
+                name: prompt,
+                report: JSON.stringify({ chatHistory: chatHistory, conversationId: "" }),
+                reportId: "",
+                reportType: "FULL"
+            });
+        }
+    }, [streamComplete]);
     const addReports = useCallback(({ type, role, content, metadata, name, parentKey, report, sliderKeys }: ReportProps) => {
         setChatHistory((prevChatHistory) => {
             if (role === 'assistant' && prevChatHistory.length > 0 && prevChatHistory[prevChatHistory.length - 1].role === 'assistant') {
@@ -69,7 +83,7 @@ export const ResearchProvider = ({ children }: ResearcherProviderProps) => {
     }, []);
     const sendMessage = async ({ input, responseType }: { input: string, responseType: ChatType }) => {
         setLoading(true)
-
+        setStreamComplete(false)
 
         try {
             if (responseType === "iresearcher-reports") {
@@ -79,6 +93,7 @@ export const ResearchProvider = ({ children }: ResearcherProviderProps) => {
         } catch (error) {
             console.error('Error:', error);
         } finally {
+            setStreamComplete(true)
             setLoading(false)
         }
     };
