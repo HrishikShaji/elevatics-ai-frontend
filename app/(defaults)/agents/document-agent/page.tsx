@@ -1,3 +1,5 @@
+import DocumentChat from "../components/DocumentChat";
+
 export default function Page() {
-    return <div></div>
+    return <DocumentChat />
 }

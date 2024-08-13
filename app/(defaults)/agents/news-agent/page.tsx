@@ -1,3 +1,5 @@
+import NewsChat from "../components/NewsChat";
+
 export default function Page() {
-    return <div></div>
+    return <NewsChat />
 }

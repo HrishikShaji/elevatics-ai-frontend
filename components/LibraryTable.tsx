@@ -31,7 +31,10 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
         { title: "Investor", value: "INVESTOR" },
         { title: "News", value: "NEWS" },
         { title: "Code", value: "CODE" },
-        { title: "Search", value: "SEARCH" }
+        { title: "Search", value: "SEARCH" },
+        { title: "Interpreter", value: "INTERPRETER" },
+        { title: "Researcher-Chat", value: "RESEARCHERCHAT" },
+        { title: "Career", value: "CAREER" }
     ];
 
     function getValue(value: string | number) {

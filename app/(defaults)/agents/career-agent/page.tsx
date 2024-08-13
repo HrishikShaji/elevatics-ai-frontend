@@ -1,3 +1,5 @@
+import CareerChat from "../components/CareerChat";
+
 export default function Page() {
-    return <div></div>
+    return <CareerChat />
 }

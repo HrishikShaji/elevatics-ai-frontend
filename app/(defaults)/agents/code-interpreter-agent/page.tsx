@@ -1,3 +1,5 @@
+import InterpreterChat from "../components/InterpreterChat";
+
 export default function Page() {
-    return <div></div>
+    return <InterpreterChat />
 }
