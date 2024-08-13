@@ -37,8 +37,7 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const { sendMessage, conversationId, loading, chatHistory } = useChat()
+    const { setSelectedFiles, uploadFile, selectedFiles, sendMessage, conversationId, loading, chatHistory } = useChat()
     const inputRef = useRef<HTMLInputElement>(null)
     const [isOpen, setIsOpen] = useState(false)
     const uploadContainerRef = useRef<HTMLDivElement>(null);
@@ -85,7 +84,7 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
         e.preventDefault()
         setInitialSearch(true)
         if (selectedFiles.length > 0) {
-            handleFileSubmit()
+            uploadFile(responseType)
         } else {
             if (input !== "") {
                 sendMessage({ input: input, responseType: responseType });
@@ -98,64 +97,6 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
         if (event.target.files) {
             const files = Array.from(event.target.files)
             setSelectedFiles(files);
-        }
-    };
-
-    const encodeFileToBase64 = (file: File) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onload = () => {
-                if (reader.result) {
-                    const base64String = (reader.result as string).split(',')[1];
-                    resolve(base64String);
-                } else {
-                    reject(new Error('FileReader result is null.'));
-                }
-            };
-
-            reader.onerror = (error) => {
-                reject(new Error(`FileReader error: ${error}`));
-            };
-        });
-    };
-
-    const handleFileSubmit = async () => {
-        if (selectedFiles) {
-
-            if (selectedFiles.length === 0) {
-                alert('Please select a file!');
-                return;
-            }
-
-            const fileNames = [];
-            const fileTypes = [];
-            const fileData = [];
-
-            for (const file of selectedFiles) {
-                fileNames.push(file.name);
-                fileTypes.push(file.type.split('/')[1]);
-                const base64String = await encodeFileToBase64(file);
-                fileData.push(base64String);
-            }
-            const data = {
-                ConversationID: conversationId,
-                FileNames: fileNames,
-                FileTypes: fileTypes,
-                FileData: fileData,
-            };
-
-            try {
-                const response = await fetch(DOCUMIND_INITIATE, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                })
-                const result = await response.json()
-            } catch (error) {
-                alert('Failed to upload files.');
-            }
         }
     };
 

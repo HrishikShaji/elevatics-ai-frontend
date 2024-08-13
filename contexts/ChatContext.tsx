@@ -23,15 +23,19 @@ import fetchDocumentResponse from '@/lib/fetchDocumentResponse';
 import { ReportType } from '@prisma/client';
 import fetchResearcherReports from '@/lib/fetchResearcherReports';
 import fetchResearcherTopics from '@/lib/fetchResearcherTopics';
+import uploadDocuments from '@/lib/uploadDocuments';
 
 interface ChatData {
     sendMessage: ({ input, responseType }: { input: string, responseType: ChatType }) => void;
+    uploadFile: (responseType: ChatType) => void;
     chatHistory: Chat[];
     loading: boolean;
     setConversationId: Dispatch<SetStateAction<string>>;
     setChatHistory: Dispatch<SetStateAction<Chat[]>>;
     setReportId: Dispatch<SetStateAction<string>>;
     conversationId: string;
+    selectedFiles: File[];
+    setSelectedFiles: Dispatch<SetStateAction<File[]>>;
 }
 
 export const ChatContext = createContext<ChatData | undefined>(undefined);
@@ -58,6 +62,8 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     const [reportId, setReportId] = useState("")
     const [streamComplete, setStreamComplete] = useState(false)
     const [currentReportType, setCurrentReportType] = useState<ReportType | null>(null)
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [uploading, setUploading] = useState(false)
 
     const { mutate, isSuccess, data } = useSaveReport();
     useEffect(() => {
@@ -138,6 +144,22 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     }, []);
 
 
+    const uploadFile = async (responseType: ChatType) => {
+        try {
+            if (responseType === "document") {
+                await uploadDocuments({ conversationId: conversationId, selectedFiles: selectedFiles })
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            addMessage({ role: 'assistant', content: 'Sorry, an error occurred while processing your request.', metadata: null, type: 'text' });
+        } finally {
+
+            if (responseType === "document") {
+                addMessage({ role: 'user', content: "uploaded documind", metadata: null, type: "document" });
+            }
+        }
+    }
+
     const sendMessage = async ({ input, responseType }: { input: string, responseType: ChatType }) => {
         addMessage({ role: 'user', content: input, metadata: null, type: "text" });
         setLoading(true)
@@ -203,7 +225,10 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
         setChatHistory,
         setConversationId,
         setReportId,
-        conversationId
+        conversationId,
+        selectedFiles,
+        setSelectedFiles,
+        uploadFile
     }
     return (
         <ChatContext.Provider value={chatData}>{children}</ChatContext.Provider>

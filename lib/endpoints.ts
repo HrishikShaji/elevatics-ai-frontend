@@ -30,3 +30,5 @@ export const INVESTOR_PDF = "https://nithin1905-pdf.hf.space/generate_pdf_invest
 export const CODE_INTERPRETER_URL = "https://ashishbangwal-code-interpreter.hf.space/response"
 export const DOCUMIND_INITIATE = "https://ashishbangwal-documind-api.hf.space/initiate_conversation"
 export const DOCUMIND_RESPONSE = "https://ashishbangwal-documind-api.hf.space/get_response"
+export const CAREER_URL = "https://pvanand-specialized-agents.hf.space/api/v1/optimize-resume"
+export const CAREER_AUTH_TOKEN = "44d5c2ac18ced6fc25c1e57dcd06fc0b31fb4ad97bf56e67540671a647465df4"
