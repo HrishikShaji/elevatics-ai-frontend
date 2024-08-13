@@ -31,9 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <AccountProvider>
                             <SettingsProvider>
                                 <ProviderComponent>
-                                    <QuickReportProvider>
-                                        {children}
-                                    </QuickReportProvider>
+                                    {children}
                                 </ProviderComponent>
                             </SettingsProvider>
                         </AccountProvider>

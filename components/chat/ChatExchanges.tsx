@@ -5,9 +5,13 @@ import ChatMessageAgentWrapper from "./ChatMessageAgentWrapper";
 import ChatMarkdownRender from "./ChatMarkdownRender";
 import AdvancedTopics from "@/app/(defaults)/researcher-chat/components/AdvancedTopics";
 import AdvancedReportContainer from "@/app/(defaults)/researcher-chat/components/AdvancedReportContainer";
-import ChatPlotly from "./ChatPlotly";
 import CheckResponseType from "./CheckResponseType";
+import dynamic from "next/dynamic"
 
+const ClientSideChatPlotly = dynamic(
+    () => import('./ChatPlotly'),
+    { ssr: false }
+);
 interface ChatExchangesProps {
     chatHistory: Chat[];
     loading: boolean;
@@ -50,7 +54,7 @@ export default function ChatExchanges({ chatHistory, loading }: ChatExchangesPro
                             <ChatMarkdownRender disableTyping={false} text={chat.content} />
                             : null}
                         {chat.type === "plotly" ?
-                            <ChatPlotly chat={chat} />
+                            <ClientSideChatPlotly chat={chat} />
                             : null}
                         {chat.type === "code-interpreter" ?
                             <CheckResponseType chat={chat} />

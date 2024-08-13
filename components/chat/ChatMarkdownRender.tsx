@@ -7,9 +7,13 @@ import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark, dracula, oneLight, duotoneLight, gruvboxLight, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import ChatChartRender from './ChatChartRender';
 import styles from "@/styles/markdown.module.css"
+import dynamic from 'next/dynamic';
 
+const ClientSideChartRender = dynamic(
+    () => import('./ChatChartRender'),
+    { ssr: false }
+);
 
 interface ChatMarkdownRenderProps {
     text: string;
@@ -53,7 +57,7 @@ const script = memo(
             return null;
         }
         if (children) {
-            return <ChatChartRender scriptContent={children as string} />
+            return <ClientSideChartRender scriptContent={children as string} />
         }
     }
 );

@@ -1,11 +1,12 @@
 
-import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useRef, useState } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
 import { DOCUMIND_INITIATE, DOCUMIND_RESPONSE } from "@/lib/endpoints";
 import { useChat } from "@/contexts/ChatContext";
 import { ChatType } from "@/types/types";
+import IconPlus from "../icon/icon-plus";
 
 interface ChatSearchBarProps {
     title: string;
@@ -21,9 +22,10 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
     const { sendMessage, conversationId } = useChat()
-
+    const inputRef = useRef<HTMLInputElement>(null)
+    const [isOpen, setIsOpen] = useState(false)
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
     }, [])
@@ -45,17 +47,21 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
     function onSubmit(e: FormEvent) {
         e.preventDefault()
         setInitialSearch(true)
-        sendMessage({ input: input, responseType: responseType });
+        if (selectedFiles) {
+            handleFileSubmit()
+        } else {
+            sendMessage({ input: input, responseType: responseType });
+        }
         handleReset()
     }
 
     // Handle file selection
-    const handleFileChange = (event) => {
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedFiles(event.target.files);
     };
 
     // Convert file to base64
-    const encodeFileToBase64 = (file) => {
+    const encodeFileToBase64 = (file: File) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -65,50 +71,57 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
     };
 
     // Handle form submission
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleFileSubmit = async () => {
+        if (selectedFiles) {
 
-        if (selectedFiles.length === 0) {
-            alert('Please select a file!');
-            return;
-        }
+            if (selectedFiles.length === 0) {
+                alert('Please select a file!');
+                return;
+            }
 
-        const fileNames = [];
-        const fileTypes = [];
-        const fileData = [];
+            const fileNames = [];
+            const fileTypes = [];
+            const fileData = [];
 
-        // Process each file
-        for (const file of selectedFiles) {
-            fileNames.push(file.name);
-            fileTypes.push(file.type.split('/')[1]); // Extract file extension
-            const base64String = await encodeFileToBase64(file);
-            fileData.push(base64String);
-        }
+            // Process each file
+            for (const file of selectedFiles) {
+                fileNames.push(file.name);
+                fileTypes.push(file.type.split('/')[1]); // Extract file extension
+                const base64String = await encodeFileToBase64(file);
+                fileData.push(base64String);
+            }
+            setInput(fileNames.join(","))
+            // Prepare the data object
+            const data = {
+                ConversationID: conversationId,
+                FileNames: fileNames,
+                FileTypes: fileTypes,
+                FileData: fileData,
+            };
 
-        // Prepare the data object
-        const data = {
-            ConversationID: conversationId,
-            FileNames: fileNames,
-            FileTypes: fileTypes,
-            FileData: fileData,
-        };
-
-        try {
-            const response = await fetch(DOCUMIND_INITIATE, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            })
-            const result = await response.json()
-            console.log('Success:', result);
-            alert('Files uploaded successfully!');
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to upload files.');
+            try {
+                const response = await fetch(DOCUMIND_INITIATE, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                })
+                const result = await response.json()
+                console.log('Success:', result);
+                alert('Files uploaded successfully!');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to upload files.');
+            }
         }
     };
 
 
+    const handleClick = () => {
+        if (inputRef.current) {
+            inputRef.current.click();
+            console.log("clicked")
+        }
+    };
 
     return (
         <>
@@ -132,12 +145,26 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                 </div>
                 : null}
             <div className="w-full flex pt-3 justify-center h-20 items-start">
-                <div className="w-[1000px]  bg-white   rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
-                    <form onSubmit={handleSubmit}>
-                        <input type="file" multiple onChange={handleFileChange} />
-                        <button type="submit">Upload</button>
-                    </form>
+                <div className="w-[1000px] relative  bg-white   rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
                     <form onSubmit={onSubmit} className=" relative  flex items-center justify-center  ">
+                        <div className={`absolute -top-10 z-40 p-2 bg-gray-200 rounded-md duration-500 transition ${isOpen ? "translate-x-0 opacity-100" : "translate-x-100 opacity-0"}`}>
+                            <button type="button" className=" rounded-md " onClick={handleClick}>Upload Fil</button>
+                        </div>
+                        <input
+                            type="file"
+                            hidden
+                            ref={inputRef}
+                            onChange={handleFileChange}
+                            className="rounded-3xl border-2 pr-28 shadow-md border-gray-100 bg-white focus:outline-gray-300 p-4 w-full"
+                        />{" "}
+                        <button type="button"
+
+                            className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute left-2 glow p-2 group cursor-pointer  rounded-full bg-gray-100   "
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsOpen(prev => !prev)
+                            }}>
+                            <IconPlus /> </button>
                         <input
                             onClick={handleInputClick}
                             value={input}
