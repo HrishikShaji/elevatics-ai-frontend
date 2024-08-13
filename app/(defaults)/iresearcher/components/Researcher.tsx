@@ -1,48 +1,30 @@
 
+
 import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useRef, useState } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
-import { DOCUMIND_INITIATE, DOCUMIND_RESPONSE } from "@/lib/endpoints";
-import { useChat } from "@/contexts/ChatContext";
-import { ChatType } from "@/types/types";
-import IconPlus from "../icon/icon-plus";
+import { DOCUMIND_INITIATE } from "@/lib/endpoints";
 import { IoCloseCircle } from "react-icons/io5";
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useResearcher } from "@/contexts/ResearcherContext";
+import IconPlus from "@/components/icon/icon-plus";
 
-interface ChatSearchBarProps {
-    title: string;
-    subTitle: string;
-    disable: boolean;
-    responseType: ChatType;
-}
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
-const agents: { name: string; url: string; active: boolean }[] = [
-    { name: "iResearcher", url: "/iresearcher", active: true },
-    { name: "document", url: "/document", active: true },
-    { name: "news", url: "/news", active: true },
-    { name: "search", url: "/search", active: true },
-    { name: "coder", url: "/coder", active: true },
-    { name: "researcher-chat", url: "/researcher-chat", active: true },
-    { name: "investor", url: "/investor", active: false },
-    { name: "code-interpreter", url: "/code-interpreter", active: true },
-    { name: "career", url: "/career", active: true },
-]
 
-const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSearchBarProps) => {
+const Researcher = memo(() => {
     const [input, setInput] = useState("")
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const { sendMessage, conversationId, loading, chatHistory } = useChat()
     const inputRef = useRef<HTMLInputElement>(null)
     const [isOpen, setIsOpen] = useState(false)
     const uploadContainerRef = useRef<HTMLDivElement>(null);
-    const pathname = usePathname()
+    const router = useRouter()
+    const { setPrompt } = useResearcher()
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (uploadContainerRef.current && !uploadContainerRef.current.contains(event.target as any)) {
@@ -81,6 +63,10 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
         mutate(recommendation)
     }, [])
 
+    function handleSubmit() {
+        setPrompt(input)
+        router.push("/iresearcher/topics")
+    }
     function onSubmit(e: FormEvent) {
         e.preventDefault()
         setInitialSearch(true)
@@ -88,7 +74,7 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
             handleFileSubmit()
         } else {
             if (input !== "") {
-                sendMessage({ input: input, responseType: responseType });
+                handleSubmit()
             }
         }
         handleReset()
@@ -140,7 +126,7 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                 fileData.push(base64String);
             }
             const data = {
-                ConversationID: conversationId,
+                ConversationID: "",
                 FileNames: fileNames,
                 FileTypes: fileTypes,
                 FileData: fileData,
@@ -161,42 +147,30 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
 
 
     const handleClick = () => {
-        if (inputRef.current && !loading) {
+        if (inputRef.current) {
             inputRef.current.click();
         }
     };
 
     return (
         <>
-            {chatHistory.length === 0 && !disable ?
-                <div className='flex flex-col w-full   items-center justify-center '>
-                    <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
-                        <h1 className="text-3xl font-semibold">
-                            {title}
-                        </h1>
-                        <h1 className="text-[#8282AD] text-center">
-                            {subTitle}
-                        </h1>
-                    </div>
-                    <AnimateHeight height={inputClick ? 0 : "auto"} duration={500}>
-                        {pathname === "/" ?
-
-                            < div className="flex  gap-4 items-center w-[800px] overflow-x-scroll hide-scrollbar  h-[calc(65vh_-_80px)]">
-                                {agents.map((item, i) => (
-                                    <Link href={item.url} key={i} className=' h-[150px] transition duration-300 hover:-translate-y-3 w-[200px] flex-shrink-0 hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item.name}</Link>
-                                ))}
-                            </div>
-                            :
-
-                            < div className="flex  gap-4 items-center w-[800px] h-[calc(65vh_-_80px)]">
-                                {suggestions.map((item, i) => (
-                                    <div onClick={() => handleRecommendationClick(item)} key={i} className='cursor-pointer h-[150px] transition duration-300 hover:-translate-y-3 w-full hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
-                                ))}
-                            </div>
-                        }
-                    </AnimateHeight>
+            <div className='flex flex-col w-full   items-center justify-center '>
+                <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
+                    <h1 className="text-3xl font-semibold">
+                        Iresearcher
+                    </h1>
+                    <h1 className="text-[#8282AD] text-center">
+                        efficient researching
+                    </h1>
                 </div>
-                : null}
+                <AnimateHeight height={inputClick ? 0 : "auto"} duration={500}>
+                    < div className="flex  gap-4 items-center w-[800px] h-[calc(65vh_-_80px)]">
+                        {suggestions.map((item, i) => (
+                            <div onClick={() => handleRecommendationClick(item)} key={i} className='cursor-pointer h-[150px] transition duration-300 hover:-translate-y-3 w-full hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
+                        ))}
+                    </div>
+                </AnimateHeight>
+            </div>
             <div className="w-full flex pt-3 justify-center h-20 items-start">
                 <div className="w-[1000px] bg-white flex flex-col rounded-3xl border-2 border-gray-200 shadow-lg">
                     <form onSubmit={onSubmit} className=" relative  flex items-center justify-center ">
@@ -211,7 +185,6 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                             className="rounded-3xl border-2 pr-28 shadow-md border-gray-100 bg-white focus:outline-gray-300 p-4 w-full"
                         />{" "}
                         <button type="button"
-                            disabled={loading}
                             className="text-gray-400 disabled:cursor-auto hover:bg-gray-300 hover:scale-125 duration-500 absolute left-2 glow p-2 group cursor-pointer  rounded-full bg-gray-100   "
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -229,7 +202,6 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                             </div>
                             :
                             <input
-                                disabled={loading}
                                 onClick={handleInputClick}
                                 value={input}
                                 onChange={handleChange}
@@ -238,35 +210,33 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                             />}
 
                         <button
-                            disabled={loading}
                             className="text-gray-400 disabled:cursor-auto hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
                         >
                             <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                         </button>
                     </form>
-                    {!disable ?
-                        <AnimateHeight height={data.length > 0 && !initialSearch && selectedFiles.length === 0 ? 300 : 0} duration={300}>
-                            <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
-                                <span className="text-[#535353] ">Here are some suggestions</span>
-                                <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
-                                    {!initialSearch ? data.map((recommendation: string, i: number) => (
-                                        <div
-                                            onClick={() => handleRecommendationClick(recommendation)}
-                                            key={i}
-                                            className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
-                                        >
-                                            <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
-                                                {recommendation}
-                                            </h1>
-                                        </div>
-                                    )) : null}
-                                </div>
+                    <AnimateHeight height={data.length > 0 && !initialSearch && selectedFiles.length === 0 ? 300 : 0} duration={300}>
+                        <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
+                            <span className="text-[#535353] ">Here are some suggestions</span>
+                            <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
+                                {!initialSearch ? data.map((recommendation: string, i: number) => (
+                                    <div
+                                        onClick={() => handleRecommendationClick(recommendation)}
+                                        key={i}
+                                        className="flex cursor-pointer p-1 items-center text-gray-500 gap-5 bg-transparent "
+                                    >
+                                        <h1 className="bg-gray-100 py-1 px-3 hover:font-semibold rounded-xl">
+                                            {recommendation}
+                                        </h1>
+                                    </div>
+                                )) : null}
                             </div>
-                        </AnimateHeight> : null}
+                        </div>
+                    </AnimateHeight>
                 </div>
             </div>
         </>
     )
 })
 
-export default ChatSearchBar
+export default Researcher
