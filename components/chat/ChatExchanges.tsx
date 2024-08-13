@@ -59,6 +59,9 @@ export default function ChatExchanges({ chatHistory, loading }: ChatExchangesPro
                         {chat.type === "code-interpreter" ?
                             <CheckResponseType chat={chat} />
                             : null}
+                        {chat.type === "career-question" ?
+                            <div>what career do you want?</div>
+                            : null}
                     </ChatMessageAgentWrapper>
                 )))}
         </div>

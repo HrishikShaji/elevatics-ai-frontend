@@ -145,6 +145,12 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
 
     const uploadFile = async (responseType: ChatType) => {
+
+        if (responseType === "career") {
+            addMessage({ role: 'user', content: "uploaded resume", metadata: null, type: "career" });
+            addMessage({ role: 'assistant', content: "resume specs", metadata: null, type: "career-question" });
+        }
+
         try {
             if (responseType === "document") {
                 await uploadDocuments({ conversationId: conversationId, selectedFiles: selectedFiles })
@@ -207,6 +213,10 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
             if (responseType === "iresearcher-reports") {
                 setCurrentReportType("RESEARCHERCHAT")
                 await fetchResearcherReports({ addReports: addReports, query: input })
+            }
+
+            if (responseType === "career-answer") {
+                console.log("this is career input", input)
             }
 
         } catch (error) {
