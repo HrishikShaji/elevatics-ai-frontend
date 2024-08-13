@@ -15,7 +15,7 @@ export default function SavedReport() {
     const { data, isLoading } = useFetchSavedReport()
     if (isLoading) return <div>Loading...</div>
 
-    return <div>{data.reportType === "QUICK" ? <SavedQuickReport name={data.name} report={data.data} /> : null}
+    return <div>{data.reportType === "QUICK" ? <SavedQuickReport reportId={data.id} name={data.name} report={data.data} /> : null}
         {data.reportType === "FULL" ? <SavedAdvancedReport name={data.name} data={data.data} /> : null}
         {data.reportType === "INVESTOR" ? <SavedInvestorReport name={data.name} report={data.data} /> : null}
         {data.reportType === "NEWS" ? <SavedNews name={data.name} report={data.data} /> : null}
