@@ -20,6 +20,7 @@ import IconLogout from '../icon/icon-logout';
 import { signOut, useSession } from 'next-auth/react';
 import { CiFolderOn } from "react-icons/ci";
 import IconHome from '../icon/icon-home';
+import { agents } from '@/lib/constants';
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -120,33 +121,11 @@ const Sidebar = () => {
 
                                 <AnimateHeight duration={300} height={currentMenu === 'agents' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
-                                        <li>
-                                            <Link href="/iresearcher">{t('iResearcher')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/investor">{t('Investor')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/coder">{t('Coder')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/news">{t('News')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/search">{t('Search')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/career">{t('Career')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/code-interpreter">{t('Code Interpreter')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/document">{t('Document')}</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/researcher-chat">{t('Researcher-Chat')}</Link>
-                                        </li>
+                                        {agents.map((agent, i) => (
+                                            <li key={i}>
+                                                <Link href={agent.url}>{t(agent.name)}</Link>
+                                            </li>
+                                        ))}
                                     </ul>
                                 </AnimateHeight>
                             </li>
