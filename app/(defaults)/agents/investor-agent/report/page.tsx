@@ -1,3 +1,5 @@
+import InvestorReportHome from "../../components/InvestorReportHome";
+
 export default function Page() {
-    return <div></div>
+    return <InvestorReportHome />
 }
