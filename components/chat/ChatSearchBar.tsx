@@ -7,6 +7,7 @@ import { DOCUMIND_INITIATE, DOCUMIND_RESPONSE } from "@/lib/endpoints";
 import { useChat } from "@/contexts/ChatContext";
 import { ChatType } from "@/types/types";
 import IconPlus from "../icon/icon-plus";
+import { IoCloseCircle } from "react-icons/io5";
 
 interface ChatSearchBarProps {
     title: string;
@@ -22,16 +23,38 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
-    const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
-    const { sendMessage, conversationId } = useChat()
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const { sendMessage, conversationId, loading, chatHistory } = useChat()
     const inputRef = useRef<HTMLInputElement>(null)
     const [isOpen, setIsOpen] = useState(false)
+    const uploadContainerRef = useRef<HTMLDivElement>(null);
+    console.log("loading", loading)
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (uploadContainerRef.current && !uploadContainerRef.current.contains(event.target as any)) {
+                setIsOpen(false)
+                console.log('Clicked outside the upload container!');
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value)
     }, [])
 
+    function handleRemoveFile(name: string, e: React.MouseEvent<HTMLButtonElement>) {
+        e.stopPropagation();
+        const updatedFiles = selectedFiles.filter((file) => file.name !== name);
+        setSelectedFiles(updatedFiles)
+    }
+
     const handleReset = useCallback(() => {
         setInput("")
+        setSelectedFiles([])
     }, [])
 
     const handleInputClick = useCallback(() => {
@@ -47,30 +70,43 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
     function onSubmit(e: FormEvent) {
         e.preventDefault()
         setInitialSearch(true)
-        if (selectedFiles) {
+        if (selectedFiles.length > 0) {
             handleFileSubmit()
         } else {
-            sendMessage({ input: input, responseType: responseType });
+            if (input !== "") {
+                sendMessage({ input: input, responseType: responseType });
+            }
         }
         handleReset()
     }
 
-    // Handle file selection
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setSelectedFiles(event.target.files);
+        if (event.target.files) {
+            const files = Array.from(event.target.files)
+            setSelectedFiles(files);
+        }
     };
 
-    // Convert file to base64
     const encodeFileToBase64 = (file: File) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result.split(',')[1]); // Get only the base64 string
-            reader.onerror = (error) => reject(error);
+
+            reader.onload = () => {
+                if (reader.result) {
+                    const base64String = (reader.result as string).split(',')[1];
+                    resolve(base64String);
+                } else {
+                    reject(new Error('FileReader result is null.'));
+                }
+            };
+
+            reader.onerror = (error) => {
+                reject(new Error(`FileReader error: ${error}`));
+            };
         });
     };
 
-    // Handle form submission
     const handleFileSubmit = async () => {
         if (selectedFiles) {
 
@@ -83,15 +119,12 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
             const fileTypes = [];
             const fileData = [];
 
-            // Process each file
             for (const file of selectedFiles) {
                 fileNames.push(file.name);
-                fileTypes.push(file.type.split('/')[1]); // Extract file extension
+                fileTypes.push(file.type.split('/')[1]);
                 const base64String = await encodeFileToBase64(file);
                 fileData.push(base64String);
             }
-            setInput(fileNames.join(","))
-            // Prepare the data object
             const data = {
                 ConversationID: conversationId,
                 FileNames: fileNames,
@@ -106,10 +139,7 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                     body: JSON.stringify(data)
                 })
                 const result = await response.json()
-                console.log('Success:', result);
-                alert('Files uploaded successfully!');
             } catch (error) {
-                console.error('Error:', error);
                 alert('Failed to upload files.');
             }
         }
@@ -117,15 +147,14 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
 
 
     const handleClick = () => {
-        if (inputRef.current) {
+        if (inputRef.current && !loading) {
             inputRef.current.click();
-            console.log("clicked")
         }
     };
 
     return (
         <>
-            {!initialSearch && !disable ?
+            {chatHistory.length === 0 && !disable ?
                 <div className='flex flex-col w-full   items-center justify-center '>
                     <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
                         <h1 className="text-3xl font-semibold">
@@ -145,10 +174,10 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                 </div>
                 : null}
             <div className="w-full flex pt-3 justify-center h-20 items-start">
-                <div className="w-[1000px] relative  bg-white   rounded-3xl dark:bg-neutral-700 overflow-hidden border-gray-200 border-2 shadow-lg focus:outline-gray-300  flex flex-col ">
-                    <form onSubmit={onSubmit} className=" relative  flex items-center justify-center  ">
-                        <div className={`absolute -top-10 z-40 p-2 bg-gray-200 rounded-md duration-500 transition ${isOpen ? "translate-x-0 opacity-100" : "translate-x-100 opacity-0"}`}>
-                            <button type="button" className=" rounded-md " onClick={handleClick}>Upload Fil</button>
+                <div className="w-[1000px] bg-white flex flex-col rounded-3xl border-2 border-gray-200 shadow-lg">
+                    <form onSubmit={onSubmit} className=" relative  flex items-center justify-center ">
+                        <div ref={uploadContainerRef} className={`absolute -top-10 left-0 z-40 p-2 bg-gray-200 rounded-md duration-500 transition ${isOpen ? "translate-x-0 opacity-100" : "translate-x-100 opacity-0"}`}>
+                            <button type="button" className=" rounded-md " onClick={handleClick}>Upload File</button>
                         </div>
                         <input
                             type="file"
@@ -158,29 +187,41 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                             className="rounded-3xl border-2 pr-28 shadow-md border-gray-100 bg-white focus:outline-gray-300 p-4 w-full"
                         />{" "}
                         <button type="button"
-
-                            className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute left-2 glow p-2 group cursor-pointer  rounded-full bg-gray-100   "
+                            disabled={loading}
+                            className="text-gray-400 disabled:cursor-auto hover:bg-gray-300 hover:scale-125 duration-500 absolute left-2 glow p-2 group cursor-pointer  rounded-full bg-gray-100   "
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setIsOpen(prev => !prev)
                             }}>
-                            <IconPlus /> </button>
-                        <input
-                            onClick={handleInputClick}
-                            value={input}
-                            onChange={handleChange}
-                            placeholder="What's on your mind..."
-                            className="   pr-28  bg-white focus:outline-none p-4 w-full"
-                        />{" "}
+                            <IconPlus />
+                        </button>
+                        {selectedFiles.length > 0 ?
+                            <div className="flex gap-2 py-4 rounded-3xl px-16 justify-start w-full">{selectedFiles.map((file, i) => <div key={i} className="flex gap-1 items-center">
+                                <h1>{file.name}</h1>
+                                <button onClick={(e) => handleRemoveFile(file.name, e)}>
+                                    <IoCloseCircle />
+                                </button>
+                            </div>)}
+                            </div>
+                            :
+                            <input
+                                disabled={loading}
+                                onClick={handleInputClick}
+                                value={input}
+                                onChange={handleChange}
+                                placeholder="What's on your mind..."
+                                className=" rounded-3xl py-4 px-16  focus:outline-none w-full"
+                            />}
 
                         <button
-                            className="text-gray-400 hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
+                            disabled={loading}
+                            className="text-gray-400 disabled:cursor-auto hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
                         >
                             <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
                         </button>
                     </form>
                     {!disable ?
-                        <AnimateHeight height={data.length > 0 && !initialSearch ? 300 : 0} duration={300}>
+                        <AnimateHeight height={data.length > 0 && !initialSearch && selectedFiles.length === 0 ? 300 : 0} duration={300}>
                             <div className="flex flex-col gap-1 p-5 pt-0   bg-transparent w-full">
                                 <span className="text-[#535353] ">Here are some suggestions</span>
                                 <div className="  w-full overflow-y-auto max-h-[300px] flex flex-col gap-1">
