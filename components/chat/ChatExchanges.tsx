@@ -9,6 +9,7 @@ import CheckResponseType from "./CheckResponseType";
 import dynamic from "next/dynamic"
 import CareerFollowUp from "./CareerFollowUp";
 import CareerResponse from "./CareerResponse";
+import FollowUpResponse from "./FollowUpResponse";
 
 const ClientSideChatPlotly = dynamic(
     () => import('./ChatPlotly'),
@@ -67,6 +68,7 @@ export default function ChatExchanges({ chatHistory, loading }: ChatExchangesPro
                         {chat.type === "career" ?
                             <CareerResponse chat={chat} />
                             : null}
+                        {chat.type === "followup" ? <FollowUpResponse chat={chat} /> : null}
                     </ChatMessageAgentWrapper>
                 )))}
         </div>

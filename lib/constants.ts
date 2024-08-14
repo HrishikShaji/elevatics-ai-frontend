@@ -8,4 +8,5 @@ export const agents: { name: string; url: string; active: boolean }[] = [
     { name: "code-interpreter", url: "/agents/code-interpreter-agent", active: false },
     { name: "investor", url: "/agents/investor-agent", active: false },
     { name: "career", url: "/agents/career-agent", active: true },
+    { name: "followup", url: "/agents/followup-agent", active: true },
 ]

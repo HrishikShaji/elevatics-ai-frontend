@@ -25,6 +25,7 @@ import fetchResearcherReports from '@/lib/fetchResearcherReports';
 import fetchResearcherTopics from '@/lib/fetchResearcherTopics';
 import uploadDocuments from '@/lib/uploadDocuments';
 import fetchCareerRepsonse from '@/lib/fetchCareerResponse';
+import fetchFollowUpResponse from '@/lib/fetchFollowUpResponse';
 
 interface ChatData {
     sendMessage: ({ input, responseType }: { input: string, responseType: ChatType }) => void;
@@ -221,10 +222,12 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
             }
 
             if (responseType === "career-answer") {
-                console.log("this is career input", input)
                 const parsedInput = JSON.parse(input)
-                console.log("parsed input", parsedInput)
                 await fetchCareerRepsonse({ addMessage: addMessage, resume: selectedFiles[0] ? selectedFiles[0] : null, jobDescription: parsedInput.jobDescription, jobDescriptionUrl: parsedInput.jobDescriptionUrl, resumeText: parsedInput.resumeText })
+            }
+
+            if (responseType === "followup") {
+                await fetchFollowUpResponse({ addMessage: addMessage, conversationId: conversationId, query: input })
             }
 
         } catch (error) {
