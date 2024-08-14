@@ -27,19 +27,64 @@ export default async function fetchFollowUpResponse({ addMessage, query, convers
     if (response.body) {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-        let assistantResponse = '';
-        let lastUpdateTime = Date.now();
+        let markdown = '';
+        let metadata = '';
+        let buffer = '';
+        let isReadingResponse = false;
+        let isReadingInteract = false;
 
         while (true) {
-            const { done, value } = await reader.read();
+            const { value, done } = await reader.read();
             if (done) break;
-            const chunk = decoder.decode(value);
-            assistantResponse += chunk;
 
-            if (Date.now() - lastUpdateTime > 100 || done) {
-                addMessage({ role: 'assistant', content: assistantResponse, metadata: null, type: 'followup' });
-                lastUpdateTime = Date.now();
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
+
+            while (true) {
+                if (isReadingInteract) {
+                    const interactEndIndex = buffer.indexOf('</interact>');
+                    if (interactEndIndex !== -1) {
+                        metadata += buffer.slice(0, interactEndIndex);
+                        buffer = buffer.slice(interactEndIndex + 11);
+                        isReadingInteract = false;
+                    } else {
+                        metadata += buffer;
+                        buffer = '';
+                        break;
+                    }
+                } else if (isReadingResponse) {
+                    const responseEndIndex = buffer.indexOf('</response>');
+                    if (responseEndIndex !== -1) {
+                        markdown += buffer.slice(0, responseEndIndex);
+                        buffer = buffer.slice(responseEndIndex + 11);
+                        isReadingResponse = false;
+                    } else {
+                        markdown += buffer;
+                        buffer = '';
+                        break;
+                    }
+                } else {
+                    const responseStartIndex = buffer.indexOf('<response>');
+                    const interactStartIndex = buffer.indexOf('<interact>');
+
+                    if (responseStartIndex !== -1 && (interactStartIndex === -1 || responseStartIndex < interactStartIndex)) {
+                        markdown += buffer.slice(0, responseStartIndex);
+                        buffer = buffer.slice(responseStartIndex + 10);
+                        isReadingResponse = true;
+                    } else if (interactStartIndex !== -1 && (responseStartIndex === -1 || interactStartIndex < responseStartIndex)) {
+                        metadata += buffer.slice(0, interactStartIndex);
+                        buffer = buffer.slice(interactStartIndex + 10);
+                        isReadingInteract = true;
+                    } else {
+                        markdown += buffer;
+                        buffer = '';
+                        break;
+                    }
+                }
             }
+
+            // Update the message with the latest content
+            addMessage({ role: 'assistant', content: markdown.trim(), metadata: metadata.trim(), type: "followup" });
         }
     }
 }

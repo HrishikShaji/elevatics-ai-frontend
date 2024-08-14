@@ -6,6 +6,7 @@ interface FollowUpResponseProps {
 }
 
 export default function FollowUpResponse({ chat }: FollowUpResponseProps) {
-    console.log(chat)
+    console.log("this is content:", chat.content)
+    console.log("this is metadata:", chat.metadata)
     return <ChatMarkdownRender disableTyping={false} text={chat.content} />
 }
