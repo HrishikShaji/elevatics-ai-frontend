@@ -21,7 +21,6 @@ export default async function fetchFollowUpResponse({ addMessage, query, convers
             user_id: 'string'
         })
     });
-
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -30,8 +29,6 @@ export default async function fetchFollowUpResponse({ addMessage, query, convers
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let assistantResponse = '';
-        let responseContent = '';
-        let metadata = null;
 
         while (true) {
             const { done, value } = await reader.read();
@@ -39,25 +36,7 @@ export default async function fetchFollowUpResponse({ addMessage, query, convers
             const chunk = decoder.decode(value);
             assistantResponse += chunk;
 
-            // Extract content inside the <response> tag in real-time
-            const responseMatch = assistantResponse.match(/<response>(.*?)<\/response>/);
-            if (responseMatch) {
-                responseContent = responseMatch[1];
-            }
-
-            // Extract the JSON object
-            const jsonMatch = assistantResponse.match(/{.*}/);
-            if (jsonMatch) {
-                metadata = JSON.parse(jsonMatch[0]);
-            }
-
-            // If responseContent is updated, render it in real-time
-            addMessage({
-                role: 'assistant',
-                content: responseContent,
-                metadata: metadata ? metadata : null,
-                type: "followup"
-            });
+            addMessage({ role: 'assistant', content: assistantResponse, metadata: null, type: "followup" });
         }
     }
 }

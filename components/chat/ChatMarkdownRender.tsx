@@ -36,6 +36,13 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
                 },
                 code: code,
                 script: script,
+                p: ({ node, ...props }) => {
+                    if (props.children?.toString().includes('{"response":')) {
+                        console.log("from markdown", props.children)
+                        return <div>i got the clarification</div>
+                    }
+                    return <p {...props}></p>
+                },
                 div: ({ node, ...props }) => {
                     return null;
                 }
