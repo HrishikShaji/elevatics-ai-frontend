@@ -58,7 +58,7 @@ export default function ResearcherReportContainer({ chat }: ResearcherReportCont
             <ChatScrollWrapper>
                 <div className="flex flex-col gap-10">
                     {chat.reports?.map((report, j) => {
-                        return <div key={j} className="flex flex-col gap-10 bg-blue-500" style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} >
+                        return <div key={j} className="flex flex-col gap-10 " style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} >
                             <ChatMarkdownRender text={report.report} disableTyping={false} />
                         </div>
                     })}

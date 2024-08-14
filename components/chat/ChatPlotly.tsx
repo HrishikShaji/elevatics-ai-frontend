@@ -2,18 +2,16 @@ import { Chat } from "@/types/types"
 import { useEffect, useState } from "react";
 import Plot from 'react-plotly.js';
 interface ChatPlotlyProps {
-    chat: Chat
+    content: string;
 }
 
-export default function ChatPlotly({ chat }: ChatPlotlyProps) {
+export default function ChatPlotly({ content }: ChatPlotlyProps) {
     const [graphData, setGraphData] = useState<any>({ data: [], layout: {} });
 
     useEffect(() => {
-        const parsedGraph = JSON.parse(chat.content);
-        console.log("data is", parsedGraph.data)
-        console.log("layout is", parsedGraph.layout)
+        const parsedGraph = JSON.parse(content);
         setGraphData(parsedGraph);
-    }, [chat.content]);
+    }, [content]);
 
     return (
         <div>

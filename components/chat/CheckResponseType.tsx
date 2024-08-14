@@ -19,8 +19,8 @@ interface Props {
 
 export default function CheckResponseType({ chat }: Props) {
     const parsedContent = JSON.parse(chat.content) as InterpreterResponseType[]
+    console.log("this is the array", parsedContent)
     return <div>{parsedContent.map((item, i) => {
-        console.log("type is:", item.type, "content is:", item.content)
-        return item.type === "plotly" ? <ClientSideChatPlotly chat={chat} /> : item.type === "HTML" ? <div dangerouslySetInnerHTML={{ __html: item.content }}></div> : <ChatMarkdownRender text={item.content} disableTyping={false} key={i} />
+        return item.type === "plotly" ? <ClientSideChatPlotly content={item.content} /> : item.type === "HTML" ? <div dangerouslySetInnerHTML={{ __html: item.content }}></div> : <ChatMarkdownRender text={item.content} disableTyping={false} key={i} />
     })}</div>
 }

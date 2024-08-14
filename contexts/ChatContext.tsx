@@ -173,8 +173,6 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
         setLoading(true)
         setStreamComplete(false)
 
-        const history: { role: string; content: string }[] = chatHistory.map((chat) => { return { role: chat.role, content: chat.content } })
-        const latestHistory = [...history, { role: "user", content: input }]
         if (responseType === "career") {
             addMessage({ role: 'assistant', content: "resume specs", metadata: null, type: "career-question" });
         }
@@ -188,7 +186,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
             if (responseType === "code-interpreter") {
                 setCurrentReportType("INTERPRETER")
-                await fetchCodeInterpreterResponse({ addMessage: addMessage, history: latestHistory, query: input })
+                await fetchCodeInterpreterResponse({ addMessage: addMessage, conversationId: conversationId, query: input })
             }
 
             if (responseType === "search") {
