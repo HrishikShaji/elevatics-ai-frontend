@@ -7,6 +7,8 @@ import AdvancedTopics from "@/app/(defaults)/researcher-chat/components/Advanced
 import AdvancedReportContainer from "@/app/(defaults)/researcher-chat/components/AdvancedReportContainer";
 import CheckResponseType from "./CheckResponseType";
 import dynamic from "next/dynamic"
+import CareerFollowUp from "./CareerFollowUp";
+import CareerResponse from "./CareerResponse";
 
 const ClientSideChatPlotly = dynamic(
     () => import('./ChatPlotly'),
@@ -60,7 +62,10 @@ export default function ChatExchanges({ chatHistory, loading }: ChatExchangesPro
                             <CheckResponseType chat={chat} />
                             : null}
                         {chat.type === "career-question" ?
-                            <div>what career do you want?</div>
+                            <CareerFollowUp chat={chat} />
+                            : null}
+                        {chat.type === "career" ?
+                            <CareerResponse chat={chat} />
                             : null}
                     </ChatMessageAgentWrapper>
                 )))}

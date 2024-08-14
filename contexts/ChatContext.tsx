@@ -24,6 +24,7 @@ import { ReportType } from '@prisma/client';
 import fetchResearcherReports from '@/lib/fetchResearcherReports';
 import fetchResearcherTopics from '@/lib/fetchResearcherTopics';
 import uploadDocuments from '@/lib/uploadDocuments';
+import fetchCareerRepsonse from '@/lib/fetchCareerResponse';
 
 interface ChatData {
     sendMessage: ({ input, responseType }: { input: string, responseType: ChatType }) => void;
@@ -173,6 +174,10 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
         const history: { role: string; content: string }[] = chatHistory.map((chat) => { return { role: chat.role, content: chat.content } })
         const latestHistory = [...history, { role: "user", content: input }]
+        if (responseType === "career") {
+            addMessage({ role: 'assistant', content: "resume specs", metadata: null, type: "career-question" });
+        }
+
 
         try {
             if (responseType === "iresearcher-report") {
@@ -217,6 +222,9 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
             if (responseType === "career-answer") {
                 console.log("this is career input", input)
+                const parsedInput = JSON.parse(input)
+                console.log("parsed input", parsedInput)
+                await fetchCareerRepsonse({ addMessage: addMessage, resume: selectedFiles[0] ? selectedFiles[0] : null, jobDescription: parsedInput.jobDescription, jobDescriptionUrl: parsedInput.jobDescriptionUrl, resumeText: parsedInput.resumeText })
             }
 
         } catch (error) {
