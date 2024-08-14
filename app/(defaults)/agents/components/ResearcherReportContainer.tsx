@@ -12,7 +12,6 @@ interface ResearcherReportContainerProps {
 export default function ResearcherReportContainer({ chat }: ResearcherReportContainerProps) {
     const [currentParentKey, setCurrentParentKey] = useState("")
     const containerRef = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
         if (chat.sliderKeys) {
             setCurrentParentKey(chat.sliderKeys[0])
@@ -57,11 +56,13 @@ export default function ResearcherReportContainer({ chat }: ResearcherReportCont
                 </button>
             </div>
             <ChatScrollWrapper>
-                {chat.reports?.map((report, j) => (
-                    <div key={j} style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} >
-                        <ChatMarkdownRender text={report.report} disableTyping={false} />
-                    </div>
-                ))}
+                <div className="flex flex-col gap-10">
+                    {chat.reports?.map((report, j) => {
+                        return <div key={j} className="flex flex-col gap-10 bg-blue-500" style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} >
+                            <ChatMarkdownRender text={report.report} disableTyping={false} />
+                        </div>
+                    })}
+                </div>
             </ChatScrollWrapper>
             <div className="w-full flex justify-end pt-2">
                 <SourcesModal metadata={chat.metadata as string} />
