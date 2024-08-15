@@ -50,25 +50,26 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
                 ul: ({ node, ...props }) => {
                     return <ul className='' {...props}></ul>
                 },
-
                 li: ({ node, ...props }) => {
                     return <li className='flex flex-col gap-[10px] pl-[15px] pb-[10px]' {...props}></li>
                 },
-
                 strong: ({ node, ...props }) => {
                     return <strong className='font-semibold' {...props}></strong>
                 },
                 table: ({ node, ...props }) => {
-                    return <table className='border-collapse' {...props}></table>
+                    return <table className='border-collapse bg-none border-b-[1px] border-gray-300 pb-[10px] mb-[20px]' {...props}></table>
+                },
+                thead: ({ node, ...props }) => {
+                    return <thead className='bg-none' {...props}></thead>
                 },
                 td: ({ node, ...props }) => {
-                    return <td className='text-left p-[10px] border-collapse' style={{ borderBottom: '10px black' }} {...props}></td>
+                    return <td className='text-left p-[10px] border-b-[1px] border-gray-300' {...props}></td>
                 },
                 th: ({ node, ...props }) => {
-                    return <th className='text-left p-[10px] border-collapse' style={{ borderBottom: "10px black" }} {...props}></th>
+                    return <th className='text-left bg-gray-200 p-[10px] border-b-[1px] border-gray-300'  {...props}></th>
                 },
                 tr: ({ node, ...props }) => {
-                    return <tr className='border-collapse' style={{ borderBottom: '10px black' }} {...props}></tr>
+                    return <tr className="bg-none"  {...props}></tr>
                 },
                 span: ({ node, ...props }) => {
                     if (props.className === "cursor") {
@@ -102,9 +103,11 @@ const script = memo(
     //@ts-ignore
     ({ src, children }: ScriptProps) => {
         if (src === "https://cdn.plot.ly/plotly-latest.min.js") {
+            console.log("these are children", children)
             return null;
         }
         if (children) {
+            console.log("these are children", children)
             return <ClientSideChartRender scriptContent={children as string} />
         }
     }

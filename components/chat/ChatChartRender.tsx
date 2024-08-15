@@ -32,6 +32,7 @@ const ChatChartRender = memo(({ scriptContent }: ChatChartRenderProps) => {
     }, []);
 
     useEffect(() => {
+
         const regex = /Plotly\.newPlot\('.*', data, layout\);/;
         if (regex.test(scriptContent)) {
             const completeScript = scriptContent.replace(/Plotly\.newPlot\(.*\);/, '');
@@ -50,8 +51,24 @@ const ChatChartRender = memo(({ scriptContent }: ChatChartRenderProps) => {
     }, [scriptContent, extractObject, chartData, chartLayout]);
 
     if (!isComplete) return null;
-    return <div className="rounded-3xl overflow-hidden bg-white">
-        <Plot className="rounded-3xl" data={chartData} layout={chartLayout} />  </div>;
+    return <div className="rounded-3xl w-full overflow-hidden bg-white p-5">
+        <Plot style={{ width: "100%", height: "100%" }} data={chartData} layout={{
+            title: chartLayout.title, autoSize: true, modebar: { orientation: "v" },
+            showlegend: true,
+            legend: {
+                x: .45,
+                orientation: "h",
+                traceorder: 'normal',
+                font: {
+                    family: 'sans-serif',
+                    size: 12,
+                    color: '#000'
+                },
+                bgcolor: '#E2E2E2',
+                bordercolor: '#FFFFFF',
+                borderwidth: 2
+            }
+        }} useResizeHandler={true} />  </div>;
 });
 
 export default ChatChartRender;
