@@ -4,7 +4,7 @@ import SourcesModal from "@/components/SourcesModal";
 import { RefObject } from "@fullcalendar/core/preact";
 import ChatMarkdownRender from "@/components/chat/ChatMarkdownRender";
 import ChatScrollWrapper from "@/components/chat/ChatScrollWrapper";
-
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 interface ResearcherReportContainerProps {
     chat: Chat
 }
@@ -41,18 +41,18 @@ export default function ResearcherReportContainer({ chat }: ResearcherReportCont
             <div className="flex py-1 pb-3 justify-between w-full overflow-hiiden">
                 <button
                     onClick={() => scrollLeft(containerRef)}
-                    className=" size-6 flex items-center justify-center bg-black text-white hover:text-black  hover:bg-gray-300 rounded-full"
+                    className=" size-10 flex  items-center justify-center  hover:text-black  hover:bg-gray-300 rounded-full"
                 >
-                    {"<"}
+                    <IoIosArrowBack size={25} />
                 </button>
-                <div className='w-[630px]  flex gap-2 overflow-hidden' ref={containerRef}>
-                    {chat.sliderKeys?.map((item, k) => (<button className='p-1 text-nowrap px-3 rounded-md bg-black text-white' onClick={() => setCurrentParentKey(item)}>{item}</button>))}
+                <div className='w-[800px] justify-center  flex gap-4 overflow-hidden' ref={containerRef}>
+                    {chat.sliderKeys?.map((item, k) => (<button className='p-1 text-nowrap px-3 rounded-md bg-white text-black' onClick={() => setCurrentParentKey(item)}>{item}</button>))}
                 </div>
                 <button
                     onClick={() => scrollRight(containerRef)}
-                    className=" size-6 flex items-center justify-center bg-black text-white hover:text-black  hover:bg-gray-300 rounded-full"
+                    className=" size-10 flex items-center justify-center  hover:text-black  hover:bg-gray-300 rounded-full"
                 >
-                    {">"}
+                    <IoIosArrowForward size={25} />
                 </button>
             </div>
             <ChatScrollWrapper>

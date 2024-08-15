@@ -52,9 +52,11 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
                             )}
                         </div>
                         <AnimateHeight duration={300} height={active === i + 1 ? 'auto' : 0}>
-                            <div className=" px-1 py-3 font-semibold text-white-dark h-[200px] overflow-y-scroll custom-scrollbar">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{task[0]}</ReactMarkdown>
+                            <div className='py-5 '>
+                                <div className=" px-1 py-3 font-semibold text-white-dark h-[200px] overflow-y-scroll custom-scrollbar">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{task[0]}</ReactMarkdown>
 
+                                </div>
                             </div>
                         </AnimateHeight>
                     </div>

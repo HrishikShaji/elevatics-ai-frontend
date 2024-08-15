@@ -28,6 +28,48 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
             components={{
+                h1: ({ node, ...props }) => {
+                    return <h1 className='text-[30px] leading-[40px] font-[500] pt-0 pr-0 pb-[20px] pl-0' {...props} ></ h1>
+                },
+                h2: ({ node, ...props }) => {
+                    return <h2 className='text-[25px] leading-[35px] pt-[15px] pr-0 pb-[5px] pl-0' {...props}></h2>
+                },
+                h3: ({ node, ...props }) => {
+
+                    return <h3 className='text-[20px] leading-[30px] font-[500] pt-[15px] pr-0 pb-[15px] pl-0' {...props}></h3>
+                },
+                h4: ({ node, ...props }) => {
+                    return <h4 className='text-[15px] leading-[25px] py-[10px] px-0' {...props}></h4>
+                },
+                h5: ({ node, ...props }) => {
+                    return <h5 className='text-[10px] leading-[20px] py-[10px] px-0' {...props}></h5>
+                },
+                h6: ({ node, ...props }) => {
+                    return <h6 className='text-[5px] leading-[15px] py-[10px] px-0' {...props}></h6>
+                },
+                ul: ({ node, ...props }) => {
+                    return <ul className='' {...props}></ul>
+                },
+
+                li: ({ node, ...props }) => {
+                    return <li className='flex flex-col gap-[10px] pl-[15px] pb-[10px]' {...props}></li>
+                },
+
+                strong: ({ node, ...props }) => {
+                    return <strong className='font-semibold' {...props}></strong>
+                },
+                table: ({ node, ...props }) => {
+                    return <table className='border-collapse' {...props}></table>
+                },
+                td: ({ node, ...props }) => {
+                    return <td className='text-left p-[10px] border-collapse' style={{ borderBottom: '10px black' }} {...props}></td>
+                },
+                th: ({ node, ...props }) => {
+                    return <th className='text-left p-[10px] border-collapse' style={{ borderBottom: "10px black" }} {...props}></th>
+                },
+                tr: ({ node, ...props }) => {
+                    return <tr className='border-collapse' style={{ borderBottom: '10px black' }} {...props}></tr>
+                },
                 span: ({ node, ...props }) => {
                     if (props.className === "cursor") {
                         return <span {...props} className={styles.cursor}></span>;
@@ -38,10 +80,9 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
                 script: script,
                 p: ({ node, ...props }) => {
                     if (props.children?.toString().includes('{"response":')) {
-                        console.log("from markdown", props.children)
                         return <div>i got the clarification</div>
                     }
-                    return <p {...props}></p>
+                    return <p className='pb-[10px] ' {...props}></p>
                 },
                 div: ({ node, ...props }) => {
                     return null;
@@ -49,7 +90,7 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
             }}
         >
             {text}
-        </ReactMarkdown>
+        </ReactMarkdown >
     );
 });
 
