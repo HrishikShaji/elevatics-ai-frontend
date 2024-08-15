@@ -4,14 +4,14 @@ import IconPlusCircle from "@/components/icon/icon-plus-circle";
 import AnimateHeight from "react-animate-height";
 import { useState } from "react";
 import { SelectedSubtasks } from "@/types/types";
-import AdvancedTopic from "./AdvancedTopic";
 import { useChat } from "@/contexts/ChatContext";
+import ResearcherChatTopic from "./ResearcherChatTopic";
 
-interface AdvancedTopicsProps {
+interface ResearcherChatTopicsProps {
     content: string;
 }
 
-export default function AdvancedTopics({ content }: AdvancedTopicsProps) {
+export default function ResearcherChatTopics({ content }: ResearcherChatTopicsProps) {
     const [active, setActive] = useState<number | null>(0)
     const [selectedSubtasks, setSelectedSubtasks] = useState<SelectedSubtasks>({});
     const { sendMessage } = useChat()
@@ -26,7 +26,7 @@ export default function AdvancedTopics({ content }: AdvancedTopicsProps) {
             <h1>Select the topics to be included in the Report</h1>
             <div className="flex">
                 <div className="divide-y divide-white-light px-6 py-4.5 dark:divide-dark w-[50%]">
-                    {JSON.parse(content)?.map((task, i) => (
+                    {JSON.parse(content)?.map((task: any, i: number) => (
 
                         <div key={i}>
                             <div
@@ -47,7 +47,7 @@ export default function AdvancedTopics({ content }: AdvancedTopicsProps) {
                             </div>
                             <AnimateHeight duration={300} height={active === i + 1 ? 'auto' : 0}>
                                 <div className="px-1 py-3 font-semibold text-white-dark">
-                                    <AdvancedTopic
+                                    <ResearcherChatTopic
                                         currentTopic={task}
                                         selectedSubtasks={selectedSubtasks}
                                         setSelectedSubtasks={setSelectedSubtasks}

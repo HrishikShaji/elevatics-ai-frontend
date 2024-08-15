@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { AiOutlineDownload } from "react-icons/ai"
 
 interface InvestorPdfProps {

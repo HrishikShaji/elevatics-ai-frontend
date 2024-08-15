@@ -1,10 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { IoDocumentTextOutline } from "react-icons/io5";
 import { PiDotsThreeOutlineVerticalThin } from "react-icons/pi";
 import Link from "next/link";
 import DeleteReport from "@/components/DeleteReport";
-import IconPencil from "@/components/icon/icon-pencil";
-import { useRouter } from "next/navigation";
 
 interface LibraryActionsProps {
     id: string;
@@ -13,7 +10,6 @@ interface LibraryActionsProps {
 export default function LibraryActions({ id }: LibraryActionsProps) {
     const [actionsOpen, setActionsOpen] = useState(false);
     const actionsRef = useRef<HTMLDivElement>(null);
-    const router = useRouter()
 
     const handleClickOutside = (event: MouseEvent) => {
         if (actionsRef.current && !actionsRef.current.contains(event.target as Node)) {

@@ -3,12 +3,11 @@ import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useRef, useState 
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
-import { DOCUMIND_INITIATE, DOCUMIND_RESPONSE } from "@/lib/endpoints";
 import { useChat } from "@/contexts/ChatContext";
 import { ChatType } from "@/types/types";
 import IconPlus from "../icon/icon-plus";
 import { IoCloseCircle } from "react-icons/io5";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 interface ChatSearchBarProps {
@@ -37,7 +36,7 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
     const { data, mutate } = useSuggestions(input)
-    const { setSelectedFiles, uploadFile, selectedFiles, sendMessage, conversationId, loading, chatHistory } = useChat()
+    const { setSelectedFiles, uploadFile, selectedFiles, sendMessage, loading, chatHistory } = useChat()
     const inputRef = useRef<HTMLInputElement>(null)
     const [isOpen, setIsOpen] = useState(false)
     const uploadContainerRef = useRef<HTMLDivElement>(null);

@@ -4,7 +4,6 @@ import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useRef, useState 
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
 import useSuggestions from "@/hooks/useSuggestions";
-import { DOCUMIND_INITIATE } from "@/lib/endpoints";
 import { IoCloseCircle } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import IconPlus from "@/components/icon/icon-plus";
@@ -90,25 +89,6 @@ const InvestorHome = memo(() => {
         }
     };
 
-    const encodeFileToBase64 = (file: File) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onload = () => {
-                if (reader.result) {
-                    const base64String = (reader.result as string).split(',')[1];
-                    resolve(base64String);
-                } else {
-                    reject(new Error('FileReader result is null.'));
-                }
-            };
-
-            reader.onerror = (error) => {
-                reject(new Error(`FileReader error: ${error}`));
-            };
-        });
-    };
 
     const handleFileSubmit = async () => {
         setPrompt(input)

@@ -4,14 +4,11 @@
 
 import useFetchProfile from "@/hooks/useFetchProfile";
 import { User } from "@prisma/client";
-import { useSession } from "next-auth/react";
 import React, {
     createContext,
     useContext,
     useState,
     ReactNode,
-    SetStateAction,
-    Dispatch,
     useEffect
 } from "react";
 

@@ -1,5 +1,6 @@
 import { Chat } from "@/types/types"
 import { useEffect, useState } from "react";
+//@ts-ignore
 import Plot from 'react-plotly.js';
 interface ChatPlotlyProps {
     content: string;

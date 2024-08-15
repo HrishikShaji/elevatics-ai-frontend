@@ -4,8 +4,6 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useState } from 'react';
 import { getTranslation } from '@/i18n';
-import IconSettings from './icon/icon-settings';
-import SettingsSection from './SettingsSection';
 import SourcesSection from './SourcesSection';
 
 interface SourcesModalProps {
@@ -14,7 +12,6 @@ interface SourcesModalProps {
 
 export default function SourcesModal({ metadata }: SourcesModalProps) {
     const [modal, setModal] = useState(false);
-    const { t } = getTranslation();
 
     return (
         <>

@@ -1,22 +1,18 @@
 
+import { ResearcherTopicsResponse, SelectedSubtasks } from "@/types/types";
 import { Dispatch, SetStateAction } from "react";
-import { ResearcherTopicsResponse } from "@/types/types";
-import { useResearcher } from "@/contexts/ResearcherContext";
 
-interface TopicProps {
-    title: string;
-    isOpen: boolean;
+interface ResearcherChatTopicProps {
     currentTopic: ResearcherTopicsResponse;
-    setOpenTopic: Dispatch<SetStateAction<string | null>>;
+    selectedSubtasks: SelectedSubtasks;
+    setSelectedSubtasks: Dispatch<SetStateAction<SelectedSubtasks>>;
 }
 
-export default function Topic({
-    title,
-    isOpen,
-    setOpenTopic,
-    currentTopic
-}: TopicProps) {
-    const { selectedSubtasks, setSelectedSubtasks } = useResearcher();
+export default function ResearcherChatTopic({
+    currentTopic,
+    selectedSubtasks,
+    setSelectedSubtasks
+}: ResearcherChatTopicProps) {
 
     const handleCheckboxChange = (task: string, subtask: { name: string, prompt: string }) => {
         setSelectedSubtasks((prev) => {

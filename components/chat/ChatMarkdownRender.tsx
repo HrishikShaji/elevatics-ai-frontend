@@ -1,12 +1,12 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import React, { memo } from 'react';
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark, dracula, oneLight, duotoneLight, gruvboxLight, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import styles from "@/styles/markdown.module.css"
 import dynamic from 'next/dynamic';
 
