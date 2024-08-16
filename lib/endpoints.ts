@@ -5,6 +5,8 @@ export const GENERATE_PDF_URL = "http://51.81.35.147/api/generate-pdf";
 export const GENERATE_EXCEL_URL = "http://51.81.35.147/api/generate-excel";
 
 
+
+
 // BACKEND
 export const DELETE_REPORT_URL = '/api/report'
 export const FETCH_LIBRARY_URL = "/api/report"
@@ -14,6 +16,7 @@ export const SAVE_REPORT_URL = "/api/report"
 
 // AI_SIDE
 
+export const OPENAI_API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY || "";
 export const HFSPACE_TOKEN = process.env.NEXT_PUBLIC_HFSPACE_TOKEN || "";
 export const CODING_ASSISTANT_API_KEY = process.env.NEXT_PUBLIC_CODER_API_KEY || "";
 export const NEWS_ASSISTANT_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY || "";

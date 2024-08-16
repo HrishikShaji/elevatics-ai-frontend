@@ -1,15 +1,15 @@
 
+
 import { SSG_GET_INITIAL_PROPS_CONFLICT } from "next/dist/lib/constants";
 import { ReactNode, memo } from "react";
 import { SiInternetcomputer } from "react-icons/si";
 import Spinner from "../Spinner";
 
-interface ChatMessageAgentWrapperProps {
-    children: ReactNode
+interface AgentLoaderProps {
     isLoading: boolean;
 }
 
-const ChatMessageAgentWrapper = memo(({ isLoading, children, }: ChatMessageAgentWrapperProps) => {
+const AgentLoader = memo(({ isLoading }: AgentLoaderProps) => {
     return (
         <div className='w-full justify-start'>
             <div className=' w-full flex gap-2 p-1'>
@@ -17,12 +17,9 @@ const ChatMessageAgentWrapper = memo(({ isLoading, children, }: ChatMessageAgent
                     {isLoading ? <div className="w-6"><Spinner /></div> :
                         <SiInternetcomputer color="white" />}
                 </div>
-                <div className='flex w-full p-4 rounded-3xl bg-gray-200 flex-col'>
-                    {children}
-                </div>
             </div>
         </div>
     )
 })
 
-export default ChatMessageAgentWrapper
+export default AgentLoader

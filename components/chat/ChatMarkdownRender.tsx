@@ -51,7 +51,7 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
                     return <ul className='' {...props}></ul>
                 },
                 li: ({ node, ...props }) => {
-                    return <li className='flex flex-col gap-[10px] pl-[15px] pb-[10px]' {...props}></li>
+                    return <li className='' {...props}></li>
                 },
                 strong: ({ node, ...props }) => {
                     return <strong className='font-semibold' {...props}></strong>

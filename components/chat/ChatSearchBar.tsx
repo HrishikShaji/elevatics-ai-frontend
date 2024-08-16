@@ -10,6 +10,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { agents } from "@/lib/constants";
+import AgentLoader from "./AgentLoader";
 
 interface ChatSearchBarProps {
     title: string;
@@ -171,7 +172,9 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                             disabled={loading}
                             className="text-gray-400 disabled:cursor-auto hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
                         >
-                            <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
+                            {loading ? <AgentLoader isLoading={loading} /> :
+                                <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
+                            }
                         </button>
                     </form>
                     {!disable ?

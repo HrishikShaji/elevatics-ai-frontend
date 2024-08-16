@@ -12,10 +12,9 @@ import ResearcherChatTopics from "./ResearcherChatTopics";
 
 interface ChatExchangesProps {
     chatHistory: Chat[];
-    loading: boolean;
 }
 
-export default function ChatExchanges({ chatHistory, loading }: ChatExchangesProps) {
+export default function ChatExchanges({ chatHistory }: ChatExchangesProps) {
 
     if (chatHistory.length === 0) return null;
     return (<ChatScrollWrapper>
@@ -26,7 +25,7 @@ export default function ChatExchanges({ chatHistory, loading }: ChatExchangesPro
                         {chat.content}
                     </ChatMessageUserWrapper>
                 ) : (
-                    <ChatMessageAgentWrapper key={i}>
+                    <ChatMessageAgentWrapper isLoading={chat.content.length === 0} key={i}>
                         {chat.type === "iresearcher-report" ?
                             <ChatMarkdownRender disableTyping={false} text={chat.content} />
                             : null}
