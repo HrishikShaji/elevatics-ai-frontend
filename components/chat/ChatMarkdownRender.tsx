@@ -103,11 +103,9 @@ const script = memo(
     //@ts-ignore
     ({ src, children }: ScriptProps) => {
         if (src === "https://cdn.plot.ly/plotly-latest.min.js") {
-            console.log("these are children", children)
             return null;
         }
         if (children) {
-            console.log("these are children", children)
             return <ClientSideChartRender scriptContent={children as string} />
         }
     }

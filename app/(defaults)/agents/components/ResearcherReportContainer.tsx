@@ -5,6 +5,7 @@ import { RefObject } from "@fullcalendar/core/preact";
 import ChatMarkdownRender from "@/components/chat/ChatMarkdownRender";
 import ChatScrollWrapper from "@/components/chat/ChatScrollWrapper";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import SourcesSection from "@/components/SourcesSection";
 interface ResearcherReportContainerProps {
     chat: Chat
 }
@@ -60,6 +61,7 @@ export default function ResearcherReportContainer({ chat }: ResearcherReportCont
                     {chat.reports?.map((report, j) => {
                         return <div key={j} className="flex flex-col gap-10 " style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} >
                             <ChatMarkdownRender text={report.report} disableTyping={false} />
+                            <SourcesSection metadata={report.metadata} />
                         </div>
                     })}
                 </div>
