@@ -51,7 +51,7 @@ const ChatChartRender = memo(({ scriptContent }: ChatChartRenderProps) => {
     }, [scriptContent, extractObject, chartData, chartLayout]);
 
     if (!isComplete) return null;
-    return <div className="rounded-3xl w-full overflow-hidden bg-white p-5">
+    return <div className="mt-5 rounded-3xl w-full overflow-hidden bg-white p-5">
         <Plot style={{ width: "100%", height: "100%" }} data={chartData} layout={{
             title: chartLayout.title, autoSize: true, modebar: { orientation: "v" },
             showlegend: true,
