@@ -81,6 +81,9 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
                 script: script,
                 p: ({ node, ...props }) => {
                     if (props.children?.toString().includes('{"response":')) {
+                        console.log("this is children", props.children)
+                        const parsed = JSON.parse(props.children)
+                        console.log(parsed)
                         return <div>i got the clarification</div>
                     }
                     return <p className='pb-[10px] ' {...props}></p>

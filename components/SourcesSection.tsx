@@ -28,7 +28,7 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
             setActive(active === index + 1 ? null : index + 1)
         }
     }
-
+    console.log(sources)
     return (
         <div>
             <div className="w-[75vw] divide-y divide-white-light px-6  dark:divide-dark">

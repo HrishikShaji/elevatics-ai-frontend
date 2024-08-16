@@ -1,25 +1,47 @@
 "use client"
 
+import SourcesSection from "@/components/SourcesSection"
 import fetchSampleReport from "@/lib/fetchSampleReport"
 import { useState } from "react"
 import ReactMarkdown, { Components } from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import remarkGfm from "remark-gfm"
+import { sampleReport } from "./sampleReport"
+import { renderToStaticMarkup } from "react-dom/server"
+import { metadata } from "@/app/layout"
 
 interface CustomComponentProps {
     node: any;
     [key: string]: any;
 }
-
+const extractText = (node: any): string => {
+    if (node.type === "text") {
+        return node.value;
+    }
+    if (node.children && node.children.length > 0) {
+        return node.children.map((child: any) => extractText(child)).join("");
+    }
+    return "";
+};
 const components: Components = {
     "report-metadata": ({ node, ...props }: CustomComponentProps) => {
-        console.log("this is metadata", props.children);
-        return <div className="w-full bg-blue-500 h-20">got metadata</div>;
+        const allTexts = extractText(node)
+        const metadataMatch = allTexts.match(/all-text-with-urls: (.+)/);
+        if (metadataMatch) {
+            console.log(metadataMatch)
+        }
+        return <div />;
     },
-} as Components & { "report-metadata": React.FC<CustomComponentProps> };
+    "report": ({ node, ...props }: CustomComponentProps) => {
+        return <div className="w-full bg-blue-500 " {...props} />;
+    },
+    "status": ({ node, ...props }: CustomComponentProps) => {
+        return <div className="w-full bg-green-500 " {...props} />;
+    },
+} as Components;
 export default function Page() {
     const [response, setResponse] = useState("")
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState<string>(false)
 
     async function handleGenerate() {
         try {
