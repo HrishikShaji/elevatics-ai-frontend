@@ -9,6 +9,7 @@ import CareerResponse from "./CareerResponse";
 import FollowUpResponse from "./FollowUpResponse";
 import ResearcherReportContainer from "@/app/(defaults)/agents/components/ResearcherReportContainer";
 import ResearcherChatTopics from "./ResearcherChatTopics";
+import SourcesSection from "../SourcesSection";
 
 interface ChatExchangesProps {
     chatHistory: Chat[];
@@ -27,7 +28,10 @@ export default function ChatExchanges({ chatHistory }: ChatExchangesProps) {
                 ) : (
                     <ChatMessageAgentWrapper isLoading={chat.content.length === 0} key={i}>
                         {chat.type === "iresearcher-report" ?
-                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            <div>
+                                <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                                <SourcesSection metadata={chat.metadata as string} />
+                            </div>
                             : null}
                         {chat.type === "iresearcher-topics" ?
                             <ResearcherChatTopics content={chat.content} />
