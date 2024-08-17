@@ -79,11 +79,12 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
                 },
                 code: code,
                 script: script,
+                pre: ({ node, ...props }) => {
+                    return <pre className='p-5 rounded-3xl bg-white' {...props} />
+                },
                 p: ({ node, ...props }) => {
                     if (props.children?.toString().includes('{"response":')) {
                         console.log("this is children", props.children)
-                        const parsed = JSON.parse(props.children)
-                        console.log(parsed)
                         return <div>i got the clarification</div>
                     }
                     return <p className='pb-[10px] ' {...props}></p>
@@ -117,10 +118,10 @@ const script = memo(
 const code = memo(({ node, className, children, ...props }: any) => {
     return <SyntaxHighlighter
         useInlineStyles={true}
-        customStyle={{ width: "100%", padding: "20px", borderRadius: "24px" }}
+        customStyle={{ padding: "3px 10px 3px 10px", borderRadius: '10px', width: "fit" }}
         style={materialLight}
         language="tsx"
-        PreTag="div"
+        PreTag="fragment"
     >{String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
 })
