@@ -17,7 +17,7 @@ const ChatMessageAgentWrapper = memo(({ isLoading, children, }: ChatMessageAgent
                     {isLoading ? <div className="w-6"><Spinner /></div> :
                         <SiInternetcomputer color="white" />}
                 </div>
-                <div className='flex w-full p-4 rounded-3xl bg-gray-200 flex-col'>
+                <div className='flex w-full p-10 rounded-3xl bg-gray-200 flex-col'>
                     {children}
                 </div>
             </div>

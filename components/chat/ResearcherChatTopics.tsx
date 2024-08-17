@@ -20,69 +20,62 @@ export default function ResearcherChatTopics({ content }: ResearcherChatTopicsPr
         const stringifiedTasks = JSON.stringify(selectedSubtasks)
         sendMessage({ input: stringifiedTasks, responseType: "iresearcher-reports" })
     }
-
+    console.log(selectedSubtasks)
     return (
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-5 ">
             <h1>Select the topics to be included in the Report</h1>
-            <div className="flex">
-                <div className="divide-y divide-white-light px-6 py-4.5 dark:divide-dark w-[50%]">
-                    {JSON.parse(content)?.map((task: any, i: number) => (
+            <div className="divide-y divide-white-light   dark:divide-dark w-full">
+                {JSON.parse(content)?.map((task: any, i: number) => (
 
-                        <div key={i}>
-                            <div
-                                className={`flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary
+                    <div key={i}>
+                        <div
+                            className={`flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary
             ${active === i + 1 ? 'bg-primary-light !text-primary dark:bg-[#1B2E4B]' : ''}`}
-                                onClick={() => setActive(active === i + 1 ? null : i + 1)}
-                            >
-                                <span>{task.task}</span>
-                                {active !== i + 1 ? (
-                                    <span className="shrink-0">
-                                        <IconPlusCircle duotone={false} />
-                                    </span>
-                                ) : (
-                                    <span className="shrink-0">
-                                        <IconMinusCircle fill={true} />
-                                    </span>
-                                )}
+                            onClick={() => setActive(active === i + 1 ? null : i + 1)}
+                        >
+                            <span>{task.task}</span>
+                            {active !== i + 1 ? (
+                                <span className="shrink-0">
+                                    <IconPlusCircle duotone={false} />
+                                </span>
+                            ) : (
+                                <span className="shrink-0">
+                                    <IconMinusCircle fill={true} />
+                                </span>
+                            )}
+                        </div>
+                        <AnimateHeight duration={300} height={active === i + 1 ? 'auto' : 0}>
+                            <div className="px-1 py-3 font-semibold text-white-dark">
+                                <ResearcherChatTopic
+                                    currentTopic={task}
+                                    selectedSubtasks={selectedSubtasks}
+                                    setSelectedSubtasks={setSelectedSubtasks}
+                                    key={i}
+                                />
                             </div>
-                            <AnimateHeight duration={300} height={active === i + 1 ? 'auto' : 0}>
-                                <div className="px-1 py-3 font-semibold text-white-dark">
-                                    <ResearcherChatTopic
-                                        currentTopic={task}
-                                        selectedSubtasks={selectedSubtasks}
-                                        setSelectedSubtasks={setSelectedSubtasks}
-                                        key={i}
-                                    />
-                                </div>
-                            </AnimateHeight>
-                        </div>
-                    ))}
-                </div>
-                <div className=" h-full sm:h-full justify-center items-center flex   text-white pt-5 w-[50%]">
-                    <div className="px-3 py-3 bg-black rounded-3xl w-full">
-
-                        <div className="w-full h-[65vh] custom-scrollbar  pt-2 pl-2 pr-4 overflow-y-auto">
-                            {Object.entries(selectedSubtasks).map(([key, value], i) => (
-                                <div key={i} className=" w-full">
-                                    <div
-                                        key={i}
-                                        className="border-b-2 py-2  text-xl border-gray-700 w-full"
-                                    >
-                                        {value.length !== 0 ? key : null}
-                                    </div>
-                                    {value.map((item, j) => (
-                                        <div key={j} className="ml-5 py-1 pt-4">
-                                            <h1>{item.name}</h1>
-                                            <p className="text-sm text-gray-400">{item.prompt}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            ))}
-                        </div>
+                        </AnimateHeight>
                     </div>
-                </div>
+                ))}
             </div>
-            <button className="p-2 rounded-md bg-black text-white" onClick={handleSubmit}>continue</button>
+            <div className="flex flex-col gap-3" >
+                {Object.entries(selectedSubtasks).map(([key, value], i) => {
+                    if (value.length === 0) return null
+                    return (
+                        <div key={i} className=" w-full flex flex-col gap-3">
+                            <h1 className="py-1 border-b-2 border-black ">{key}</h1>
+                            <div className="flex flex-wrap gap-3">
+                                {value.map((item, j) => (
+                                    <div key={j} className=" bg-black text-white rounded-3xl py-1 px-2">
+                                        <h1>{item.name}</h1>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>)
+                })}
+            </div>
+            <div className="w-full">
+                <button className="p-2 rounded-md bg-black text-white" onClick={handleSubmit}>continue</button>
+            </div>
         </div>
     )
 }
