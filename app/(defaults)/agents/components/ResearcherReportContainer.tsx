@@ -38,7 +38,7 @@ export default function ResearcherReportContainer({ chat }: ResearcherReportCont
         }
     }
     return (
-        <div className="w-[1000px] bg-gray-200 rounded-3xl p-5 flex flex-col gap-5">
+        <div className=" flex flex-col gap-5">
             <div className="flex py-1 pb-3 justify-between w-full overflow-hiiden">
                 <button
                     onClick={() => scrollLeft(containerRef)}

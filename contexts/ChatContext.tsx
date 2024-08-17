@@ -169,9 +169,9 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     }
 
     const sendMessage = async ({ input, responseType }: { input: string, responseType: ChatType }) => {
-        addMessage({ role: 'user', content: input, metadata: null, type: "text" });
         setLoading(true)
         setStreamComplete(false)
+
 
         if (responseType === "career") {
             addMessage({ role: 'assistant', content: "resume specs", metadata: null, type: "career-question" });
@@ -180,36 +180,43 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
 
         try {
             if (responseType === "iresearcher-report") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 setCurrentReportType("QUICK")
                 await fetchQuickReport({ query: input, addMessage: addMessage })
             }
 
             if (responseType === "code-interpreter") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 setCurrentReportType("INTERPRETER")
                 await fetchCodeInterpreterResponse({ addMessage: addMessage, conversationId: conversationId, query: input })
             }
 
             if (responseType === "search") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 setCurrentReportType("SEARCH")
                 await fetchSearchResponse({ addMessage: addMessage, query: input, model: agentModel })
             }
 
             if (responseType === "news") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 setCurrentReportType("NEWS")
                 await fetchNewsResponse({ addMessage: addMessage, query: input, model: agentModel })
             }
 
             if (responseType === "coder") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 setCurrentReportType("CODE")
                 await fetchCoderResponse({ addMessage: addMessage, query: input, model: agentModel, userId: userId, conversationId: conversationId })
             }
 
             if (responseType === "document") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 setCurrentReportType("DOCUMENT")
                 await fetchDocumentResponse({ addMessage: addMessage, query: input, conversationId: conversationId })
             }
 
             if (responseType === "iresearcher-topics") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 setCurrentReportType("RESEARCHERCHAT")
                 await fetchResearcherTopics({ addMessage: addMessage, query: input })
             }
@@ -220,11 +227,13 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
             }
 
             if (responseType === "career-answer") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 const parsedInput = JSON.parse(input)
                 await fetchCareerRepsonse({ addMessage: addMessage, resume: selectedFiles[0] ? selectedFiles[0] : null, jobDescription: parsedInput.jobDescription, jobDescriptionUrl: parsedInput.jobDescriptionUrl, resumeText: parsedInput.resumeText })
             }
 
             if (responseType === "followup") {
+                addMessage({ role: 'user', content: input, metadata: null, type: "text" });
                 await fetchFollowUpResponse({ addMessage: addMessage, conversationId: conversationId, query: input })
             }
 

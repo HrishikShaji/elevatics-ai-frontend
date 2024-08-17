@@ -16,7 +16,8 @@ export default function ResearcherChatTopics({ content }: ResearcherChatTopicsPr
     const [selectedSubtasks, setSelectedSubtasks] = useState<SelectedSubtasks>({});
     const { sendMessage } = useChat()
 
-    function handleSubmit() {
+    function handleSubmit(e: React.MouseEvent<HTMLButtonElement>) {
+        e.stopPropagation()
         const stringifiedTasks = JSON.stringify(selectedSubtasks)
         sendMessage({ input: stringifiedTasks, responseType: "iresearcher-reports" })
     }
@@ -74,7 +75,7 @@ export default function ResearcherChatTopics({ content }: ResearcherChatTopicsPr
                 })}
             </div>
             <div className="w-full">
-                <button className="p-2 rounded-md bg-black text-white" onClick={handleSubmit}>continue</button>
+                <button type="button" className="p-2 rounded-md bg-black text-white" onClick={handleSubmit}>continue</button>
             </div>
         </div>
     )

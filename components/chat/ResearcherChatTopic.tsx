@@ -19,17 +19,25 @@ export default function ResearcherChatTopic({
             const currentSubtasks = prev[task] || [];
             const subtaskExists = currentSubtasks.some(item => item.name === subtask.name);
 
+            let updatedSubtasks;
             if (subtaskExists) {
-                return {
+                updatedSubtasks = {
                     ...prev,
                     [task]: currentSubtasks.filter((item) => item.name !== subtask.name),
                 };
             } else {
-                return {
+                updatedSubtasks = {
                     ...prev,
                     [task]: [...currentSubtasks, subtask],
                 };
             }
+
+            if (updatedSubtasks[task].length === 0) {
+                const { [task]: _, ...rest } = updatedSubtasks;
+                return rest;
+            }
+
+            return updatedSubtasks;
         });
     };
 
