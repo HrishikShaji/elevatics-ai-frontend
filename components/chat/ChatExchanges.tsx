@@ -10,12 +10,11 @@ import FollowUpResponse from "./FollowUpResponse";
 import ResearcherReportContainer from "@/app/(defaults)/agents/components/ResearcherReportContainer";
 import ResearcherChatTopics from "./ResearcherChatTopics";
 import SourcesSection from "../SourcesSection";
+import { useChat } from "@/contexts/ChatContext";
 
-interface ChatExchangesProps {
-    chatHistory: Chat[];
-}
 
-export default function ChatExchanges({ chatHistory }: ChatExchangesProps) {
+export default function ChatExchanges() {
+    const { chatHistory, loading } = useChat()
 
     if (chatHistory.length === 0) return null;
     return (<ChatScrollWrapper>
@@ -30,7 +29,8 @@ export default function ChatExchanges({ chatHistory }: ChatExchangesProps) {
                         {chat.type === "iresearcher-report" ?
                             <div>
                                 <ChatMarkdownRender disableTyping={false} text={chat.content} />
-                                <SourcesSection metadata={chat.metadata as string} />
+                                {loading ? null :
+                                    <SourcesSection metadata={chat.metadata as string} />}
                             </div>
                             : null}
                         {chat.type === "iresearcher-topics" ?

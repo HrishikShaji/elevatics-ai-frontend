@@ -18,7 +18,7 @@ interface ChatWindowProps {
 
 export default function ChatWindow({ responseType, title, subTitle, disable, initialChatHistory, reportId }: ChatWindowProps) {
 
-    const { loading, chatHistory, setChatHistory, setReportId, setConversationId } = useChat()
+    const { setChatHistory, setReportId, setConversationId } = useChat()
 
     useEffect(() => {
         if (initialChatHistory === "") {
@@ -34,7 +34,7 @@ export default function ChatWindow({ responseType, title, subTitle, disable, ini
 
     return (
         <ChatWrapper>
-            <ChatExchanges chatHistory={chatHistory} loading={loading} />
+            <ChatExchanges />
             <ChatSearchBar disable={disable} title={title} subTitle={subTitle} responseType={responseType} />
         </ChatWrapper>
     );

@@ -28,14 +28,13 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
             setActive(active === index + 1 ? null : index + 1)
         }
     }
-    console.log(sources)
     return (
         <div>
-            <div className="w-[75vw] divide-y divide-white-light px-6  dark:divide-dark">
+            <div className="w-full divide-y divide-white-light   dark:divide-dark">
                 {(sources as string[][]).map((task, i) => (
                     <div key={i}>
                         <div
-                            className={`flex cursor-pointer items-center justify-between gap-10 px-2.5 py-2 text-base font-semibold hover:bg-primary-light hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary
+                            className={`flex cursor-pointer items-center justify-between gap-10  py-2 text-base font-semibold  hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary
             ${active === i + 1 ? 'bg-primary-light !text-primary dark:bg-[#1B2E4B]' : ''}`}
                             onClick={() => handleClick({ index: i, content: task[0] })}
                         >

@@ -6,9 +6,6 @@ import { useState } from "react"
 import ReactMarkdown, { Components } from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import remarkGfm from "remark-gfm"
-import { sampleReport } from "./sampleReport"
-import { renderToStaticMarkup } from "react-dom/server"
-import { metadata } from "@/app/layout"
 
 interface CustomComponentProps {
     node: any;
@@ -24,13 +21,20 @@ const extractText = (node: any): string => {
     return "";
 };
 const components: Components = {
-    "report-metadata": ({ node, ...props }: CustomComponentProps) => {
-        const allTexts = extractText(node)
-        const metadataMatch = allTexts.match(/all-text-with-urls: (.+)/);
+    code: ({ node, children, ...props }) => {
+        const codeContent = String(children).trim()
+        const stringified = JSON.stringify(codeContent)
+        const metadataMatch = stringified.match(/all-text-with-urls: (.+)/);
         if (metadataMatch) {
-            console.log(metadataMatch)
+            try {
+
+                console.log(metadataMatch[1])
+                JSON.parse(metadataMatch[1])
+            } catch (error) {
+                console.log(error)
+            }
         }
-        return <div />;
+        return <code className="bg-gray-400">{codeContent}</code>
     },
     "report": ({ node, ...props }: CustomComponentProps) => {
         return <div className="w-full bg-blue-500 " {...props} />;
@@ -41,7 +45,7 @@ const components: Components = {
 } as Components;
 export default function Page() {
     const [response, setResponse] = useState("")
-    const [loading, setLoading] = useState<string>(false)
+    const [loading, setLoading] = useState(false)
 
     async function handleGenerate() {
         try {

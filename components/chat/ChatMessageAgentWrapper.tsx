@@ -11,7 +11,7 @@ interface ChatMessageAgentWrapperProps {
 
 const ChatMessageAgentWrapper = memo(({ isLoading, children, }: ChatMessageAgentWrapperProps) => {
     return (
-        <div className='w-full justify-start'>
+        <div className='max-w-[900px] justify-start'>
             <div className=' w-full flex gap-2 p-1'>
                 <div className='h-8 w-8 flex-shrink-0 rounded-full bg-gray-400 flex items-center justify-center text-black'>
                     {isLoading ? <div className="w-6"><Spinner /></div> :
