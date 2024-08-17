@@ -3,7 +3,7 @@
 import SourcesSection from "@/components/SourcesSection"
 import fetchSampleReport from "@/lib/fetchSampleReport"
 import { useState } from "react"
-import ReactMarkdown, { Components } from "react-markdown"
+import ReactMarkdown, { Components, ExtraProps } from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import remarkGfm from "remark-gfm"
 
@@ -36,10 +36,10 @@ const components: Components = {
         }
         return <code className="bg-gray-400">{codeContent}</code>
     },
-    "report": ({ node, ...props }: CustomComponentProps) => {
+    "report": ({ node, ...props }: ExtraProps) => {
         return <div className="w-full bg-blue-500 " {...props} />;
     },
-    "status": ({ node, ...props }: CustomComponentProps) => {
+    "status": ({ node, ...props }: ExtraProps) => {
         return <div className="w-full bg-green-500 " {...props} />;
     },
 } as Components;
