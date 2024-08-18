@@ -1,9 +1,10 @@
 
 import { Chat } from "@/types/types";
+import { NEW_RESEARCHER_REPORT_URL } from "./endpoints";
 
 
 export default async function fetchSampleReport() {
-    const response = await fetch('https://pvanand-search-generate-prod.hf.space/generate_report', {
+    const response = await fetch(NEW_RESEARCHER_REPORT_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

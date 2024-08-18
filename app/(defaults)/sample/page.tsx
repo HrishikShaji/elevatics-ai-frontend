@@ -6,6 +6,7 @@ import { useState } from "react"
 import ReactMarkdown, { Components, ExtraProps } from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import remarkGfm from "remark-gfm"
+import { sampleReport, simpleReport } from "./sampleReport"
 
 interface CustomComponentProps {
     node: any;
@@ -36,6 +37,16 @@ const components: Components = {
         }
         return <code className="bg-gray-400">{codeContent}</code>
     },
+    strong: ({ node, ...props }) => {
+        return null
+    },
+    pre: ({ node, ...props }) => {
+        console.log(node?.children)
+        return null
+    },
+    "json": ({ node, ...props }: ExtraProps) => {
+        console.log(node.children)
+    },
     "report": ({ node, ...props }: ExtraProps) => {
         return <div className="w-full bg-blue-500 " {...props} />;
     },
@@ -62,11 +73,10 @@ export default function Page() {
     return <div className="h-screen w-full justify-center items-center">
         <button onClick={handleGenerate}>{loading ? "Generating..." : "Generate"}</button>
         <ReactMarkdown
-            rehypePlugins={[rehypeRaw]}
-            remarkPlugins={[remarkGfm]}
             components={components}
+            rehypePlugins={[rehypeRaw]}
         >
-            {response}
+            {sampleReport}
         </ReactMarkdown>
     </div>
 }

@@ -32,22 +32,8 @@ export default async function fetchDocumentResponse({ addMessage, conversationId
             if (done) break;
 
             const chunk = decoder.decode(value, { stream: true });
-
-            if (chunk.includes('<REFRENCES>')) {
-                isReadingMetadata = true;
-                metadata = '';
-            }
-
-            if (isReadingMetadata) {
-                metadata += chunk;
-                addMessage({ role: 'assistant', content: markdown, metadata: metadata, type: 'document' });
-                if (chunk.includes('</REFRENCES>')) {
-                    isReadingMetadata = false;
-                }
-            } else {
-                markdown += chunk;
-                addMessage({ role: 'assistant', content: markdown, metadata: metadata, type: "document" });
-            }
+            markdown += chunk;
+            addMessage({ role: 'assistant', content: markdown, metadata: metadata, type: "document" });
         }
     }
 

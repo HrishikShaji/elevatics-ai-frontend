@@ -9,12 +9,23 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import styles from "@/styles/markdown.module.css"
 import dynamic from 'next/dynamic';
+import { extractSystemStyles } from '@mantine/core';
+import DocumentReferences from './DocumentSources';
 
 const ClientSideChartRender = dynamic(
     () => import('./ChatChartRender'),
     { ssr: false }
 );
 
+const extractText = (node: any): string => {
+    if (node.type === "text") {
+        return node.value;
+    }
+    if (node.children && node.children.length > 0) {
+        return node.children.map((child: any) => extractText(child)).join("");
+    }
+    return "";
+};
 
 interface ChatMarkdownRenderProps {
     text: string;
@@ -96,6 +107,18 @@ const components: Components = {
         return <p className='pb-[10px] ' {...props}></p>
     },
     div: ({ node, ...props }) => {
+        return null;
+    },
+    "refrences": ({ node, children, ...props }: ExtraProps) => {
+        console.log("these are children", node?.children)
+        if (node?.children) {
+            const metadata = extractText(node.children)
+            return <DocumentReferences metadata={metadata} />
+        }
+        return null
+    },
+    "report-metadata": ({ node, ...props }: ExtraProps) => {
+        console.log(node?.children)
         return null;
     },
     "report": ({ node, ...props }: ExtraProps) => {

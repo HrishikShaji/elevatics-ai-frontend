@@ -11,6 +11,7 @@ import ResearcherReportContainer from "@/app/(defaults)/agents/components/Resear
 import ResearcherChatTopics from "./ResearcherChatTopics";
 import SourcesSection from "../SourcesSection";
 import { useChat } from "@/contexts/ChatContext";
+import DocumentResponse from "./DocumentResponse";
 
 
 export default function ChatExchanges() {
@@ -40,7 +41,7 @@ export default function ChatExchanges() {
                             <ResearcherReportContainer chat={chat} />
                             : null}
                         {chat.type === "document" ?
-                            <ChatMarkdownRender disableTyping={false} text={chat.content} />
+                            <DocumentResponse chat={chat} />
                             : null}
                         {chat.type === "search" ?
                             <ChatMarkdownRender disableTyping={false} text={chat.content} />

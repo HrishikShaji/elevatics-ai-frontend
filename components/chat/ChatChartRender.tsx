@@ -53,7 +53,7 @@ const ChatChartRender = memo(({ scriptContent }: ChatChartRenderProps) => {
     if (!isComplete) return null;
     return <div className="mt-5 rounded-3xl w-full overflow-hidden bg-white p-5">
         <Plot style={{ width: "100%", height: "100%" }} data={chartData} layout={{
-            title: chartLayout.title ? chartLayout.title : "chart", autoSize: true, modebar: { orientation: "v" },
+            title: chartLayout?.title ? chartLayout.title : "chart", autoSize: true, modebar: { orientation: "v" },
             showlegend: true,
             legend: {
                 x: .45,
