@@ -16,7 +16,6 @@ import DocumentResponse from "./DocumentResponse";
 
 export default function ChatExchanges() {
     const { chatHistory, loading } = useChat()
-    console.log(chatHistory)
     if (chatHistory.length === 0) return null;
     return (<ChatScrollWrapper>
         <div className="w-[1000px] py-5 flex flex-col gap-2">

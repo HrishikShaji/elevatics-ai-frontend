@@ -1,10 +1,10 @@
-import { INVESTOR_REPORT_URL } from '@/lib/endpoints';
+import { INVESTOR_REPORT_URL, NEW_INVESTOR_REPORT } from '@/lib/endpoints';
 import { useMutation } from '@tanstack/react-query';
 
 
 
 async function fetchInvestor(formData: FormData) {
-    const response = await fetch(INVESTOR_REPORT_URL, {
+    const response = await fetch(NEW_INVESTOR_REPORT, {
         method: "POST",
         body: formData,
     });

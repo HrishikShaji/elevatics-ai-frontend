@@ -39,3 +39,6 @@ export const FOLLOWUP_AGENT_URL = 'https://pvanand-general-chat.hf.space/followu
 export const FOLLOWUP_AGENT_API_KEY = '44d5c2ac18ced6fc25c1e57dcd06fc0b31fb4ad97bf56e67540671a647465df4'
 export const NEW_RESEARCHER_REPORT_URL = "https://pvanand-search-generate-prod.hf.space/v2/generate_report"
 export const NEW_FOLLOWUP_URL = "https://pvanand-general-chat.hf.space/v2/followup-agent"
+export const NEW_INVESTOR_REPORT = "https://ashishbangwal-investor-api.hf.space/investor"
+
+
