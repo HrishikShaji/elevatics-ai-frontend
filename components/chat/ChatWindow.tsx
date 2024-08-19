@@ -14,9 +14,10 @@ interface ChatWindowProps {
     title: string;
     subTitle: string;
     responseType: ChatType;
+    suggestions: string[]
 }
 
-export default function ChatWindow({ responseType, title, subTitle, disable, initialChatHistory, reportId }: ChatWindowProps) {
+export default function ChatWindow({ suggestions, responseType, title, subTitle, disable, initialChatHistory, reportId }: ChatWindowProps) {
 
     const { setChatHistory, setReportId, setConversationId } = useChat()
 
@@ -35,7 +36,7 @@ export default function ChatWindow({ responseType, title, subTitle, disable, ini
     return (
         <ChatWrapper>
             <ChatExchanges />
-            <ChatSearchBar disable={disable} title={title} subTitle={subTitle} responseType={responseType} />
+            <ChatSearchBar suggestions={suggestions} disable={disable} title={title} subTitle={subTitle} responseType={responseType} />
         </ChatWrapper>
     );
 }

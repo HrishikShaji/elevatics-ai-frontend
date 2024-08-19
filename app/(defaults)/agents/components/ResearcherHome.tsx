@@ -8,6 +8,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { useResearcher } from "@/contexts/ResearcherContext";
 import IconPlus from "@/components/icon/icon-plus";
+import { agents } from "@/lib/constants";
 
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
@@ -24,6 +25,8 @@ const ResearcherHome = memo(() => {
     const uploadContainerRef = useRef<HTMLDivElement>(null);
     const router = useRouter()
     const { setPrompt } = useResearcher()
+    const agent = agents["FULL"]
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (uploadContainerRef.current && !uploadContainerRef.current.contains(event.target as any)) {
@@ -156,10 +159,10 @@ const ResearcherHome = memo(() => {
             <div className='flex flex-col w-full   items-center justify-center '>
                 <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
                     <h1 className="text-3xl font-semibold">
-                        Iresearcher
+                        {agent.name}
                     </h1>
                     <h1 className="text-[#8282AD] text-center">
-                        efficient researching
+                        {agent.tagLine}
                     </h1>
                 </div>
                 <AnimateHeight height={inputClick ? 0 : "auto"} duration={500}>

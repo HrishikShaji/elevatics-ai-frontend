@@ -17,12 +17,12 @@ interface ChatSearchBarProps {
     subTitle: string;
     disable: boolean;
     responseType: ChatType;
+    suggestions: string[];
 }
 
-const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
 
 
-const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSearchBarProps) => {
+const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseType }: ChatSearchBarProps) => {
     const [input, setInput] = useState("")
     const [initialSearch, setInitialSearch] = useState(false)
     const [inputClick, setInputClick] = useState(false)
@@ -113,7 +113,7 @@ const ChatSearchBar = memo(({ disable, title, subTitle, responseType }: ChatSear
                         {pathname === "/" ?
 
                             < div className="flex  gap-4 items-center w-[1000px] overflow-x-scroll hide-scrollbar  h-[calc(65vh_-_80px)] px-1">
-                                {agents.map((item, i) => (
+                                {Object.values(agents).map((item, i) => (
                                     <Link href={item.url} key={i} className=' h-[150px] transition duration-300 hover:-translate-y-3 w-[300px] flex-shrink-0 bg-gray-100 hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item.name}</Link>
                                 ))}
                             </div>

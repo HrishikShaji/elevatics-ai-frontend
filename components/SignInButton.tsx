@@ -11,7 +11,7 @@ export default function SignInButton() {
     return (
         <>
             {status === "authenticated" ? null :
-                <button type="button" onClick={() => setModal(true)} className="absolute top-5 right-5 text-xl text-gray-500 hover:text-black duration-300">
+                <button type="button" onClick={() => setModal(true)} className="z-20 absolute top-5 right-5 text-xl text-gray-500 hover:text-black duration-300">
                     Login
                 </button>}
             <Transition appear show={modal} as={Fragment}>

@@ -8,6 +8,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import IconPlus from "@/components/icon/icon-plus";
 import { useInvestor } from "@/contexts/InvestorContext";
+import { agents } from "@/lib/constants";
 
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
@@ -24,7 +25,7 @@ const InvestorHome = memo(() => {
     const uploadContainerRef = useRef<HTMLDivElement>(null);
     const router = useRouter()
     const { setPrompt, setFile, setFileName } = useInvestor()
-
+    const agent = agents["INVESTOR"]
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -107,10 +108,10 @@ const InvestorHome = memo(() => {
             <div className='flex flex-col w-full   items-center justify-center '>
                 <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
                     <h1 className="text-3xl font-semibold">
-                        Investor
+                        {agent.name}
                     </h1>
                     <h1 className="text-[#8282AD] text-center">
-                        efficient investing
+                        {agent.tagLine}
                     </h1>
                 </div>
                 <AnimateHeight height={inputClick ? 0 : "auto"} duration={500}>

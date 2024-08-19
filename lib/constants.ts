@@ -1,12 +1,24 @@
-export const agents: { name: string; url: string; active: boolean }[] = [
-    { name: "iResearcher", url: "/agents/researcher-agent", active: true },
-    { name: "Researcher Chat", url: "/agents/researcher-chat", active: true },
-    { name: "Documind", url: "/agents/document-agent", active: true },
-    { name: "News", url: "/agents/news-agent", active: true },
-    { name: "Search", url: "/agents/search-agent", active: true },
-    { name: "Coder", url: "/agents/coding-agent", active: true },
-    { name: "Code Interpreter", url: "/agents/code-interpreter-agent", active: false },
-    { name: "Investor", url: "/agents/investor-agent", active: false },
-    { name: "Career", url: "/agents/career-agent", active: true },
-    { name: "Follow Up", url: "/agents/followup-agent", active: true },
-]
+import { ReportType } from "@prisma/client";
+
+type AgentData = {
+    name: string; url: string; active: boolean, tagLine: string, suggestions: string[]
+}
+
+export const agents: { [key in ReportType]: AgentData } = {
+    "QUICK": { name: "Quick Search", url: "/", active: false, tagLine: "Smart Research, Swift Results.", suggestions: [] },
+    "FULL": { name: "iResearcher", url: "/agents/researcher-agent", active: true, tagLine: "Smart Research, Swift Results.", suggestions: [] },
+    "RESEARCHERCHAT": { name: "Researcher Chat", url: "/agents/researcher-chat", active: true, tagLine: " Smart Research, Swift Results.", suggestions: [] },
+    "DOCUMENT": { name: "Documind", url: "/agents/document-agent", active: true, tagLine: 'From Data to Clarity with One Click', suggestions: [] },
+    "NEWS": { name: "News", url: "/agents/news-agent", active: true, tagLine: "Your Instant Pulse on Global News", suggestions: [] },
+    "SEARCH": { name: "Search", url: "/agents/search-agent", active: true, tagLine: "", suggestions: [] },
+    "CODE": { name: "Code Assistance", url: "/agents/coding-agent", active: true, tagLine: ": Your Instant Code Companion", suggestions: [] },
+    "INTERPRETER": { name: "Code Interpreter", url: "/agents/code-interpreter-agent", active: true, tagLine: "", suggestions: [] },
+    "INVESTOR": { name: "Investor", url: "/agents/investor-agent", active: true, tagLine: "Empowering Investors with Predictive Intelligence.", suggestions: [] },
+    "INVESTORCHAT": { name: "Investor", url: "/agents/investor-chat", active: false, tagLine: "Empowering Investors with Predictive Intelligence.", suggestions: [] },
+    "CAREER": { name: "Career", url: "/agents/career-agent", active: true, tagLine: "Your Virtual Career Coach for Smarter Choices", suggestions: [] },
+    "FOLLOWUP": { name: "FollowUp", url: "/agents/followup-agent", active: true, tagLine: "", suggestions: [] },
+    "PRESENTATION": { name: "Presentation", url: "/agents/presentation-agent", active: false, tagLine: "", suggestions: [] },
+}
+
+export const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
+

@@ -121,11 +121,15 @@ const Sidebar = () => {
 
                                 <AnimateHeight duration={300} height={currentMenu === 'agents' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
-                                        {agents.map((agent, i) => (
-                                            <li key={i}>
-                                                <Link href={agent.url}>{t(agent.name)}</Link>
-                                            </li>
-                                        ))}
+                                        {Object.values(agents).map((agent, i) => {
+                                            if (agent.active) {
+                                                return <li key={i}>
+                                                    <Link href={agent.url}>{t(agent.name)}</Link>
+                                                </li>
+                                            } else {
+                                                return null
+                                            }
+                                        })}
                                     </ul>
                                 </AnimateHeight>
                             </li>

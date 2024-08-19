@@ -6,6 +6,33 @@ const stringified = JSON.stringify(code)
 
 export const simpleReport = `
 <json>
+## Overview
+The term "singularity" has diverse meanings across various disciplines including technology, mathematics, physics, and futurology. This report explores the multifaceted concept of singularity, focusing primarily on the technological and mathematical aspects while also addressing its implications in other fields.
+
+## Types of Singularity
+
+### 1. Technological Singularity
+The technological singularity refers to a hypothetical point in the future where technological growth becomes uncontrollable and irreversible, resulting in transformative and unpredictable changes for humanity. This concept suggests that advancements in artificial intelligence (AI) will lead to machine intelligence surpassing human intelligence.
+
+**Predictions:**
+| **Predictor**         | **Prediction**                              | **Year**   | **Plausibility** |
+|-----------------------|--------------------------------------------|------------|------------------|
+| I.J. Good             | Ultra-intelligent machine                   | 1965       | High             |
+| Vernor Vinge          | Greater-than-human intelligence             | 2005-2030  | Medium           |
+| Ray Kurzweil          | Human-level AI                             | 2029       | Medium           |
+| Ray Kurzweil          | Technological singularity                   | 2045       | Medium           |
+
+### 2. Mathematical Singularity
+In mathematics, a singularity is a point where a mathematical object is not defined or is ill-behaved.
+
+**Examples:**
+- **Essential Singularity:** Exhibits extreme behavior near a function.
+- **Isolated Singularity:** Singularities that occur close to each other.
+- **Removable Singularity:** Points where a function is defined and continuous.
+
+### 3. Gravitational Singularity
+In the context of general relativity, a gravitational singularity is a point in spacetime where gravitational forces are predicted to become infinite, such as within black holes.
+<ignore-markdown>
 
 ## Overview
 The term "singularity" has diverse meanings across various disciplines including technology, mathematics, physics, and futurology. This report explores the multifaceted concept of singularity, focusing primarily on the technological and mathematical aspects while also addressing its implications in other fields.
@@ -33,35 +60,7 @@ In mathematics, a singularity is a point where a mathematical object is not defi
 
 ### 3. Gravitational Singularity
 In the context of general relativity, a gravitational singularity is a point in spacetime where gravitational forces are predicted to become infinite, such as within black holes.
-<pre>
-
-## Overview
-The term "singularity" has diverse meanings across various disciplines including technology, mathematics, physics, and futurology. This report explores the multifaceted concept of singularity, focusing primarily on the technological and mathematical aspects while also addressing its implications in other fields.
-
-## Types of Singularity
-
-### 1. Technological Singularity
-The technological singularity refers to a hypothetical point in the future where technological growth becomes uncontrollable and irreversible, resulting in transformative and unpredictable changes for humanity. This concept suggests that advancements in artificial intelligence (AI) will lead to machine intelligence surpassing human intelligence.
-
-**Predictions:**
-| **Predictor**         | **Prediction**                              | **Year**   | **Plausibility** |
-|-----------------------|--------------------------------------------|------------|------------------|
-| I.J. Good             | Ultra-intelligent machine                   | 1965       | High             |
-| Vernor Vinge          | Greater-than-human intelligence             | 2005-2030  | Medium           |
-| Ray Kurzweil          | Human-level AI                             | 2029       | Medium           |
-| Ray Kurzweil          | Technological singularity                   | 2045       | Medium           |
-
-### 2. Mathematical Singularity
-In mathematics, a singularity is a point where a mathematical object is not defined or is ill-behaved.
-
-**Examples:**
-- **Essential Singularity:** Exhibits extreme behavior near a function.
-- **Isolated Singularity:** Singularities that occur close to each other.
-- **Removable Singularity:** Points where a function is defined and continuous.
-
-### 3. Gravitational Singularity
-In the context of general relativity, a gravitational singularity is a point in spacetime where gravitational forces are predicted to become infinite, such as within black holes.
-</pre>
+</ignore-markdown>
 </json>
 `
 
