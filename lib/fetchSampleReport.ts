@@ -1,9 +1,12 @@
 
 import { Chat } from "@/types/types";
-import { NEW_RESEARCHER_REPORT_URL } from "./endpoints";
+import { LATEST_RESEARCHER_REPORT_URL, NEW_RESEARCHER_REPORT_URL } from "./endpoints";
 
+interface Props {
+    addMessage: (value: string) => void
+}
 
-export default async function fetchSampleReport() {
+export default async function fetchSampleReport({ addMessage }: Props) {
     const response = await fetch(NEW_RESEARCHER_REPORT_URL, {
         method: 'POST',
         headers: {
@@ -26,6 +29,23 @@ export default async function fetchSampleReport() {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.text()
+    if (response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let markdown = '';
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+
+            markdown += chunk;
+            console.log(markdown)
+            addMessage(markdown);
+        }
+    }
+
+
 
 }

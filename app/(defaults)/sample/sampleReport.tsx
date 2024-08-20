@@ -10,11 +10,8 @@ one
 
 ## Two ##
 two
-
 <ignore>
-[[[
-## Three
-three
-]]]
+[[[###Three### hello## BLAAA ####three]]]
 </ignore>
 `
+
