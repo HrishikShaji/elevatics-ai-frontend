@@ -1,7 +1,7 @@
 
 
 "use client";
-
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import useFetchProfile from "@/hooks/useFetchProfile";
 import { User } from "@prisma/client";
 import React, {
@@ -32,7 +32,20 @@ type AccountProviderProps = {
 export const AccountProvider = ({ children }: AccountProviderProps) => {
     const [profile, setProfile] = useState<User | null>(null);
     const { data, isSuccess } = useFetchProfile()
+    const [fpHash, setFpHash] = useState('');
 
+    useEffect(() => {
+        const setFp = async () => {
+            const fp = await FingerprintJS.load();
+
+            const { visitorId } = await fp.get();
+
+            setFpHash(visitorId);
+        };
+
+        setFp();
+    }, []);
+    console.log("this is fingerprint", fpHash)
     useEffect(() => {
         if (isSuccess) {
             setProfile(data.profile)
