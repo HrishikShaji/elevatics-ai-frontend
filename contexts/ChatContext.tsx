@@ -26,6 +26,7 @@ import fetchResearcherTopics from '@/lib/fetchResearcherTopics';
 import uploadDocuments from '@/lib/uploadDocuments';
 import fetchCareerRepsonse from '@/lib/fetchCareerResponse';
 import fetchFollowUpResponse from '@/lib/fetchFollowUpResponse';
+import { useAccount } from './AccountContext';
 
 interface ChatData {
     sendMessage: ({ input, responseType }: { input: string, responseType: ChatType }) => void;
@@ -66,6 +67,9 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     const [currentReportType, setCurrentReportType] = useState<ReportType | null>(null)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false)
+    const { currentFingerPrint, profile, incrementNonLoggedInUsage } = useAccount()
+
+    console.log("current usage", currentFingerPrint?.usage, "user id", profile?.id)
 
     const { mutate, isSuccess, data } = useSaveReport();
     useEffect(() => {
@@ -75,7 +79,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     }, [isSuccess, data]);
 
     useEffect(() => {
-        if (streamComplete && currentReportType !== null) {
+        if (streamComplete && currentReportType !== null && profile?.id) {
             console.log("ran saving")
             mutate({
                 name: chatHistory[0].content,
@@ -84,7 +88,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
                 reportType: currentReportType
             });
         }
-    }, [streamComplete]);
+    }, [streamComplete, profile?.id]);
 
     useEffect(() => {
         const userId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -171,7 +175,9 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     const sendMessage = async ({ input, responseType }: { input: string, responseType: ChatType }) => {
         setLoading(true)
         setStreamComplete(false)
-
+        if (!profile?.id) {
+            incrementNonLoggedInUsage()
+        }
 
         if (responseType === "career") {
             addMessage({ role: 'assistant', content: "resume specs", metadata: null, type: "career-question" });

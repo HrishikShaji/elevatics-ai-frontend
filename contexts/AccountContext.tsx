@@ -3,7 +3,7 @@
 "use client";
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import useFetchProfile from "@/hooks/useFetchProfile";
-import { User } from "@prisma/client";
+import { Fingerprint, User } from "@prisma/client";
 import React, {
     createContext,
     useContext,
@@ -14,6 +14,8 @@ import React, {
 
 interface AccountData {
     profile: User | null;
+    incrementNonLoggedInUsage: () => void;
+    currentFingerPrint: Fingerprint | null
 }
 const AccountContext = createContext<AccountData | undefined>(undefined);
 
@@ -29,10 +31,12 @@ type AccountProviderProps = {
     children: ReactNode;
 };
 
+
 export const AccountProvider = ({ children }: AccountProviderProps) => {
     const [profile, setProfile] = useState<User | null>(null);
     const { data, isSuccess } = useFetchProfile()
     const [fpHash, setFpHash] = useState('');
+    const [currentFingerPrint, setCurrentFingerPrint] = useState<Fingerprint | null>(null)
 
     useEffect(() => {
         const setFp = async () => {
@@ -46,19 +50,38 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
                 headers: { "Content-Type": "application/json" }
             })
             const result = await response.json()
+            setCurrentFingerPrint(result.fingerPrint)
             console.log("response is ", result)
         };
 
         setFp();
     }, []);
-    console.log("this is fingerprint", fpHash)
     useEffect(() => {
         if (isSuccess) {
             setProfile(data.profile)
         }
     }, [isSuccess, data])
+
+    async function incrementNonLoggedInUsage() {
+        if (!currentFingerPrint) return;
+        try {
+
+            const response = await fetch(`/api/fingerprint/${currentFingerPrint.browserId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            })
+            const result = await response.json();
+            console.log("after updation", result)
+            setCurrentFingerPrint(result.fingerPrint)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const accountData = {
-        profile
+        profile,
+        incrementNonLoggedInUsage,
+        currentFingerPrint
     };
 
 

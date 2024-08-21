@@ -11,6 +11,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { agents } from "@/lib/constants";
 import AgentLoader from "./AgentLoader";
+import { useAccount } from "@/contexts/AccountContext";
+import SignInModal from "../SignInModal";
 
 interface ChatSearchBarProps {
     title: string;
@@ -31,6 +33,8 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
     const inputRef = useRef<HTMLInputElement>(null)
     const [isOpen, setIsOpen] = useState(false)
     const uploadContainerRef = useRef<HTMLDivElement>(null);
+    const { currentFingerPrint, profile } = useAccount()
+    const [signInModal, setSignInModal] = useState(false)
     const pathname = usePathname()
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -72,15 +76,38 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
 
     function onSubmit(e: FormEvent) {
         e.preventDefault()
-        setInitialSearch(true)
-        if (selectedFiles.length > 0) {
-            uploadFile(responseType)
-        } else {
-            if (input !== "") {
-                sendMessage({ input: input, responseType: responseType });
+        if (!profile?.id) {
+            if (currentFingerPrint?.usage && currentFingerPrint.usage >= 3) {
+                console.log("sign in ")
+                setSignInModal(true)
+            } else {
+                setInitialSearch(true)
+                if (selectedFiles.length > 0) {
+                    uploadFile(responseType)
+                } else {
+                    if (input !== "") {
+                        sendMessage({ input: input, responseType: responseType });
+                    }
+                }
+                handleReset()
             }
+        } else {
+            if (profile.queries <= 0) {
+                console.log("exhuasted everything")
+            } else {
+
+                setInitialSearch(true)
+                if (selectedFiles.length > 0) {
+                    uploadFile(responseType)
+                } else {
+                    if (input !== "") {
+                        sendMessage({ input: input, responseType: responseType });
+                    }
+                }
+                handleReset()
+            }
+
         }
-        handleReset()
     }
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -99,6 +126,7 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
 
     return (
         <>
+            <SignInModal modal={signInModal} setModal={setSignInModal} />
             {chatHistory.length === 0 && !disable ?
                 <div className='flex flex-col w-full   items-center justify-center '>
                     <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
