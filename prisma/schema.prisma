@@ -109,3 +109,8 @@ userEmail String
 user User @relation(fields: [userEmail],references: [email])
 }
 
+model Fingerprint {
+  id           String   @id @default(cuid()) @map("_id")
+  browserId String   @unique
+  usage      Int @default(3)
+}

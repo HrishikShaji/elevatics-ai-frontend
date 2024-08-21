@@ -41,6 +41,12 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
             const { visitorId } = await fp.get();
 
             setFpHash(visitorId);
+            const response = await fetch(`/api/fingerprint/${visitorId}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            })
+            const result = await response.json()
+            console.log("response is ", result)
         };
 
         setFp();
