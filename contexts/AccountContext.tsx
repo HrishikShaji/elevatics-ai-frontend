@@ -14,6 +14,7 @@ import React, {
 
 interface AccountData {
     profile: User | null;
+    updateQueryLimit: () => void;
     incrementNonLoggedInUsage: () => void;
     currentFingerPrint: Fingerprint | null
 }
@@ -78,10 +79,28 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
         }
     }
 
+    async function updateQueryLimit() {
+        if (!profile) return;
+
+        try {
+
+            const response = await fetch(`/api/query/${profile.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            })
+            const result = await response.json();
+            console.log("after query updation", result)
+            setProfile(result.profile)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const accountData = {
         profile,
         incrementNonLoggedInUsage,
-        currentFingerPrint
+        currentFingerPrint,
+        updateQueryLimit
     };
 
 

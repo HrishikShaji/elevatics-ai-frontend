@@ -72,10 +72,6 @@ export const POST = async (req: Request) => {
                 },
             });
 
-            await prisma.user.update({
-                where: { email: session.user.email },
-                data: { queries: profile.queries - 1 },
-            });
         }
 
         return new NextResponse(JSON.stringify({ message: "success", report: savedReport }));

@@ -13,6 +13,7 @@ import { agents } from "@/lib/constants";
 import AgentLoader from "./AgentLoader";
 import { useAccount } from "@/contexts/AccountContext";
 import SignInModal from "../SignInModal";
+import PlanModal from "../PlanModal";
 
 interface ChatSearchBarProps {
     title: string;
@@ -35,7 +36,9 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
     const uploadContainerRef = useRef<HTMLDivElement>(null);
     const { currentFingerPrint, profile } = useAccount()
     const [signInModal, setSignInModal] = useState(false)
+    const [planModal, setPlanModal] = useState(false)
     const pathname = usePathname()
+    console.log(profile?.queries)
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (uploadContainerRef.current && !uploadContainerRef.current.contains(event.target as any)) {
@@ -93,6 +96,7 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
             }
         } else {
             if (profile.queries <= 0) {
+                setPlanModal(true)
                 console.log("exhuasted everything")
             } else {
 
@@ -126,6 +130,7 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
 
     return (
         <>
+            <PlanModal modal={planModal} setModal={setPlanModal} />
             <SignInModal modal={signInModal} setModal={setSignInModal} />
             {chatHistory.length === 0 && !disable ?
                 <div className='flex flex-col w-full   items-center justify-center '>

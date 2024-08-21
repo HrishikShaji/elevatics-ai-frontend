@@ -67,7 +67,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     const [currentReportType, setCurrentReportType] = useState<ReportType | null>(null)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false)
-    const { currentFingerPrint, profile, incrementNonLoggedInUsage } = useAccount()
+    const { currentFingerPrint, profile, incrementNonLoggedInUsage, updateQueryLimit } = useAccount()
 
     console.log("current usage", currentFingerPrint?.usage, "user id", profile?.id)
 
@@ -177,6 +177,8 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
         setStreamComplete(false)
         if (!profile?.id) {
             incrementNonLoggedInUsage()
+        } else {
+            updateQueryLimit()
         }
 
         if (responseType === "career") {
