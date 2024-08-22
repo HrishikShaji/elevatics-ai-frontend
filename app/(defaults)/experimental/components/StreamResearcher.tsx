@@ -48,16 +48,30 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let markdown = '';
+        let metadata = '';
+        let isReadingMetadata = false;
 
         while (true) {
             const { value, done } = await reader.read();
             if (done) break;
 
             const chunk = decoder.decode(value, { stream: true });
-            markdown += chunk;
-            addReport(markdown);
-        }
 
+            if (chunk.includes('<report-metadata>')) {
+                isReadingMetadata = true;
+                metadata = '';
+            }
+
+            if (isReadingMetadata) {
+                metadata += chunk;
+                if (chunk.includes('</report-metadata>')) {
+                    isReadingMetadata = false;
+                }
+            } else {
+                markdown += chunk;
+                addReport(markdown);
+            }
+        }
         addReports({ name: topic.name, parentKey: topic.parentKey, content: markdown })
     }
 }
@@ -75,7 +89,13 @@ export default function StreamResearcher() {
     }, [])
 
     function addReport(report: string) {
-        setStreamingReport(report);
+        setStreamingReport(prev => {
+            // Avoid setting the same content repeatedly
+            if (prev !== report) {
+                return report;
+            }
+            return prev;
+        });
     }
     const debouncedAddReport = useCallback(debounce(addReport, 100), []);
     function addReports(report: Report) {
