@@ -83,7 +83,7 @@ const components: Components = {
     div: ({ node, ...props }) => {
         return null;
     },
-    "refrences": ({ node, children, ...props }: ExtraProps) => {
+    "refrences": ({ node, ...props }: ExtraProps) => {
         console.log("these are children", node?.children)
         if (node?.children) {
             const metadata = extractText(node.children)

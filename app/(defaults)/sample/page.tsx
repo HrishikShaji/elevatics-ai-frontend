@@ -1,13 +1,11 @@
 "use client"
 
-import SourcesSection from "@/components/SourcesSection"
 import fetchSampleReport from "@/lib/fetchSampleReport"
 import { useState } from "react"
 import ReactMarkdown, { Components } from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import remarkGfm from "remark-gfm"
 import style from "@/styles/medium.module.css"
-import markdownStyle from "@/styles/markdown.module.css"
 
 interface CustomComponentProps {
     node: any;
@@ -35,7 +33,7 @@ const extractText = (node: any): string => {
     return "";
 };
 const components: Components = {
-    "json": ({ node, ...props }) => {
+    "json": ({ node, ...props }: CustomComponentProps) => {
         console.log(node.children)
         const value = extractText(node)
         const match = value.match(/\[\[\[(.*?)\]\]\]/);
