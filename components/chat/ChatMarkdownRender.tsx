@@ -11,6 +11,8 @@ import styles from "@/styles/markdown.module.css"
 import dynamic from 'next/dynamic';
 import { extractSystemStyles } from '@mantine/core';
 import DocumentReferences from './DocumentSources';
+import style from "@/styles/medium.module.css"
+
 
 const ClientSideChartRender = dynamic(
     () => import('./ChatChartRender'),
@@ -48,34 +50,6 @@ const components: Components = {
         }
         return <ClientSideChartRender scriptContent={children as string} />
     }),
-    h1: ({ node, ...props }) => {
-        return <h1 className='text-[30px] leading-[40px] font-[500] pt-0 pr-0 pb-[20px] pl-0' {...props} ></ h1>
-    },
-    h2: ({ node, ...props }) => {
-        return <h2 className='text-[25px] leading-[35px] pt-[15px] pr-0 pb-[5px] pl-0' {...props}></h2>
-    },
-    h3: ({ node, ...props }) => {
-
-        return <h3 className='text-[20px] leading-[30px] font-[500] pt-[15px] pr-0 pb-[15px] pl-0' {...props}></h3>
-    },
-    h4: ({ node, ...props }) => {
-        return <h4 className='text-[15px] leading-[25px] py-[10px] px-0' {...props}></h4>
-    },
-    h5: ({ node, ...props }) => {
-        return <h5 className='text-[10px] leading-[20px] py-[10px] px-0' {...props}></h5>
-    },
-    h6: ({ node, ...props }) => {
-        return <h6 className='text-[5px] leading-[15px] py-[10px] px-0' {...props}></h6>
-    },
-    ul: ({ node, ...props }) => {
-        return <ul className='' {...props}></ul>
-    },
-    li: ({ node, ...props }) => {
-        return <li className='' {...props}></li>
-    },
-    strong: ({ node, ...props }) => {
-        return <strong className='font-semibold' {...props}></strong>
-    },
     table: ({ node, ...props }) => {
         return <table className='border-collapse bg-none border-b-[1px] border-gray-300 pb-[10px] mb-[20px]' {...props}></table>
     },
@@ -104,7 +78,7 @@ const components: Components = {
         if (props.children?.toString().includes('{"response":')) {
             return <div>i got the clarification</div>
         }
-        return <p className='pb-[10px] ' {...props}></p>
+        return <p {...props}></p>
     },
     div: ({ node, ...props }) => {
         return null;
@@ -132,13 +106,17 @@ const components: Components = {
 const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProps) => {
 
     return (
-        <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
-            components={components}
+        <div
+            className={style.markdown}
         >
-            {text}
-        </ReactMarkdown >
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+                components={components}
+            >
+                {text}
+            </ReactMarkdown >
+        </div>
     );
 });
 

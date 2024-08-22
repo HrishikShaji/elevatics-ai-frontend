@@ -6,6 +6,8 @@ import { useState } from "react"
 import ReactMarkdown, { Components } from "react-markdown"
 import rehypeRaw from "rehype-raw"
 import remarkGfm from "remark-gfm"
+import style from "@/styles/medium.module.css"
+import markdownStyle from "@/styles/markdown.module.css"
 
 interface CustomComponentProps {
     node: any;
@@ -78,6 +80,7 @@ export default function Page() {
         <div className="flex flex-col gap-5">
 
             <ReactMarkdown
+                className={style.markdown}
                 rehypePlugins={[rehypeRaw]}
                 remarkPlugins={[remarkGfm]}
                 components={components}
