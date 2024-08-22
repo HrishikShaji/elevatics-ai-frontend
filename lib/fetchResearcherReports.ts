@@ -28,7 +28,7 @@ export default async function fetchResearcherReports({ query, addReports }: Prop
 
     const topics = transformData(selectedSubtasks);
     const sliderKeys = Object.keys(selectedSubtasks);
-
+    console.log("this is topics", topics)
     for (const topic of topics) {
         const response = await fetch('https://pvanand-search-generate-prod.hf.space/generate_report', {
             method: 'POST',

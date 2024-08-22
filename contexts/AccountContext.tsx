@@ -52,7 +52,6 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
             })
             const result = await response.json()
             setCurrentFingerPrint(result.fingerPrint)
-            console.log("response is ", result)
         };
 
         setFp();
@@ -72,7 +71,6 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
                 headers: { "Content-Type": "application/json" }
             })
             const result = await response.json();
-            console.log("after updation", result)
             setCurrentFingerPrint(result.fingerPrint)
         } catch (error) {
             console.log(error)
@@ -89,7 +87,6 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
                 headers: { "Content-Type": "application/json" }
             })
             const result = await response.json();
-            console.log("after query updation", result)
             setProfile(result.profile)
         } catch (error) {
             console.log(error)
