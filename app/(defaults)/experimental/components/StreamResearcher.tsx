@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import debounce from "lodash.debounce";
+import { memo, useCallback, useEffect, useState } from "react"
 import { landformTopics } from "../lib/sampleData"
 import ReactMarkdown, { Components, ExtraProps } from "react-markdown"
 import style from "@/styles/medium.module.css"
@@ -61,14 +62,6 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
     }
 }
 
-const components: Components = {
-    "json": ({ node, ...props }: ExtraProps) => {
-        return null;
-    },
-    "report-metadata": ({ node, ...props }: ExtraProps) => {
-        return null;
-    },
-} as Components;
 export default function StreamResearcher() {
     const [topics, setTopics] = useState<Topic[]>([])
     const [streamingReport, setStreamingReport] = useState("")
@@ -78,18 +71,19 @@ export default function StreamResearcher() {
     useEffect(() => {
         const modifiedTopics = landformTopics.map(topic => ({ ...topic, isCompleted: false }));
         setTopics(modifiedTopics);
+        console.log("rendered")
     }, [])
 
     function addReport(report: string) {
-        setStreamingReport(prev => prev + report);
+        setStreamingReport(report);
     }
-
+    const debouncedAddReport = useCallback(debounce(addReport, 100), []);
     function addReports(report: Report) {
         setReports(prev => [...prev, report]);
     }
 
     async function generateReports() {
-        await fetchReport({ topic: topics[0], addReport, addReports });
+        await fetchReport({ topic: topics[0], addReport: debouncedAddReport, addReports });
     }
 
     return (
@@ -101,20 +95,34 @@ export default function StreamResearcher() {
                 {reports.map((report, i) => (
                     <div className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
                         <div className={style.markdown}>
-                            <ReactMarkdown components={components} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                                {report.content}
-                            </ReactMarkdown>
+                            <MemoizedMarkdown content={report.content} />
                         </div>
                     </div>
                 ))}
-                <div className="w-[1000px] p-5 rounded-3xl bg-gray-100">
+
+                <div className="w-[1000px] p-5 rounded-3xl bg-blue-100">
                     <div className={style.markdown}>
-                        <ReactMarkdown components={components} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                            {streamingReport}
-                        </ReactMarkdown>
+                        <MemoizedMarkdown content={streamingReport} />
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+
+const components: Components = {
+    "status": ({ node, ...props }: ExtraProps) => {
+        return null;
+    },
+    "json": ({ node, ...props }: ExtraProps) => {
+        return null;
+    },
+    "report-metadata": ({ node, ...props }: ExtraProps) => {
+        return null;
+    },
+} as Components;
+const MemoizedMarkdown = memo(({ content }: { content: string }) => (
+    <ReactMarkdown components={components} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+        {content}
+    </ReactMarkdown>
+));

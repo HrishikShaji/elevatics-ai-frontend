@@ -37,6 +37,7 @@
         "formik": "^2.2.9",
         "highlight.js": "^11.10.0",
         "i18next": "^22.4.10",
+        "lodash.debounce": "^4.0.8",
         "mantine-datatable": "^1.7.35",
         "markdown-to-jsx": "^7.5.0",
         "marked": "^13.0.2",
