@@ -69,6 +69,7 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
                 }
             } else {
                 markdown += chunk;
+                console.log(markdown)
                 addReport(markdown);
             }
         }
@@ -90,7 +91,6 @@ export default function StreamResearcher() {
 
     function addReport(report: string) {
         setStreamingReport(prev => {
-            // Avoid setting the same content repeatedly
             if (prev !== report) {
                 return report;
             }
@@ -103,7 +103,18 @@ export default function StreamResearcher() {
     }
 
     async function generateReports() {
-        await fetchReport({ topic: topics[0], addReport: debouncedAddReport, addReports });
+        for (const topic of topics) {
+
+            try {
+                setStreaming(true)
+                setStreamingReport("")
+                await fetchReport({ topic: topic, addReport: debouncedAddReport, addReports });
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setStreaming(false)
+            }
+        }
     }
 
     return (
@@ -119,12 +130,12 @@ export default function StreamResearcher() {
                         </div>
                     </div>
                 ))}
-
-                <div className="w-[1000px] p-5 rounded-3xl bg-blue-100">
-                    <div className={style.markdown}>
-                        <MemoizedMarkdown content={streamingReport} />
-                    </div>
-                </div>
+                {streaming ?
+                    <div className="w-[1000px] p-5 rounded-3xl bg-blue-100">
+                        <div className={style.markdown}>
+                            <MemoizedMarkdown content={streamingReport} />
+                        </div>
+                    </div> : null}
             </div>
         </div>
     );
