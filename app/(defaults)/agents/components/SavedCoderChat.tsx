@@ -4,6 +4,7 @@
 
 import ChatWindow from "@/components/chat/ChatWindow"
 import { ChatProvider } from "@/contexts/ChatContext"
+import { agents, suggestions } from "@/lib/constants";
 
 interface SavedCoderChatProps {
     initialChatHistory: string;
@@ -11,8 +12,9 @@ interface SavedCoderChatProps {
 }
 
 export default function SavedCoderChat({ initialChatHistory, reportId }: SavedCoderChatProps) {
+    const agent = agents["CODE"]
     return <ChatProvider>
-        <ChatWindow title='Coder' subTitle='Efficient coding' responseType='coder' initialChatHistory={initialChatHistory} reportId={reportId} disable={false} />
+        <ChatWindow title={agent.name} subTitle={agent.tagLine} suggestions={suggestions} responseType='coder' initialChatHistory={initialChatHistory} reportId={reportId} disable={false} />
     </ChatProvider>
 
 }

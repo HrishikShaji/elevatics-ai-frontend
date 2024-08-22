@@ -3,6 +3,7 @@
 
 import ChatWindow from "@/components/chat/ChatWindow"
 import { ChatProvider } from "@/contexts/ChatContext"
+import { agents, suggestions } from "@/lib/constants";
 
 interface SavedResearcherChatProps {
     initialChatHistory: string;
@@ -10,8 +11,9 @@ interface SavedResearcherChatProps {
 }
 
 export default function SavedResearcherChat({ initialChatHistory, reportId }: SavedResearcherChatProps) {
+    const agent = agents["RESEARCHERCHAT"]
     return <ChatProvider>
-        <ChatWindow title='Researcher Chat' subTitle='Efficient research' responseType='iresearcher-topics' initialChatHistory={initialChatHistory} reportId={reportId} disable={false} />
+        <ChatWindow title={agent.name} subTitle={agent.tagLine} suggestions={suggestions} responseType='iresearcher-topics' initialChatHistory={initialChatHistory} reportId={reportId} disable={false} />
     </ChatProvider>
 
 }
