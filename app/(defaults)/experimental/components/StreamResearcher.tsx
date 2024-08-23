@@ -7,6 +7,7 @@ import ReactMarkdown, { Components, ExtraProps } from "react-markdown"
 import style from "@/styles/medium.module.css"
 import remarkGfm from "remark-gfm"
 import rehypeRaw from "rehype-raw"
+import dynamic from "next/dynamic";
 
 type Topic = {
     isCompleted: boolean;
@@ -20,6 +21,10 @@ type Report = {
     parentKey: string;
     content: string;
 }
+const ClientSideChartRender = dynamic(
+    () => import('@/components/chat/ChatChartRender'),
+    { ssr: false }
+);
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -175,6 +180,15 @@ const components: Components = {
         return null;
     },
     "report-metadata": ({ node, ...props }: ExtraProps) => {
+        return null;
+    },
+    script: memo(({ node, src, children }) => {
+        if (src === "https://cdn.plot.ly/plotly-latest.min.js") {
+            return null;
+        }
+        return <ClientSideChartRender scriptContent={children as string} />
+    }),
+    div: ({ node, ...props }) => {
         return null;
     },
 } as Components;
