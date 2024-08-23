@@ -80,13 +80,24 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
 export default function StreamResearcher() {
     const [topics, setTopics] = useState<Topic[]>([])
     const [streamingReport, setStreamingReport] = useState("")
+    const [streamingReportParent, setStreamingReportParent] = useState("")
     const [reports, setReports] = useState<Report[]>([])
     const [streaming, setStreaming] = useState(false)
-    console.log("these are reports", reports)
+    const [sliderData, setSliderData] = useState<string[]>([])
+    const [currentParent, setCurrentParent] = useState("")
+
     useEffect(() => {
         const modifiedTopics = landformTopics.map(topic => ({ ...topic, isCompleted: false }));
         setTopics(modifiedTopics);
-        console.log("rendered")
+        let sliderKeys: string[] = [];
+
+        modifiedTopics.forEach((topic) => {
+            if (!sliderKeys.includes(topic.parentKey)) {
+                sliderKeys.push(topic.parentKey)
+            }
+        })
+        setSliderData(sliderKeys)
+        setCurrentParent(sliderKeys[0])
     }, [])
 
     function addReport(report: string) {
@@ -97,6 +108,8 @@ export default function StreamResearcher() {
             return prev;
         });
     }
+
+
     const debouncedAddReport = useCallback(debounce(addReport, 100), []);
     function addReports(report: Report) {
         setReports(prev => [...prev, report]);
@@ -108,6 +121,7 @@ export default function StreamResearcher() {
             try {
                 setStreaming(true)
                 setStreamingReport("")
+                setStreamingReportParent(topic.parentKey)
                 await fetchReport({ topic: topic, addReport: debouncedAddReport, addReports });
             } catch (error) {
                 console.log(error)
@@ -122,16 +136,21 @@ export default function StreamResearcher() {
             <button className="p-2 bg-black text-white" onClick={generateReports} disabled={streaming}>
                 Generate
             </button>
-            <div className="flex flex-col gap-5 h-[70vh] overflow-y-scroll">
+            <div className="flex gap-2 p-1 rounded-md bg-neutral-900 ">
+                {sliderData.map((parent, i) => (
+                    <button onClick={() => setCurrentParent(parent)} key={i} className="py-1 px-2 rounded-md bg-black text-white">{parent}</button>
+                ))}
+            </div>
+            <div className="flex flex-col gap-5 h-[70vh] overflow-y-scroll items-center w-full custom-scrollbar">
                 {reports.map((report, i) => (
-                    <div className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
+                    <div style={{ display: currentParent === report.parentKey ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
                         <div className={style.markdown}>
                             <MemoizedMarkdown content={report.content} />
                         </div>
                     </div>
                 ))}
                 {streaming ?
-                    <div className="w-[1000px] p-5 rounded-3xl bg-blue-100">
+                    <div style={{ display: currentParent === streamingReportParent ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl ">
                         <div className={style.markdown}>
                             <MemoizedMarkdown content={streamingReport} />
                         </div>
