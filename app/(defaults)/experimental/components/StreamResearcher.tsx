@@ -20,7 +20,9 @@ type Report = {
     parentKey: string;
     content: string;
 }
-
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 async function fetchReport({ topic, addReport, addReports }: { topic: Topic, addReport: (report: string) => void, addReports: (report: Report) => void }) {
     const response = await fetch('https://pvanand-search-generate-prod.hf.space/generate_report', {
         method: 'POST',
@@ -68,9 +70,12 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
                     isReadingMetadata = false;
                 }
             } else {
-                markdown += chunk;
-                console.log(markdown)
-                addReport(markdown);
+                for (let i = 0; i < chunk.length; i += 100) {
+                    const batch = chunk.slice(i, i + 100);
+                    markdown += batch;
+                    addReport(markdown);
+                    await delay(100);
+                }
             }
         }
         addReports({ name: topic.name, parentKey: topic.parentKey, content: markdown })
@@ -141,20 +146,22 @@ export default function StreamResearcher() {
                     <button onClick={() => setCurrentParent(parent)} key={i} className="py-1 px-2 rounded-md bg-black text-white">{parent}</button>
                 ))}
             </div>
-            <div className="flex flex-col gap-5 h-[70vh] overflow-y-scroll items-center w-full custom-scrollbar">
-                {reports.map((report, i) => (
-                    <div style={{ display: currentParent === report.parentKey ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
-                        <div className={style.markdown}>
-                            <MemoizedMarkdown content={report.content} />
+            <div className="flex scroll-smooth  flex-col-reverse h-[70vh] overflow-y-auto items-center w-full custom-scrollbar">
+                <div className="flex flex-col gap-10">
+                    {reports.map((report, i) => (
+                        <div style={{ display: currentParent === report.parentKey ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
+                            <div className={style.markdown}>
+                                <MemoizedMarkdown content={report.content} />
+                            </div>
                         </div>
-                    </div>
-                ))}
-                {streaming ?
-                    <div style={{ display: currentParent === streamingReportParent ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl ">
-                        <div className={style.markdown}>
-                            <MemoizedMarkdown content={streamingReport} />
-                        </div>
-                    </div> : null}
+                    ))}
+                    {streaming ?
+                        <div style={{ display: currentParent === streamingReportParent ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl ">
+                            <div className={style.markdown}>
+                                <MemoizedMarkdown content={streamingReport} />
+                            </div>
+                        </div> : null}
+                </div>
             </div>
         </div>
     );
