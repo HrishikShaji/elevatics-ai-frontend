@@ -1,6 +1,5 @@
 "use client"
 
-import debounce from "lodash.debounce";
 import { memo, useCallback, useEffect, useRef, useState } from "react"
 import { landformTopics } from "../lib/sampleData"
 import ReactMarkdown, { Components, ExtraProps } from "react-markdown"
@@ -27,7 +26,7 @@ const ClientSideChartRender = dynamic(
     () => import('@/components/chat/ChatChartRender'),
     { ssr: false }
 );
-function delay(ms) {
+function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 async function fetchReport({ topic, addReport, addReports }: { topic: Topic, addReport: (report: string) => void, addReports: (report: Report) => void }) {
