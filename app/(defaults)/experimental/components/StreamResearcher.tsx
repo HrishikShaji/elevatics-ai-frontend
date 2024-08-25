@@ -189,6 +189,9 @@ export default function StreamResearcher() {
 
 const MemoizedMarkdown = memo(({ content, chartData }: { content: string, chartData: string }) => {
     const tableIndex = useRef(0)
+    useEffect(() => {
+
+    }, [])
     return (
         <div className={style.markdown}>
             <ReactMarkdown

@@ -12,6 +12,7 @@ import dynamic from 'next/dynamic';
 import { extractSystemStyles } from '@mantine/core';
 import DocumentReferences from './DocumentSources';
 import style from "@/styles/medium.module.css"
+import newStyle from "@/styles/new-medium.module.css"
 
 
 const ClientSideChartRender = dynamic(
@@ -107,7 +108,7 @@ const ChatMarkdownRender = memo(({ disableTyping, text }: ChatMarkdownRenderProp
 
     return (
         <div
-            className={style.markdown}
+            className={newStyle.markdown}
         >
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
