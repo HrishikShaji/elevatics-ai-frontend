@@ -27,7 +27,7 @@ export type TransformedData = {
     prompt: string;
 };
 export default function ResearcherTopicsHome() {
-    const { prompt, selectedSubtasks, setTopics, sendMessage } = useResearcher();
+    const { prompt, selectedSubtasks, setTopics, generateReports } = useResearcher();
     const { data, isLoading } = useFetchTopics();
     const [active, setActive] = useState<number | null>(0)
     const router = useRouter()
@@ -53,8 +53,7 @@ export default function ResearcherTopicsHome() {
 
     function handleNext() {
         const data = transformData(selectedSubtasks)
-        const stringifiedTasks = JSON.stringify(selectedSubtasks)
-        sendMessage({ input: stringifiedTasks, responseType: "iresearcher-reports" })
+        generateReports()
         setTopics(data)
         router.push("/agents/researcher-agent/topics/report")
     }

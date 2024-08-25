@@ -121,6 +121,9 @@ export default function StreamResearcher() {
         setCurrentParent(sliderKeys[0])
     }, [])
 
+    useEffect(() => {
+        generateReports()
+    }, [topics])
     function addReport(report: string) {
         setStreamingReport(prev => {
             if (prev !== report) {
