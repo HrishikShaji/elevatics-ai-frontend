@@ -40,8 +40,9 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
     } return (
         <div>
             <div className="w-full divide-y divide-white-light   dark:divide-dark">
-                {(sources as string[][]).map((task, i) => (
-                    <div key={i}>
+                {(sources as string[][]).map((task, i) => {
+                    if (task[0].length < 30) return null
+                    return (<div key={i}>
                         <div
                             className={`flex cursor-pointer items-center justify-between gap-10  py-2 text-base font-semibold  hover:text-primary dark:text-white dark:hover:bg-[#1B2E4B] dark:hover:text-primary
             ${active === i + 1 ? ' !text-primary dark:bg-[#1B2E4B]' : ''}`}
@@ -68,7 +69,8 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
                             </div>
                         </AnimateHeight>
                     </div>
-                ))}
+                    )
+                })}
             </div>
         </div>
     );
