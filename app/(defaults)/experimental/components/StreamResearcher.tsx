@@ -1,7 +1,7 @@
 "use client"
 
 import debounce from "lodash.debounce";
-import { memo, useCallback, useEffect, useState } from "react"
+import { memo, useCallback, useEffect, useRef, useState } from "react"
 import { landformTopics } from "../lib/sampleData"
 import ReactMarkdown, { Components, ExtraProps } from "react-markdown"
 import style from "@/styles/medium.module.css"
@@ -21,6 +21,7 @@ type Report = {
     name: string;
     parentKey: string;
     content: string;
+    chartData: string;
 }
 const ClientSideChartRender = dynamic(
     () => import('@/components/chat/ChatChartRender'),
@@ -57,7 +58,9 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
         const decoder = new TextDecoder();
         let markdown = '';
         let metadata = '';
+        let chartData = '';
         let isReadingMetadata = false;
+        let isReadingChartData = false;
 
         while (true) {
             const { value, done } = await reader.read();
@@ -68,12 +71,20 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
             if (chunk.includes('<json>')) {
                 isReadingMetadata = true;
                 metadata = '';
+            } else if (chunk.includes("<report-chart>")) {
+                isReadingChartData = true;
+                chartData = "";
             }
 
             if (isReadingMetadata) {
                 metadata += chunk;
                 if (chunk.includes('</json>')) {
                     isReadingMetadata = false;
+                }
+            } else if (isReadingChartData) {
+                chartData += chunk;
+                if (chunk.includes("</report-chart>")) {
+                    isReadingChartData = false;
                 }
             } else {
                 for (let i = 0; i < chunk.length; i += 10) {
@@ -84,7 +95,7 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
                 }
             }
         }
-        addReports({ name: topic.name, parentKey: topic.parentKey, content: markdown })
+        addReports({ name: topic.name, parentKey: topic.parentKey, content: markdown, chartData: chartData })
     }
 }
 
@@ -160,16 +171,12 @@ export default function StreamResearcher() {
                     <div className="flex flex-col gap-10">
                         {reports.map((report, i) => (
                             <div style={{ display: currentParent === report.parentKey ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
-                                <div className={style.markdown}>
-                                    <MemoizedMarkdown content={report.content} />
-                                </div>
+                                <MemoizedMarkdown chartData={report.chartData} content={report.content} />
                             </div>
                         ))}
                         {streaming ?
                             <div style={{ display: currentParent === streamingReportParent ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl ">
-                                <div className={style.markdown}>
-                                    <MemoizedMarkdown content={streamingReport} />
-                                </div>
+                                <MemoizedMarkdown chartData="" content={streamingReport} />
                             </div> : null}
                     </div>
                 </div>
@@ -178,37 +185,64 @@ export default function StreamResearcher() {
     );
 }
 
-const components: Components = {
-    "status": ({ node, ...props }: ExtraProps) => {
-        return null;
-    },
-    "json": ({ node, ...props }: ExtraProps) => {
-        return null;
-    },
-    "report-metadata": ({ node, ...props }: ExtraProps) => {
-        return null;
-    },
-    "report": ({ node, ...props }: ExtraProps) => {
-        return <div className="bg-yellow-500" {...props} />
-    },
-    "report-chart": ({ node, ...props }: ExtraProps) => {
-        return <div className="bg-green-500" {...props} />
-    },
-    table: ({ node, ...props }) => {
-        return <div className="bg-red-500">got table</div>
-    },
-    script: memo(({ node, src, children }) => {
-        if (src === "https://cdn.plot.ly/plotly-latest.min.js") {
-            return null;
-        }
-        return <ClientSideChartRender scriptContent={children as string} />
-    }),
-    div: ({ node, ...props }) => {
-        return null;
-    },
-} as Components;
-const MemoizedMarkdown = memo(({ content }: { content: string }) => (
-    <ReactMarkdown components={components} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-        {content}
-    </ReactMarkdown>
-));
+
+
+const MemoizedMarkdown = memo(({ content, chartData }: { content: string, chartData: string }) => {
+    const tableIndex = useRef(0)
+    return (
+        <div className={style.markdown}>
+            <ReactMarkdown
+                components={{
+                    "status": ({ node, ...props }: ExtraProps) => {
+                        return null;
+                    },
+                    "json": ({ node, ...props }: ExtraProps) => {
+                        return null;
+                    },
+                    "report-metadata": ({ node, ...props }: ExtraProps) => {
+                        return null;
+                    },
+                    "report": ({ node, ...props }: ExtraProps) => {
+                        return <div className="bg-yellow-500" {...props} />;
+                    },
+                    "report-chart": ({ node, ...props }: ExtraProps) => {
+                        return <div className="bg-green-500" {...props} />;
+                    },
+                    table: memo(({ node, ...props }) => {
+                        const currentTableIndex = tableIndex.current;
+                        tableIndex.current += 1;
+                        return (
+                            <div className="flex flex-col gap-2">
+                                <h1 className="bg-red-500 text-white w-full text-center text-2xl">{currentTableIndex}</h1>
+                                <table id="999" {...props} />
+                            </div>
+                        );
+                    }),
+                    script: memo(({ node, src, children }) => {
+                        if (src === "https://cdn.plot.ly/plotly-latest.min.js") {
+                            return null;
+                        }
+                        return (
+                            <div className="flex flex-col gap-2">
+                                <button
+                                    className="bg-black text-white px-2 py-1 rounded-md"
+                                    onClick={() => console.log(chartData)}
+                                >
+                                    Show Chart
+                                </button>
+                                <ClientSideChartRender scriptContent={children as string} />
+                            </div>
+                        );
+                    }),
+                    div: ({ node, ...props }) => {
+                        return null;
+                    },
+                } as Components}
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+            >
+                {content}
+            </ReactMarkdown>
+        </div>
+    );
+});
