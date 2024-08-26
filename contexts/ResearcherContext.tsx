@@ -36,6 +36,7 @@ type Report = {
     parentKey: string;
     content: string;
     chartData: string;
+    metadata: string;
 }
 function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -105,7 +106,7 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
                 }
             }
         }
-        addReports({ name: topic.name, parentKey: topic.parentKey, content: markdown, chartData: chartData })
+        addReports({ name: topic.name, parentKey: topic.parentKey, content: markdown, chartData: chartData, metadata: metadata })
     }
 }
 const ResearcherContext = createContext<ResearcherData | undefined>(undefined);

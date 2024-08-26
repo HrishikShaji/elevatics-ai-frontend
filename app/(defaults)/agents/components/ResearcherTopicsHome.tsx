@@ -53,7 +53,6 @@ export default function ResearcherTopicsHome() {
 
     function handleNext() {
         const data = transformData(selectedSubtasks)
-        generateReports()
         setTopics(data)
         router.push("/agents/researcher-agent/topics/report")
     }
