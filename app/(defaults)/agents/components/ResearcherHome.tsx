@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 import { useResearcher } from "@/contexts/ResearcherContext";
 import IconPlus from "@/components/icon/icon-plus";
 import { agents } from "@/lib/constants";
+import Image from "next/image";
+import { useAccount } from "@/contexts/AccountContext";
+import { BiRightArrowAlt } from "react-icons/bi";
 
 
 const suggestions = ["Find the Latest research about AI", "What is high-yield savings account?", "Market size and growth projections for EV", "Market share analysis for space exploration"]
@@ -24,6 +27,7 @@ const ResearcherHome = memo(() => {
     const [isOpen, setIsOpen] = useState(false)
     const uploadContainerRef = useRef<HTMLDivElement>(null);
     const router = useRouter()
+    const { profile } = useAccount()
     const { setPrompt } = useResearcher()
     const agent = agents["FULL"]
 
@@ -147,6 +151,7 @@ const ResearcherHome = memo(() => {
         }
     };
 
+    const items = ["What's the biggest challenge you face in your investment research?", "How do you usually evaluate investment risks?", "What features do you value most in research software?", "Which tools do you currently use for analyzing pitch decks?"]
 
     const handleClick = () => {
         if (inputRef.current) {
@@ -156,26 +161,26 @@ const ResearcherHome = memo(() => {
 
     return (
         <>
-            <div className='flex flex-col w-full   items-center justify-center '>
-                <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
-                    <h1 className="text-3xl font-semibold">
-                        {agent.name}
-                    </h1>
-                    <h1 className="text-[#8282AD] text-center">
-                        {agent.tagLine}
-                    </h1>
-                </div>
-                <AnimateHeight height={inputClick ? 0 : "auto"} duration={500}>
-                    < div className="flex  gap-4 items-center w-[800px] h-[calc(65vh_-_80px)]">
-                        {suggestions.map((item, i) => (
-                            <div onClick={() => handleRecommendationClick(item)} key={i} className='cursor-pointer h-[150px] transition duration-300 hover:-translate-y-3 w-full hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
-                        ))}
+            <div className="h-[40vh] w-full p-5 pb-0">
+                <div className="h-full rounded-2xl w-full  flex-shrink-0 overflow-hidden relative" >
+                    <div className="absolute bg-[#08022F]/50 h-full w-full flex flex-col items-center justify-end gap-1 p-5">
+                        <div className="w-[1000px] flex flex-col items-start gap-3">
+                            <h1 className="text-4xl  bg-clip-text text-white">
+                                {profile?.name ? `Hello, ${profile.name}` : null}
+                            </h1>
+                            <h1 className="text-white text-4xl ">
+                                How can I- Researcher help you today?
+                            </h1>
+                        </div>
                     </div>
-                </AnimateHeight>
+                    <Image src="/assets/agentIMG.png" alt="agent " width={2000} height={1000} className="h-full w-full object-cover" />
+                </div>
             </div>
-            <div className="w-full flex pt-3 justify-center h-20 items-start">
-                <div className="w-[1000px] bg-white flex flex-col rounded-3xl border-2 border-gray-200 shadow-lg">
-                    <form onSubmit={onSubmit} className=" relative  flex items-center justify-center ">
+            <div className="w-full flex pt-5 justify-center h-20 items-start">
+                <div className="w-[1000px] z-20 flex flex-col rounded-3xl bg-[#F6F6F6]">
+                    <form onSubmit={onSubmit} className=" relative z-20 flex items-center justify-center ">
+                        {/*
+
                         <div ref={uploadContainerRef} className={`absolute -top-10 left-0 z-40 p-2 bg-gray-200 rounded-md duration-500 transition ${isOpen ? "translate-x-0 opacity-100" : "translate-x-100 opacity-0"}`}>
                             <button type="button" className=" rounded-md " onClick={handleClick}>Upload File</button>
                         </div>
@@ -194,6 +199,7 @@ const ResearcherHome = memo(() => {
                             }}>
                             <IconPlus />
                         </button>
+                        */}
                         {selectedFiles.length > 0 ?
                             <div className="flex gap-2 py-4 rounded-3xl px-16 justify-start w-full">{selectedFiles.map((file, i) => <div key={i} className="flex gap-1 items-center">
                                 <h1>{file.name}</h1>
@@ -208,13 +214,13 @@ const ResearcherHome = memo(() => {
                                 value={input}
                                 onChange={handleChange}
                                 placeholder="What's on your mind..."
-                                className=" rounded-3xl py-4 px-16  focus:outline-none w-full"
+                                className=" rounded-3xl bg-transparent py-4 px-8  focus:outline-none w-full"
                             />}
 
                         <button
-                            className="text-gray-400 disabled:cursor-auto hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
+                            className="disabled:cursor-auto bg-gradient-to-b absolute right-2 from-blue-500 to-purple-500 hover:scale-125 duration-500  text-white  p-2 group cursor-pointer rounded-full   "
                         >
-                            <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
+                            <BiRightArrowAlt size={20} className="text-white duration-500" />
                         </button>
                     </form>
                     <AnimateHeight height={data.length > 0 && !initialSearch && selectedFiles.length === 0 ? 300 : 0} duration={300}>
@@ -235,6 +241,16 @@ const ResearcherHome = memo(() => {
                             </div>
                         </div>
                     </AnimateHeight>
+                </div>
+            </div>
+            <div className="flex w-full justify-center">
+                <div
+                    className="w-[1000px] py-5 px-3 flex gap-5 justify-center ">
+                    {items.map((item, i) => (
+                        <button
+                            onClick={() => handleRecommendationClick(item)}
+                            className="bg-[#F7F7F7] flex w-full h-[120px] p-5 items-start rounded-md text-[#61646B]" key={i}>{item}</button>
+                    ))}
                 </div>
             </div>
         </>
