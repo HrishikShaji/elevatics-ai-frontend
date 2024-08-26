@@ -3,6 +3,8 @@ import { PiDotsThreeOutlineVerticalThin } from "react-icons/pi";
 import Link from "next/link";
 import DeleteReport from "@/components/DeleteReport";
 
+import { MdEdit } from "react-icons/md";
+
 interface LibraryActionsProps {
     id: string;
 }
@@ -26,17 +28,12 @@ export default function LibraryActions({ id }: LibraryActionsProps) {
 
     return (
         <div className="relative mx-auto flex w-max  items-center " ref={actionsRef}>
-            <button onClick={() => setActionsOpen(true)}><PiDotsThreeOutlineVerticalThin /></button>
-            {actionsOpen ? (
-                <div className="min-w-[150px]  flex flex-col bg-white shadow-gray-400 shadow-3xl divide-y-2 rounded-2xl overflow-hidden  absolute right-4 z-10">
-                    <Link href={`${process.env.NEXT_PUBLIC_URL}/saved/${id}`} className="p-1 w-full text-left pl-4 hover:bg-gray-200">
-                        View</Link>
-                    <button className="p-1 w-full text-left pl-4 hover:bg-gray-200">
-                        Edit
-                    </button>
-                    <DeleteReport id={id} />
-                </div>
-            ) : null}
+            <div className="flex gap-5">
+                <button className="p-1 w-full text-left pl-4 hover:bg-gray-200">
+                    <MdEdit />
+                </button>
+                <DeleteReport id={id} />
+            </div>
         </div>
     );
 }

@@ -9,7 +9,7 @@ import Link from "next/link";
 import CustomDropdown from "./CustomDropdown";
 import LibraryActions from "@/app/(defaults)/library/components/LibraryActions";
 import { current } from "@reduxjs/toolkit";
-
+import { CiSearch } from "react-icons/ci";
 interface LibraryTableProps {
     rowData: Report[]
 }
@@ -83,7 +83,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
 
     useEffect(() => {
         const data = sortBy(initialRecords, sortStatus.columnAccessor);
-        setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
+        setInitialRecords(sortStatus.direction === 'asc' ? data.reverse() : data);
     }, [sortStatus]);
 
     const formatDate = (date: string | number | Date) => {
@@ -99,9 +99,15 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
     return (
         <div className="p-10">
             <div className="mb-5 flex flex-col gap-5 md:flex-row justify-end md:items-center">
-                <div className="ltr:ml-auto flex items-center gap-5 rtl:mr-auto">
-                    <CustomDropdown label="" options={typeOptions} value={currentType} onChange={typeChange} />
-                    <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                <div className="flex items-center w-full justify-between">
+                    <h1 className="text-3xl">Library</h1>
+                    <div className="relative w-[50vw]  flex items-center">
+                        <div className="left-2 absolute">
+                            <CiSearch size={23} />
+                        </div>
+                        <input type="text" className="w-full py-2 px-12 rounded-3xl bg-[#F6F6F6]" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                    </div>
+                    <CustomDropdown label="Select Agent:" options={typeOptions} value={currentType} onChange={typeChange} />
                 </div>
             </div>
             <div className="datatables">
@@ -110,12 +116,6 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                         className="table-hover whitespace-nowrap"
                         records={recordsData}
                         columns={[
-                            {
-                                accessor: 'no',
-                                title: "ID",
-                                sortable: false,
-                                render: (value, row) => <div>{(row + 1) + (page - 1) * pageSize}</div>,
-                            },
                             {
                                 accessor: 'query',
                                 title: 'Query',
@@ -154,7 +154,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
                         sortStatus={sortStatus}
                         onSortStatusChange={setSortStatus}
                         minHeight={200}
-                        paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                        paginationText={({ from, to, totalRecords }) => `${totalRecords} searches`}
                     />
                 )}
             </div>
