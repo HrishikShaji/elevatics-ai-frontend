@@ -1,4 +1,4 @@
-
+import { BiRightArrowAlt } from "react-icons/bi";
 import { ChangeEvent, FormEvent, memo, useCallback, useEffect, useRef, useState } from "react"
 import { PiRocketLaunchThin } from "react-icons/pi"
 import AnimateHeight from "react-animate-height"
@@ -14,6 +14,7 @@ import AgentLoader from "./AgentLoader";
 import { useAccount } from "@/contexts/AccountContext";
 import SignInModal from "../SignInModal";
 import PlanModal from "../PlanModal";
+import Image from "next/image";
 
 interface ChatSearchBarProps {
     title: string;
@@ -134,28 +135,30 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
             <SignInModal modal={signInModal} setModal={setSignInModal} />
             {chatHistory.length === 0 && !disable ?
                 <div className='flex flex-col w-full   items-center justify-center '>
-                    <div className="h-[35vh] flex flex-col items-center gap-3 justify-end">
-                        <h1 className="text-3xl font-semibold">
-                            {title}
+                    <div className="h-[40vh] w-[1000px]  flex flex-col gap-3 items-start pt-[20vh] justify-center">
+                        <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-500">
+                            {profile?.name ? `Hello, ${profile.name}` : null}
                         </h1>
-                        <h1 className="text-[#8282AD] text-center">
-                            {subTitle}
+                        <h1 className="text-[#C4C7C5] text-4xl text-center">
+                            Welcome to Elevatics AI !
                         </h1>
                     </div>
                 </div>
                 : null}
-            <div className="w-full flex  justify-center h-20 z-20 items-start">
-                <div className="w-[1000px] bg-white flex flex-col rounded-3xl border-2 border-gray-200 shadow-lg">
+            <div className="w-full flex  justify-center h-20 z-20 pt-5 items-start">
+                <div className="w-[1000px]  flex flex-col rounded-3xl bg-[#F6F6F6]">
                     <form onSubmit={onSubmit} className=" relative  flex items-center justify-center ">
                         <div ref={uploadContainerRef} className={`absolute -top-10 left-0 z-40 p-2 bg-gray-200 rounded-md duration-500 transition ${isOpen ? "translate-x-0 opacity-100" : "translate-x-100 opacity-0"}`}>
                             <button type="button" className=" rounded-md " onClick={handleClick}>Upload File</button>
                         </div>
+                        {/*
+
                         <input
                             type="file"
                             hidden
                             ref={inputRef}
                             onChange={handleFileChange}
-                            className="rounded-3xl border-2 pr-28 shadow-md border-gray-100 bg-white focus:outline-gray-300 p-4 w-full"
+                            className="rounded-3xl border-2 pr-28 shadow-md border-gray-100  focus:outline-none p-4 w-full"
                         />{" "}
                         <button type="button"
                             disabled={loading}
@@ -166,6 +169,7 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
                             }}>
                             <IconPlus />
                         </button>
+                        */}
                         {selectedFiles.length > 0 ?
                             <div className="flex gap-2 py-4 rounded-3xl px-16 justify-start w-full">{selectedFiles.map((file, i) => <div key={i} className="flex gap-1 items-center">
                                 <h1>{file.name}</h1>
@@ -181,17 +185,24 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
                                 value={input}
                                 onChange={handleChange}
                                 placeholder="What's on your mind..."
-                                className=" rounded-3xl py-4 px-16  focus:outline-none w-full"
+                                className=" rounded-3xl py-4 px-8 bg-transparent focus:outline-none w-full"
                             />}
-
-                        <button
-                            disabled={loading}
-                            className="text-gray-400 disabled:cursor-auto hover:bg-gray-300 hover:scale-125 duration-500 absolute glow p-2 group cursor-pointer rounded-full bg-gray-100  right-2 "
-                        >
-                            {loading ? <AgentLoader isLoading={loading} /> :
-                                <PiRocketLaunchThin size={20} className="text-gray-500 group-hover:text-white duration-500" />
-                            }
-                        </button>
+                        <div className="flex gap-2 items-center absolute right-2">
+                            <div className="flex gap-2 items-center">
+                                <div className="p-1 w-10 rounded-2xl border-[1px] border-[#A1A1A1]">
+                                    <div className="h-4 w-4 rounded-full bg-[#A1A1A1]"></div>
+                                </div>
+                                <h1>Pro</h1>
+                            </div>
+                            <button
+                                disabled={loading}
+                                className="disabled:cursor-auto bg-gradient-to-b from-blue-500 to-purple-500 hover:scale-125 duration-500  text-white  p-2 group cursor-pointer rounded-full   "
+                            >
+                                {loading ? <AgentLoader isLoading={loading} /> :
+                                    <BiRightArrowAlt size={20} className="text-white duration-500" />
+                                }
+                            </button>
+                        </div>
                     </form>
                     {!disable ?
                         <AnimateHeight height={data.length > 0 && !initialSearch && selectedFiles.length === 0 ? 300 : 0} duration={300}>
@@ -215,10 +226,20 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
                 </div>
             </div>
             {chatHistory.length === 0 && !disable ?
-                <div className="w-full justify-center flex">
-                    <div className="flex gap-5 w-[1000px] overflow-auto hide-scrollbar">{Array.from({ length: 15 }).map((_, i) => (
-                        <div className="h-32 rounded-2xl w-40 bg-gray-300 flex-shrink-0"></div>
-                    ))}</div>
+                <div className="w-full justify-center h-full items-center flex">
+                    <div className="flex gap-5 w-[1000px] overflow-auto hide-scrollbar">{Object.values(agents).map((agent, i) => {
+                        if (agent.hidden) return null
+                        return (<div className="h-[150px] rounded-2xl w-[250px] bg-gray-300 flex-shrink-0 overflow-hidden relative" key={i}>
+                            <div className="absolute bg-[#08022F]/50 h-full w-full flex flex-col gap-1 p-5">
+                                <h1 className="text-white text-xl font-semibold">{agent.name}</h1>
+                                <h1 className="text-white  ">{agent.tagLine}</h1>
+                            </div>
+                            <Link href={agent.active ? agent.url : "/"} className="absolute h-6 w-6 rounded-full flex items-center justify-center bg-white bottom-2 right-2">
+                                <BiRightArrowAlt />
+                            </Link>
+                            <Image src={agent.img} alt="agent " width={301} height={157} className="h-full w-full object-cover" />
+                        </div>)
+                    })}</div>
                 </div> : null}
         </>
     )
