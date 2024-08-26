@@ -142,26 +142,9 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
                             {subTitle}
                         </h1>
                     </div>
-                    <AnimateHeight height={inputClick ? 0 : "auto"} duration={500}>
-                        {pathname === "/" ?
-
-                            < div className="flex  gap-4 items-center w-[1000px] overflow-x-scroll hide-scrollbar  h-[calc(65vh_-_80px)] px-1">
-                                {Object.values(agents).map((item, i) => (
-                                    <Link href={item.url} key={i} className=' h-[150px] transition duration-300 hover:-translate-y-3 w-[300px] flex-shrink-0 bg-gray-100 hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item.name}</Link>
-                                ))}
-                            </div>
-                            :
-
-                            < div className="flex  gap-4 items-center w-[800px] h-[calc(65vh_-_80px)]">
-                                {suggestions.map((item, i) => (
-                                    <div onClick={() => handleRecommendationClick(item)} key={i} className='cursor-pointer h-[150px] transition duration-300 hover:-translate-y-3 w-full hover:bg-gray-200 hover:text-black rounded-3xl shadow-gray-300 p-5 text-gray-500 pt-10 shadow-3xl'>{item}</div>
-                                ))}
-                            </div>
-                        }
-                    </AnimateHeight>
                 </div>
                 : null}
-            <div className="w-full flex  justify-center h-20 items-start">
+            <div className="w-full flex  justify-center h-20 z-20 items-start">
                 <div className="w-[1000px] bg-white flex flex-col rounded-3xl border-2 border-gray-200 shadow-lg">
                     <form onSubmit={onSubmit} className=" relative  flex items-center justify-center ">
                         <div ref={uploadContainerRef} className={`absolute -top-10 left-0 z-40 p-2 bg-gray-200 rounded-md duration-500 transition ${isOpen ? "translate-x-0 opacity-100" : "translate-x-100 opacity-0"}`}>
@@ -231,6 +214,12 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
                         </AnimateHeight> : null}
                 </div>
             </div>
+            {chatHistory.length === 0 && !disable ?
+                <div className="w-full justify-center flex">
+                    <div className="flex gap-5 w-[1000px] overflow-auto hide-scrollbar">{Array.from({ length: 15 }).map((_, i) => (
+                        <div className="h-32 rounded-2xl w-40 bg-gray-300 flex-shrink-0"></div>
+                    ))}</div>
+                </div> : null}
         </>
     )
 })
