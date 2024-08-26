@@ -32,12 +32,12 @@ export default function CustomDropdown({ label, value, options, onChange }: Cust
     }, []);
 
     return (
-        <div ref={dropdownRef} className="flex relative gap-5 items-center">
+        <div ref={dropdownRef} className="flex relative gap-1 items-center">
             {label ? <h5 className="text-sm min-w-[100px]">{label}</h5> : null}
             <div className="relative">
                 <button
                     onClick={() => setIsOpen(prev => !prev)}
-                    className="relative z-1 min-w-[150px] flex justify-between p-2 border-gray-300 border-[1px] rounded-md"
+                    className="relative z-1 min-w-[150px] flex justify-between p-2 bg-[#F6F6F6]  rounded-md"
                 >
                     <h1>{getCurrentTitle()}</h1>
                     <span style={{ rotate: isOpen ? "180deg" : "0deg" }}>

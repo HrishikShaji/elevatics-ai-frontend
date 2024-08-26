@@ -98,7 +98,7 @@ export default function LibraryTable({ rowData }: LibraryTableProps) {
 
     return (
         <div className="p-10">
-            <div className="mb-5 flex flex-col gap-5 md:flex-row justify-end md:items-center">
+            <div className="mb-5 border-b-[1px] pb-5 border-gray-200  flex flex-col gap-5 md:flex-row justify-end md:items-center">
                 <div className="flex items-center w-full justify-between">
                     <h1 className="text-3xl">Library</h1>
                     <div className="relative w-[50vw]  flex items-center">

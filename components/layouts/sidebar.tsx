@@ -21,6 +21,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { CiFolderOn } from "react-icons/ci";
 import IconHome from '../icon/icon-home';
 import { agents } from '@/lib/constants';
+import IconUser from '../icon/icon-user';
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -142,7 +143,14 @@ const Sidebar = () => {
                                         </div>
                                     </Link>
                                 </li>
-                                <ProfileModal />
+                                <li className="nav-item">
+                                    <Link href="/profile" className="group">
+                                        <div className="flex items-center">
+                                            <IconUser className="shrink-0 group-hover:!text-primary" />
+                                            <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('Profile')}</span>
+                                        </div>
+                                    </Link>
+                                </li>
                                 <SettingsModal />
                                 <div className="nav-item pt-[53vh]">
                                     <button onClick={() => signOut()} className="group">
