@@ -69,7 +69,6 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
     const [uploading, setUploading] = useState(false)
     const { currentFingerPrint, profile, incrementNonLoggedInUsage, updateQueryLimit } = useAccount()
 
-    console.log("current usage", currentFingerPrint?.usage, "user id", profile?.id)
 
     const { mutate, isSuccess, data } = useSaveReport();
     useEffect(() => {

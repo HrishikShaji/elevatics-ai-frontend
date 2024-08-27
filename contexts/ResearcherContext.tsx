@@ -2,7 +2,7 @@
 "use client"
 
 import useSaveReport from "@/hooks/useSaveReport";
-import { NEW_RESEARCHER_REPORT_URL } from "@/lib/endpoints";
+import { NEW_RESEARCHER_REPORT_URL, VPS_RESEARCHER_URL_V2 } from "@/lib/endpoints";
 import fetchResearcherReports from "@/lib/fetchResearcherReports";
 import { Chat, ChatType, ReportProps, ResearcherTopicsResponse, SelectedSubtasks } from "@/types/types";
 import { createContext, Dispatch, ReactNode, SetStateAction, useCallback, useContext, useEffect, useState } from "react";
@@ -42,7 +42,7 @@ function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 async function fetchReport({ topic, addReport, addReports }: { topic: Topic, addReport: (report: string) => void, addReports: (report: Report) => void }) {
-    const response = await fetch(NEW_RESEARCHER_REPORT_URL, {
+    const response = await fetch(VPS_RESEARCHER_URL_V2, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -82,20 +82,11 @@ async function fetchReport({ topic, addReport, addReports }: { topic: Topic, add
             if (chunk.includes('<json>')) {
                 isReadingMetadata = true;
                 metadata = '';
-            } else if (chunk.includes("<report-chart>")) {
-                isReadingChartData = true;
-                chartData = "";
             }
-
             if (isReadingMetadata) {
                 metadata += chunk;
                 if (chunk.includes('</json>')) {
                     isReadingMetadata = false;
-                }
-            } else if (isReadingChartData) {
-                chartData += chunk;
-                if (chunk.includes("</report-chart>")) {
-                    isReadingChartData = false;
                 }
             } else {
                 for (let i = 0; i < chunk.length; i += 10) {

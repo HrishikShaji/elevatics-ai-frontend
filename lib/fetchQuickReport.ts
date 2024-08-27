@@ -1,4 +1,5 @@
 import { Chat } from "@/types/types";
+import { VPS_RESEARCHER_URL } from "./endpoints";
 
 interface Props {
     query: string;
@@ -6,7 +7,7 @@ interface Props {
 }
 
 export default async function fetchQuickReport({ query, addMessage }: Props) {
-    const response = await fetch('https://pvanand-search-generate-prod.hf.space/generate_report', {
+    const response = await fetch(VPS_RESEARCHER_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

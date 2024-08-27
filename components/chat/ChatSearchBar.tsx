@@ -39,7 +39,6 @@ const ChatSearchBar = memo(({ suggestions, disable, title, subTitle, responseTyp
     const [signInModal, setSignInModal] = useState(false)
     const [planModal, setPlanModal] = useState(false)
     const pathname = usePathname()
-    console.log(profile?.queries)
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (uploadContainerRef.current && !uploadContainerRef.current.contains(event.target as any)) {

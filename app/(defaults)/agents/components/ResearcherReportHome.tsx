@@ -123,10 +123,10 @@ const MemoizedMarkdown = memo(({ content, chartData }: { content: string, chartD
                         return null;
                     },
                     "report": ({ node, ...props }: ExtraProps) => {
-                        return <div className="bg-yellow-500" {...props} />;
+                        return <div className="" {...props} />;
                     },
                     "report-chart": ({ node, ...props }: ExtraProps) => {
-                        return <div className="bg-green-500" {...props} />;
+                        return <div className="" {...props} />;
                     },
                     table: memo(({ node, ...props }) => {
                         const currentTableIndex = tableIndex.current;

@@ -38,6 +38,7 @@ export default function SignInModal({ modal, setModal }: SignInModalProps) {
                         >
                             <Dialog.Panel className="panel border-0 p-5 rounded-3xl overflow-hidden  my-8 text-black dark:text-white-dark">
                                 <div className="flex flex-col gap-5 p-5 font-semibold text-lg dark:text-white">
+
                                     <h5 className='border-b-2 pl-5 py-2 bg-gray-200 rounded-3xl'>Login</h5>
                                     <div className="flex flex-col w-[400px] bg-gray-200 rounded-3xl p-5 justify-center gap-3 mb-5">
                                         <button onClick={() => signIn("google", { callbackUrl: "/" })} type="button" className="btn btn-outline-primary rounded-2xl flex gap-1">

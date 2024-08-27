@@ -39,6 +39,7 @@ export const AccountProvider = ({ children }: AccountProviderProps) => {
     const [fpHash, setFpHash] = useState('');
     const [currentFingerPrint, setCurrentFingerPrint] = useState<Fingerprint | null>(null)
 
+    console.log("this is database url", process.env.DATABASE_URL)
     useEffect(() => {
         const setFp = async () => {
             const fp = await FingerprintJS.load();
