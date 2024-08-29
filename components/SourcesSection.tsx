@@ -48,8 +48,8 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
             return null;
         }
     } return (
-        <div>
-            <div className="w-full divide-y divide-white-light   dark:divide-dark">
+        <div className='w-full flex justify-center'>
+            <div className="w-[800px] divide-y divide-white-light   dark:divide-dark">
                 {(sources as string[][]).map((task, i) => {
                     if (task[0].length < 30) return null
                     return (<div key={i}>
