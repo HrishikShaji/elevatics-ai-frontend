@@ -16,10 +16,20 @@ const SourcesSection: React.FC<SourcesComponentProps> = ({ metadata }) => {
     const [sources, setSources] = useState<string[][]>([]);
     const [active, setActive] = useState<number | null>(null)
     useEffect(() => {
-        const metadataMatch = metadata.match(/all-text-with-urls: (.+)/);
-        if (metadataMatch) {
-            const metadataObj = JSON.parse(metadataMatch[1]);
-            setSources(metadataObj);
+        const matches = metadata.match(/\[\[\[(.*)\]\]\]/);
+        console.log("this is metadata", metadata)
+        if (matches && matches[1]) {
+            const jsonString = matches[1];
+
+            try {
+                const jsonData = JSON.parse(jsonString);
+                console.log(jsonData.references);
+                setSources(jsonData.references)
+            } catch (error) {
+                console.error("Invalid JSON format:", error);
+            }
+        } else {
+            console.error("No JSON content found within triple square brackets.");
         }
     }, [metadata]);
 

@@ -1,5 +1,5 @@
 import { Chat } from "@/types/types";
-import { VPS_RESEARCHER_URL } from "./endpoints";
+import { VPS_RESEARCHER_URL, VPS_RESEARCHER_URL_V2 } from "./endpoints";
 
 interface Props {
     query: string;
@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default async function fetchQuickReport({ query, addMessage }: Props) {
-    const response = await fetch(VPS_RESEARCHER_URL, {
+    const response = await fetch(VPS_RESEARCHER_URL_V2, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -42,15 +42,16 @@ export default async function fetchQuickReport({ query, addMessage }: Props) {
 
             const chunk = decoder.decode(value, { stream: true });
 
-            if (chunk.includes('<report-metadata>')) {
+            if (chunk.includes('<json>')) {
                 isReadingMetadata = true;
                 metadata = '';
             }
 
             if (isReadingMetadata) {
                 metadata += chunk;
-                if (chunk.includes('</report-metadata>')) {
+                if (chunk.includes('</json>')) {
                     isReadingMetadata = false;
+                    addMessage({ role: 'assistant', content: markdown, metadata: metadata, type: "iresearcher-report" });
                 }
             } else {
                 markdown += chunk;
