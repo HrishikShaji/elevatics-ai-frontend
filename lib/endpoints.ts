@@ -42,5 +42,5 @@ export const NEW_FOLLOWUP_URL = "https://pvanand-general-chat.hf.space/v2/follow
 export const NEW_INVESTOR_REPORT = "https://ashishbangwal-investor-api.hf.space/investor"
 export const LATEST_RESEARCHER_REPORT_URL = "https://pvanand-search-generate-prod.hf.space/generate_report_v2"
 
-export const VPS_RESEARCHER_URL = "http://162.0.211.129:7860/generate_report"
-export const VPS_RESEARCHER_URL_V2 = "http://162.0.211.129:7860/v2/generate_report"
+export const VPS_RESEARCHER_URL = "https://iresearcher-api.elevatics.cloud/generate_report"
+export const VPS_RESEARCHER_URL_V2 = "https://iresearcher-api.elevatics.cloud/v2/generate_report"

@@ -62,40 +62,24 @@ export default function ResearcherReportHome() {
     console.log(reports)
 
     return (
-        <div className="flex flex-col gap-5 py-10">
-            <div className="flex flex-col gap-2">
-                <div className="w-full flex justify-center">
-                    <div className="flex py-1 pb-3 justify-between w-[1000px] overflow-hiiden">
-                        <button
-                            onClick={() => scrollLeft(containerRef)}
-                            className=" size-10 flex  items-center justify-center  hover:text-black  hover:bg-gray-300 rounded-full"
-                        >
-                            <IoIosArrowBack size={25} />
-                        </button>
-                        <div className='w-[800px] justify-center  flex gap-4 overflow-hidden' ref={containerRef}>
-                            {sliderData.map((item, k) => (<button className='p-1 text-nowrap px-3 rounded-md bg-gray-100 min-w-[300px] text-black' onClick={() => setCurrentParentKey(item)}>{item}</button>))}
-                        </div>
-                        <button
-                            onClick={() => scrollRight(containerRef)}
-                            className=" size-10 flex items-center justify-center  hover:text-black  hover:bg-gray-300 rounded-full"
-                        >
-                            <IoIosArrowForward size={25} />
-                        </button>
-                    </div>
+        <div className="flex gap-2 relative justify-center pt-10">
+            <div className=" flex absolute top-10 left-6 justify-center">
+                <div className=' justify-center flex-col flex gap-2 w-[180px] ' ref={containerRef}>
+                    {sliderData.map((item, k) => (<button className={`${item === currentParentKey ? "bg-blue-500 text-white" : "bg-gray-100 text-black"} p-1  px-3 truncate rounded-md  w-full `} onClick={() => setCurrentParentKey(item)}>{item}</button>))}
                 </div>
-                <div className="flex scroll-smooth  flex-col-reverse h-[70vh] overflow-y-auto items-center w-full custom-scrollbar">
-                    <div className="flex flex-col gap-10">
-                        {reports.map((report, i) => (
-                            <div style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
-                                <MemoizedMarkdown chartData={report.chartData} content={report.content} />
-                                <SourcesSection metadata={report.metadata} />
-                            </div>
-                        ))}
-                        {streaming ?
-                            <div style={{ display: currentParentKey === streamingReportParent ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100">
-                                <MemoizedMarkdown chartData="" content={streamingReport} />
-                            </div> : null}
-                    </div>
+            </div>
+            <div className="flex scroll-smooth  flex-col-reverse h-[85vh] overflow-y-auto items-center w-full custom-scrollbar">
+                <div className="flex flex-col gap-10">
+                    {reports.map((report, i) => (
+                        <div style={{ display: currentParentKey === report.parentKey ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100" key={i}>
+                            <MemoizedMarkdown chartData={report.chartData} content={report.content} />
+                            <SourcesSection metadata={report.metadata} />
+                        </div>
+                    ))}
+                    {streaming ?
+                        <div style={{ display: currentParentKey === streamingReportParent ? "block" : "none" }} className="w-[1000px] p-5 rounded-3xl bg-gray-100">
+                            <MemoizedMarkdown chartData="" content={streamingReport} />
+                        </div> : null}
                 </div>
             </div>
         </div>
